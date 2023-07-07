@@ -46,10 +46,10 @@ file(GLOB VENDORS_SOURCES Glitter/Vendor/glad/src/glad.c
         )
 file(GLOB PROJECT_HEADERS Glitter/Headers/*.hpp)
 file(GLOB PROJECT_SOURCES Glitter/Sources/*.cpp)
-file(GLOB PROJECT_SHADERS Glitter/Shaders/*.comp
-                          Glitter/Shaders/*.frag
-                          Glitter/Shaders/*.geom
-                          Glitter/Shaders/*.vert)
+file(GLOB PROJECT_SHADERS ${SHADER_DIR}/*.comp
+                          ${SHADER_DIR}/*.frag
+                          ${SHADER_DIR}/*.geom
+                          ${SHADER_DIR}/*.vert)
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                           Readme.md
                          .gitattributes
@@ -65,13 +65,26 @@ add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES} Glitter/Headers/Model.hpp Glitter/Headers/shader.hpp Glitter/Headers/mesh.hpp Glitter/Vendor/stb/deprecated/stb_image.c  Glitter/Vendor/stb/deprecated/rrsprintf.h Glitter/Vendor/stb/deprecated/stretchy_buffer.h Glitter/Vendor/imgui/imgui.h Glitter/Headers/light.hpp Glitter/Headers/camera.hpp)
+                               ${VENDORS_SOURCES} Glitter/Headers/Model.hpp
+        Glitter/Headers/shader.hpp Glitter/Headers/mesh.hpp
+        Glitter/Vendor/stb/deprecated/stb_image.c
+        Glitter/Vendor/stb/deprecated/rrsprintf.h
+        Glitter/Vendor/stb/deprecated/stretchy_buffer.h
+        Glitter/Vendor/imgui/imgui.h Glitter/Headers/light.hpp
+        Glitter/Headers/camera.hpp)
 target_link_libraries(${PROJECT_NAME} assimp glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
-
+#Specify relative paths for shader and model files
+set(SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Shaders")
+set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/model")
+#Add preprocessor definitions for the relative paths
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+        SHADER_DIR="${SHADER_DIR}"
+        MODEL_DIR="${MODEL_DIR}"
+        )
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>

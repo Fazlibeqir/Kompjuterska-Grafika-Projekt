@@ -64,10 +64,12 @@ int main() {
     }
 
     glEnable(GL_DEPTH_TEST);
+    string vertPath= string(SHADER_DIR)+"\\belt.vert";
+    string fragmentPath= string(SHADER_DIR)+ "\\belt.frag";
+    string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
 
-    Shader ourShader("D:\\Elena\\Faks\\Tret semestar\\Napredno programiranje\\Kompjuterska-Grafika-Projekt\\Glitter\\Shaders\\belt.vert",
-                     "D:\\Elena\\Faks\\Tret semestar\\Napredno programiranje\\Kompjuterska-Grafika-Projekt\\Glitter\\Shaders\\belt.frag");
-    Model car("D:\\Elena\\Faks\\Tret semestar\\Napredno programiranje\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\model\\car\\car.obj");
+    Shader ourShader(vertPath.c_str(),fragmentPath.c_str());
+    Model car(modelPath.c_str());
 
     // Rendering Loop
     while (!glfwWindowShouldClose(mWindow)) {
