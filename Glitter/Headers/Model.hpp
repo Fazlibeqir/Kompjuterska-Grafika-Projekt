@@ -5,6 +5,7 @@
 
 #ifndef GLITTER_MODEL_HPP
 #define GLITTER_MODEL_HPP
+#pragma once
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
