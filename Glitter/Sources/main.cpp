@@ -5,9 +5,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-//#include <imgui.h>
-//#include <imgui_impl_glfw.h>
-//#include <imgui_impl_opengl3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 #include "shader.hpp"
 #include "Model.hpp"
@@ -30,11 +30,15 @@ int main() {
     Shader ourShader(vertPath.c_str(),fragmentPath.c_str());
     Model car(modelPath.c_str());
 
-    // Rendering Loop
+
+    float rotationAngle = 0.0f; // Initial rotation angle
+
     while (!glfwWindowShouldClose(mWindow)) {
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        rotationAngle += 45.0f * deltaTime; // Adjust the rotation speed as desired
 
         processInput(mWindow);
         // Background Fill Color
@@ -49,7 +53,10 @@ int main() {
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(6.0f, 6.0f, 6.0f));
+        model = glm::scale(model, glm::vec3(7.0f, 7.0f, 7.0f));
+        model = glm::rotate(model, glm::radians(rotationAngle),
+                            glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
+
 
         ourShader.setMat4("model", model);
         car.Draw(ourShader);
