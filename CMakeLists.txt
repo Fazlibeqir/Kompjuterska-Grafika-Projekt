@@ -71,7 +71,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Vendor/stb/deprecated/rrsprintf.h
         Glitter/Vendor/stb/deprecated/stretchy_buffer.h
         Glitter/Vendor/imgui/imgui.h Glitter/Headers/light.hpp
-        Glitter/Headers/camera.hpp Glitter/Sources/init.cpp Glitter/Headers/init.h)
+        Glitter/Headers/camera.hpp Glitter/Sources/init.cpp Glitter/Headers/init.h Glitter/Sources/MainMenu.cpp Glitter/Headers/MainMenu.h Glitter/Sources/Game.cpp Glitter/Headers/Game.h)
 target_link_libraries(${PROJECT_NAME} assimp glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)

@@ -5,23 +5,21 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-
 #include "shader.hpp"
 #include "Model.hpp"
 #include "init.h"
+#include "MainMenu.h"
 //#include "light.hpp"
 
-// Standard Headers
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 int main() {
 
+    MainMenu menu;
     GLFWwindow* mWindow = initializeWindow();
+    menu.initializeImGui(mWindow);
 
     string vertPath= string(SHADER_DIR)+"\\belt.vert";
     string fragmentPath= string(SHADER_DIR)+ "\\belt.frag";
@@ -34,6 +32,10 @@ int main() {
     float rotationAngle = 0.0f; // Initial rotation angle
 
     while (!glfwWindowShouldClose(mWindow)) {
+
+        //Load menu
+        menu.renderImGui();
+
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -57,14 +59,18 @@ int main() {
         model = glm::rotate(model, glm::radians(rotationAngle),
                             glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
 
-
         ourShader.setMat4("model", model);
         car.Draw(ourShader);
+
+        //Load menu
+        menu.renderImGui();
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }
+
+    menu.cleanImGui();
     glfwTerminate();
     return 0;
 }

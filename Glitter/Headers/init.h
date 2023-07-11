@@ -13,10 +13,6 @@
 #include "camera.hpp"
 #include <iostream>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 700;
 
@@ -27,7 +23,6 @@ extern bool firstMouse;
 
 GLFWwindow* initializeWindow();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
