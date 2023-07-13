@@ -26,6 +26,7 @@ public:
 //    static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 
 private:
+    GLFWwindow* window;
     void startGame();
     void quitGame();
     void showSettings();

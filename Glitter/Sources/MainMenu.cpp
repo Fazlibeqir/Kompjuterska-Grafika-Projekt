@@ -35,6 +35,7 @@ void MainMenu::renderMainMenu(){
 }
 void MainMenu:: initializeImGui(GLFWwindow* window)
 {
+    this->window =window;
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
@@ -68,7 +69,7 @@ void MainMenu::startGame() {
 }
 
 void MainMenu::quitGame() {
-
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
 void MainMenu::showSettings() {
