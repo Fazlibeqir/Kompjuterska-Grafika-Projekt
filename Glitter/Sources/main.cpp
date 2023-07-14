@@ -21,13 +21,21 @@ int main() {
     GLFWwindow* mWindow = initializeWindow();
     menu.initializeImGui(mWindow);
 
-    string vertPath= string(SHADER_DIR)+"\\deferred.vert";
-    string fragmentPath= string(SHADER_DIR)+ "\\deferred.frag";
+    string vertPath= string(SHADER_DIR)+"\\belt.vert";
+    string fragmentPath= string(SHADER_DIR)+ "\\belt.frag";
     string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
 
+//    std::vector<std::string> skyboxTextures = {
+//            "assets/img/skybox/right.png",
+//            "assets/img/skybox/left.png",
+//            "assets/img/skybox/top.png",
+//            "assets/img/skybox/bottom.png",
+//            "assets/img/skybox/back.png",
+//            "assets/img/skybox/front.png"
+//    };
     Shader ourShader(vertPath.c_str(),fragmentPath.c_str());
     Model car(modelPath.c_str());
-    Light light;
+//    Light light;
 
 
 
@@ -52,26 +60,6 @@ int main() {
         float time = glfwGetTime();
         glm::vec3 light_pos = glm::vec3(7.0f * cos(time), 10.0f, 7.0f * sin(time));
         glm::vec3 light_pos_ops = glm::vec3(-7.0f * cos(time), 10.0f, -7.0f * sin(time));
-
-        ourShader.setVec3("viewPos", camera.position());
-        ourShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        ourShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        ourShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-        ourShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-        ourShader.setVec3("pointLights[0].position", light_pos);
-        ourShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        ourShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-        ourShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-        ourShader.setFloat("pointLights[0].constant", 1.0f);
-        ourShader.setFloat("pointLights[0].linear", 0.007f);
-        ourShader.setFloat("pointLights[0].quadratic", 0.0002f);
-        ourShader.setVec3("pointLights[1].position", light_pos_ops);
-        ourShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-        ourShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-        ourShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-        ourShader.setFloat("pointLights[1].constant", 1.0f);
-        ourShader.setFloat("pointLights[1].linear", 0.007f);
-        ourShader.setFloat("pointLights[1].quadratic", 0.0002f);
 
         glm::mat4 projection = glm::perspective(glm::radians(camera.zoom()), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
