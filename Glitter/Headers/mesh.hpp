@@ -68,7 +68,7 @@ public:
             glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
             // retrieve texture number (the N in diffuse_textureN)
             string number;
-            string name = textures[i].type;
+            string name = this->textures[i].type;
             if(name == "texture_diffuse")
                 number = std::to_string(diffuseNr++);
             else if(name == "texture_specular")
@@ -78,10 +78,10 @@ public:
             else if(name == "texture_height")
                 number = std::to_string(heightNr++); // transfer unsigned int to string
 
+            // and finally bind the texture
+            glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
             // now set the sampler to the correct texture unit
             glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
-            // and finally bind the texture
-            glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
 
         // draw mesh
@@ -90,7 +90,10 @@ public:
         glBindVertexArray(0);
 
         // always good practice to set everything back to defaults once configured.
-        glActiveTexture(GL_TEXTURE0);
+       for(unsigned i=0;i<this->textures.size();i++){
+           glActiveTexture(GL_TEXTURE0 + i);
+           glBindTexture(GL_TEXTURE_2D,0);
+       }
     }
 
 private:

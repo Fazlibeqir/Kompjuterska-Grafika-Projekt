@@ -26,14 +26,14 @@ GLFWwindow* initializeWindow(){
     glfwMakeContextCurrent(mWindow);
     glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
     glfwSetScrollCallback(mWindow, scroll_callback);
-    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit(1);
     }
     glEnable(GL_DEPTH_TEST);
-
+    glDepthFunc(GL_LESS);
 
     return mWindow;
 }
