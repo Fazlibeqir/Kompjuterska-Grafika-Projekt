@@ -4,7 +4,9 @@
 
 #include "MainMenu.h"
 
-MainMenu::MainMenu() {
+MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath, const std::string& modelPath)
+    : window(inWindow), game(shaderVertPath, shaderFragPath, modelPath)
+{
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -12,6 +14,8 @@ MainMenu::MainMenu() {
 }
 
 void MainMenu::renderMainMenu(){
+    game.initialStart();
+
     ImGui::Begin("Main Menu");
     if (ImGui::Button("Start Game"))
     {
@@ -33,9 +37,8 @@ void MainMenu::renderMainMenu(){
 
     ImGui::End();
 }
-void MainMenu:: initializeImGui(GLFWwindow* window)
+void MainMenu:: initializeImGui()
 {
-    this->window =window;
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
 
@@ -65,15 +68,15 @@ void MainMenu:: renderImGui(){
 }
 
 void MainMenu::startGame() {
-
+    game.start();
 }
 
 void MainMenu::quitGame() {
-    glfwSetWindowShouldClose(window, GLFW_TRUE);
+    game.quit(window);
 }
 
 void MainMenu::showSettings() {
-
+    game.settings();
 }
 //void MainMenu::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 //{
