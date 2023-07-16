@@ -204,6 +204,9 @@ int main() {
     faces.push_back("C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\skybox\\front.png");
     GLuint cubemapTexture = loadCubemap(faces);
     float ambientS = 0.5, diffuseS = 1.5, specularS = 0.3;
+    char* planeText[] = {"C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\textures\\text0.jpg",
+                         "C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\textures\\text1.jpg",
+                         "C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\textures\\text2.jpg"};
 
     ourShader.setInt("material.diffuse",0);
     ourShader.setInt("material.specular",0);
@@ -213,6 +216,7 @@ int main() {
 
     while (!glfwWindowShouldClose(mWindow)) {
 
+        GLint texture = loadTexture(planeText[idx]);
 
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
@@ -224,6 +228,7 @@ int main() {
         // Background Fill Color
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        glBindTexture(GL_TEXTURE_2D, texture);
         ourShader.use();
         glm::mat4 model = glm::mat4(1.0f);
         ourShader.setFloat("model",1);
