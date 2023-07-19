@@ -19,7 +19,10 @@ option(BUILD_UNIT_TESTS OFF)
 add_subdirectory(Glitter/Vendor/bullet)
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    add_compile_options(/MP)
+    add_compile_options(/Gm)
+    add_compile_options(/W4)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /INCREMENTAL")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
     if(NOT WIN32)
@@ -65,8 +68,10 @@ add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES} Glitter/Headers/Model.hpp
-        Glitter/Headers/shader.hpp Glitter/Headers/mesh.hpp
+                               ${VENDORS_SOURCES}
+        Glitter/Headers/Model.hpp
+        Glitter/Headers/shader.hpp
+        Glitter/Headers/mesh.hpp
         Glitter/Vendor/stb/deprecated/stb_image.c
         Glitter/Vendor/stb/deprecated/rrsprintf.h
         Glitter/Vendor/stb/deprecated/stretchy_buffer.h
@@ -78,8 +83,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Sources/MainMenu.cpp
         Glitter/Headers/MainMenu.h
         Glitter/Sources/Game.cpp
-        Glitter/Headers/Game.h
-        Glitter/Headers/Scene.hpp)
+        Glitter/Headers/Game.h)
 target_link_libraries(${PROJECT_NAME} assimp glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)

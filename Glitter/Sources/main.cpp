@@ -86,9 +86,6 @@ int main() {
     string skyVertPath= string(SHADER_DIR)+"\\skybox.vert";
     string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
     string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
-
-
-
     Shader ourShader(vertPath.c_str(),fragmentPath.c_str());
     Shader skyboxShader(skyVertPath.c_str(),skyFragPath.c_str() );
     Model car(modelPath.c_str());
@@ -187,14 +184,7 @@ int main() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glBindVertexArray(0);
-//    std::vector<std::string> skyboxTextures = {
-//            "assets/img/skybox/right.png",
-//            "assets/img/skybox/left.png",
-//            "assets/img/skybox/top.png",
-//            "assets/img/skybox/bottom.png",
-//            "assets/img/skybox/back.png",
-//            "assets/img/skybox/front.png"
-//    };
+
     string right= string(SKY_DIR)+"\\skybox\\right.png";
     string left= string(SKY_DIR)+"\\skybox\\left.png";
     string top= string(SKY_DIR)+"\\skybox\\top.png";
