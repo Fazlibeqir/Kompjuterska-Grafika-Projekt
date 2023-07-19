@@ -11,22 +11,20 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
 
 class MainMenu {
 public:
     MainMenu();
     void renderMainMenu();
     void initializeImGui(GLFWwindow* window);
-    void cleanImGui();
+    static void cleanImGui();
     void renderImGui();
 //
 //    static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 //    static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 
 private:
-    GLFWwindow* window;
+    GLFWwindow* window{};
     void startGame();
     void quitGame();
     void showSettings();

@@ -88,7 +88,7 @@ int main() {
     string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
     Shader ourShader(vertPath.c_str(),fragmentPath.c_str());
     Shader skyboxShader(skyVertPath.c_str(),skyFragPath.c_str() );
-    Model car(modelPath.c_str());
+    Model car(modelPath);
 //    Light light;
 
 
@@ -162,7 +162,7 @@ int main() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Set vertices position pointer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)nullptr);
     glEnableVertexAttribArray(0);
 
     // Set vertices color pointer
@@ -182,7 +182,7 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)nullptr);
     glBindVertexArray(0);
 
     string right= string(SKY_DIR)+"\\skybox\\right.png";
@@ -217,7 +217,7 @@ int main() {
 
         GLint texture = loadTexture(planeText[idx]);
 
-        float currentFrame = static_cast<float>(glfwGetTime());
+        auto currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
@@ -232,7 +232,7 @@ int main() {
         glm::mat4 model = glm::mat4(1.0f);
         ourShader.setFloat("model",1);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
         //
         ourShader.setVec3("viewPos",camera.position());
         // Set material properties
