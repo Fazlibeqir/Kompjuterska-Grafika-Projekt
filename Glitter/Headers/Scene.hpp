@@ -1,0 +1,14 @@
+//
+// Created by Beqir on 19.7.2023.
+//
+
+#ifndef KOMPJUTERSKA_GRAFIKA_PROJEKT_SCENE_HPP
+#define KOMPJUTERSKA_GRAFIKA_PROJEKT_SCENE_HPP
+
+
+class Scene {
+
+};
+
+
+#endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_SCENE_HPP

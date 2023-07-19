@@ -14,7 +14,6 @@
 using namespace std;
 
 int idx=0;
-bool keys[1024];
 glm::vec3 lightDirection(-10.2f, 0.0f, -5.0f);
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -87,6 +86,7 @@ int main() {
     string skyVertPath= string(SHADER_DIR)+"\\skybox.vert";
     string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
     string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
+
 
 
     Shader ourShader(vertPath.c_str(),fragmentPath.c_str());
@@ -195,18 +195,27 @@ int main() {
 //            "assets/img/skybox/back.png",
 //            "assets/img/skybox/front.png"
 //    };
+    string right= string(SKY_DIR)+"\\skybox\\right.png";
+    string left= string(SKY_DIR)+"\\skybox\\left.png";
+    string top= string(SKY_DIR)+"\\skybox\\top.png";
+    string bottom= string(SKY_DIR)+"\\skybox\\bottom.png";
+    string back= string(SKY_DIR)+"\\skybox\\back.png";
+    string front= string(SKY_DIR)+"\\skybox\\front.png";
     vector<const GLchar*> faces;
-    faces.push_back("C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\skybox\\right.png");
-    faces.push_back("C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\skybox\\left.png");
-    faces.push_back("C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\skybox\\top.png");
-    faces.push_back("C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\skybox\\bottom.png");
-    faces.push_back("C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\skybox\\back.png");
-    faces.push_back("C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\skybox\\front.png");
+    faces.push_back(right.c_str());
+    faces.push_back(left.c_str());
+    faces.push_back(top.c_str());
+    faces.push_back(bottom.c_str());
+    faces.push_back(back.c_str());
+    faces.push_back(front.c_str());
     GLuint cubemapTexture = loadCubemap(faces);
+    string texture0=string(SKY_DIR)+"\\textures\\text0.jpg";
+    string texture1=string(SKY_DIR)+"\\textures\\text1.jpg";
+    string texture2=string(SKY_DIR)+"\\textures\\text2.jpg";
     float ambientS = 0.5, diffuseS = 1.5, specularS = 0.3;
-    char* planeText[] = {"C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\textures\\text0.jpg",
-                         "C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\textures\\text1.jpg",
-                         "C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\img\\textures\\text2.jpg"};
+    char* planeText[] = {const_cast<char *>(texture0.c_str()),
+                         const_cast<char*>(texture1.c_str()),
+                         const_cast<char*>(texture2.c_str())};
 
     ourShader.setInt("material.diffuse",0);
     ourShader.setInt("material.specular",0);
@@ -258,6 +267,7 @@ int main() {
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
+        model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
         model = glm::scale(model, glm::vec3(7.0f, 7.0f, 7.0f));
         model = glm::rotate(model, glm::radians(rotationAngle),
@@ -265,6 +275,7 @@ int main() {
         ourShader.setMat4("model", model);
 
         car.Draw(ourShader);
+
 
 
         glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content

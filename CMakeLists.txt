@@ -70,8 +70,16 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Vendor/stb/deprecated/stb_image.c
         Glitter/Vendor/stb/deprecated/rrsprintf.h
         Glitter/Vendor/stb/deprecated/stretchy_buffer.h
-        Glitter/Vendor/imgui/imgui.h Glitter/Headers/light.hpp
-        Glitter/Headers/camera.hpp Glitter/Sources/init.cpp Glitter/Headers/init.h Glitter/Sources/MainMenu.cpp Glitter/Headers/MainMenu.h Glitter/Sources/Game.cpp Glitter/Headers/Game.h)
+        Glitter/Vendor/imgui/imgui.h
+        Glitter/Headers/light.hpp
+        Glitter/Headers/camera.hpp
+        Glitter/Sources/init.cpp
+        Glitter/Headers/init.h
+        Glitter/Sources/MainMenu.cpp
+        Glitter/Headers/MainMenu.h
+        Glitter/Sources/Game.cpp
+        Glitter/Headers/Game.h
+        Glitter/Headers/Scene.hpp)
 target_link_libraries(${PROJECT_NAME} assimp glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES}
                       BulletDynamics BulletCollision LinearMath)
@@ -80,10 +88,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 #Specify relative paths for shader and model files
 set(SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Shaders")
 set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/model")
+set(SKY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/img")
 #Add preprocessor definitions for the relative paths
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         SHADER_DIR="${SHADER_DIR}"
         MODEL_DIR="${MODEL_DIR}"
+        SKY_DIR="${SKY_DIR}"
         )
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
