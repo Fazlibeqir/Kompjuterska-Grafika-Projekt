@@ -23,7 +23,6 @@ extern bool firstMouse;
 
 GLFWwindow* initializeWindow();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_INIT_H

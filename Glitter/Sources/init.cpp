@@ -25,7 +25,7 @@ GLFWwindow* initializeWindow(){
 // Create Context and Load OpenGL Functions
     glfwMakeContextCurrent(mWindow);
     glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
-    glfwSetScrollCallback(mWindow, scroll_callback);
+   // glfwSetScrollCallback(mWindow, scroll_callback);
     glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -41,15 +41,4 @@ GLFWwindow* initializeWindow(){
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
-}
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
 }

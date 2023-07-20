@@ -20,12 +20,12 @@ enum Directions
 class Camera
 {
 public:
-    Camera(glm::vec3 init_pos)
+    explicit Camera(glm::vec3 init_pos)
     {
         position_ = init_pos;
     }
-    ~Camera(){}
-    float zoom(){ return zoom_; }
+    ~Camera()= default;
+    float zoom() const{ return zoom_; }
     glm::vec3 position() { return position_; }
     void ProcessKeyboard(Directions direction, float dlt_time)
     {

@@ -10,7 +10,8 @@
 class Shader
 {
 public:
-    unsigned int ID;
+    unsigned int ID{};
+    Shader()= default;
     Shader(const char* vertexPath, const char* fragmentPath)
     {
         std::string vertexCode;
@@ -63,11 +64,98 @@ public:
         glDeleteShader(vertex);
         glDeleteShader(fragment);
     }
+    Shader(const Shader& other)
+    {
+        // Copy the shader program ID
+        ID = glCreateProgram();
+
+        // Copy the shader source code from the original shader
+        glUseProgram(other.ID);
+        GLint shaderCount;
+        glGetProgramiv(other.ID, GL_ATTACHED_SHADERS, &shaderCount);
+        auto shaders = new GLuint[shaderCount];
+        glGetAttachedShaders(other.ID, shaderCount, nullptr, shaders);
+
+        for (int i = 0; i < shaderCount; ++i) {
+            GLuint shader = shaders[i];
+            GLint shaderType;
+            glGetShaderiv(shader, GL_SHADER_TYPE, &shaderType);
+
+            GLuint newShader = glCreateShader(shaderType);
+            glAttachShader(ID, newShader);
+
+            GLint sourceLength;
+            glGetShaderiv(shader, GL_SHADER_SOURCE_LENGTH, &sourceLength);
+            auto shaderSource = new GLchar[sourceLength];
+            glGetShaderSource(shader, sourceLength, nullptr, shaderSource);
+            const GLchar* shaderSourcePtr = shaderSource;
+            glShaderSource(newShader, 1, &shaderSourcePtr, nullptr);
+
+            glCompileShader(newShader);
+
+            delete[] shaderSource;
+        }
+
+        glLinkProgram(ID);
+
+        // Clean up the temporary shader array
+        delete[] shaders;
+
+        // Copy any other member variables if there are any
+    }
+
+    Shader& operator=(const Shader& other)
+    {
+        if (this != &other) {
+            // Delete the existing shader program
+            glDeleteProgram(ID);
+
+            // Copy the shader program ID
+            ID = glCreateProgram();
+
+            // Copy the shader source code from the original shader
+            glUseProgram(other.ID);
+            GLint shaderCount;
+            glGetProgramiv(other.ID, GL_ATTACHED_SHADERS, &shaderCount);
+            auto shaders = new GLuint[shaderCount];
+            glGetAttachedShaders(other.ID, shaderCount, nullptr, shaders);
+
+            for (int i = 0; i < shaderCount; ++i) {
+                GLuint shader = shaders[i];
+                GLint shaderType;
+                glGetShaderiv(shader, GL_SHADER_TYPE, &shaderType);
+
+                GLuint newShader = glCreateShader(shaderType);
+                glAttachShader(ID, newShader);
+
+                GLint sourceLength;
+                glGetShaderiv(shader, GL_SHADER_SOURCE_LENGTH, &sourceLength);
+                auto shaderSource = new GLchar[sourceLength];
+                glGetShaderSource(shader, sourceLength, nullptr, shaderSource);
+                const GLchar* shaderSourcePtr = shaderSource;
+                glShaderSource(newShader, 1, &shaderSourcePtr, nullptr);
+
+                glCompileShader(newShader);
+
+                delete[] shaderSource;
+            }
+
+            glLinkProgram(ID);
+
+            // Clean up the temporary shader array
+            delete[] shaders;
+
+            // Copy any other member variables if there are any
+        }
+
+        return *this;
+    }
+
     ~Shader()
     {
         glDeleteProgram(ID);
     }
-    void use()
+    void use() const
     {
         glUseProgram(ID);
     }
@@ -107,7 +195,7 @@ public:
 
 private:
 
-    void checkCompileErrors(unsigned int shader, std::string type)
+    static void checkCompileErrors(unsigned int shader, const std::string& type)
     {
         int success;
         char infoLog[1024];
