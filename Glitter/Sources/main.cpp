@@ -28,13 +28,6 @@ int main() {
         Game::processInput(mWindow);
 
         if (gameStarted) {
-            // Hide the main menu after starting the game
-            menu.hide();
-
-            // To do Update ,render and cleanup the game
-            // game.update();
-            // game.render();
-
             // Check if the game is finished or if the player wants to go back to the main menu
             if (menu.game.shouldReturnToMenu()) {
                 // Transition back to the main menu
@@ -45,6 +38,7 @@ int main() {
             }
         } else {
             // Show the main menu
+
             menu.game.initialStart();
             menu.renderImGui();
 

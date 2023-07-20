@@ -24,6 +24,9 @@ public:
     bool shouldReturnToMenu() const { return returnToMenuClicked; }
     void hide() { showMenu = false; }
     void show() { showMenu = true; }
+    bool isMenuVisible() const {
+        return showMenu;
+    }
 
     GLFWwindow* window;
     Game game;
@@ -32,7 +35,7 @@ public:
 //    static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 
 private:
-    bool showMenu;
+    bool showMenu= true;
     bool startGameClicked = false;
     bool returnToMenuClicked = false;
     void startGame();

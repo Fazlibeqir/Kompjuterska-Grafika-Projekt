@@ -52,18 +52,20 @@ void MainMenu:: cleanImGui(){
 
 
 void MainMenu:: renderImGui(){
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+    if(isMenuVisible()) {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-    renderMainMenu();
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+        renderMainMenu();
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
 }
 
 void MainMenu::startGame() {
     game.start();
+    hide();
     startGameClicked = false; // Add this line to reset the flag
 }
 
