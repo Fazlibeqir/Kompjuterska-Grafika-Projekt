@@ -11,14 +11,20 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
         :ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
         skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
          car(modelPath),
-         camera(glm::vec3(0.0f, 0.0f, 50.0f))
+         camera(glm::vec3(0.0f, 0.0f, 50.0f)),
+         texture(0),cubemapTexture(0),rotationAngle(0.0f),
+         deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5),specularS (0.3)
 {
-    rotationAngle = 0.0f;
-    deltaTime = 0.0f;
-    lastFrame = 0.0f;
-    ambientS = 0.5;
-    diffuseS = 1.5;
-    specularS = 0.3;
+    initSkybox();
+    initTextures();
+    initShaders();
+
+}
+void Game::initShaders() {
+    ourShader.setInt("material.diffuse",0);
+    ourShader.setInt("material.specular",0);
+}
+void Game::initSkybox() {
     Skybox entity;
     const std::vector<GLfloat>& vertices=entity.getVertices();
     const std::vector<GLuint>& indices=entity.getIndices();
@@ -56,13 +62,15 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)nullptr);
     glBindVertexArray(0);
+}
+void Game::initTextures() {
+    string right = string(SKY_DIR) + "\\skybox\\right.png";
+    string left = string(SKY_DIR) + "\\skybox\\left.png";
+    string top = string(SKY_DIR) + "\\skybox\\top.png";
+    string bottom = string(SKY_DIR) + "\\skybox\\bottom.png";
+    string back = string(SKY_DIR) + "\\skybox\\back.png";
+    string front = string(SKY_DIR) + "\\skybox\\front.png";
 
-    string right= string(SKY_DIR)+"\\skybox\\right.png";
-    string left= string(SKY_DIR)+"\\skybox\\left.png";
-    string top= string(SKY_DIR)+"\\skybox\\top.png";
-    string bottom= string(SKY_DIR)+"\\skybox\\bottom.png";
-    string back= string(SKY_DIR)+"\\skybox\\back.png";
-    string front= string(SKY_DIR)+"\\skybox\\front.png";
     vector<const GLchar*> faces;
     faces.push_back(right.c_str());
     faces.push_back(left.c_str());
@@ -70,41 +78,19 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
     faces.push_back(bottom.c_str());
     faces.push_back(back.c_str());
     faces.push_back(front.c_str());
+
     cubemapTexture = loadCubemap(faces);
-//    string texture0=string(SKY_DIR)+"\\textures\\text0.jpg";
-//    string texture1=string(SKY_DIR)+"\\textures\\text1.jpg";
-//    string texture2=string(SKY_DIR)+"\\textures\\text2.jpg";
-//     planeText[0] = const_cast<char*>(texture0.c_str());
-//     planeText[1] = const_cast<char*>(texture1.c_str());
-//     planeText[2] = const_cast<char*>(texture2.c_str());
 
-
-
-    ourShader.setInt("material.diffuse",0);
-    ourShader.setInt("material.specular",0);
-
-
-}
-
-void Game::initialStart(){
     string texture0=string(SKY_DIR)+"\\textures\\text0.jpg";
-    GLuint  texture = loadTexture(const_cast<GLchar *>(texture0.c_str()));
-
+    texture = loadTexture(const_cast<GLchar *>(texture0.c_str()));
+}
+void Game::updateDeltaTime()
+{
     auto currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-
-    rotationAngle += 45.0f * deltaTime; // Adjust the rotation speed as desired
-    // Background Fill Color
-    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    ourShader.use();
-    glm::mat4 model = glm::mat4(1.0f);
-    ourShader.setFloat("model",1);
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
-    //
+}
+void Game::setUniforms() {
     ourShader.setVec3("viewPos",camera.position());
     // Set material properties
     ourShader.setFloat("material.shininess",32.0f);
@@ -121,10 +107,45 @@ void Game::initialStart(){
     ourShader.setFloat("spotLight.quadratic",0.032);
     ourShader.setFloat("spotLight.cuOff",glm::cos(glm::radians(12.5f)));
     ourShader.setFloat("spotLight.outerCutOff",glm::cos(glm::radians(15.0f)));
-    //
-    glm::mat4 projection = glm::perspective(glm::radians(camera.zoom()),
+
+}
+void Game::renderSkybox(){
+    glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
+    skyboxShader.use();
+    view = glm::mat4(glm::mat3(camera.GetViewMatrix()));    // Remove any translation component of the view matrix
+    skyboxShader.setMat4("view",view);
+    skyboxShader.setMat4("projection",projection);
+    // skybox cube
+    glBindVertexArray(skyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
+    skyboxShader.setInt("skybox",0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    glDepthFunc(GL_LESS); // Set depth function back to default
+}
+void Game::initialStart(){
+
+    updateDeltaTime();
+
+    rotationAngle += 45.0f * deltaTime; // Adjust the rotation speed as desired
+    // Background Fill Color
+    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    ourShader.use();
+    model = glm::mat4(1.0f);
+    ourShader.setFloat("model",1);
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
+
+    setUniforms();
+
+    projection = glm::perspective(glm::radians(camera.zoom()),
                                             (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
+    view = camera.GetViewMatrix();
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
 
@@ -139,19 +160,7 @@ void Game::initialStart(){
 
     //we can draw more models
 
-    glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
-    skyboxShader.use();
-    view = glm::mat4(glm::mat3(camera.GetViewMatrix()));    // Remove any translation component of the view matrix
-    skyboxShader.setMat4("view",view);
-    skyboxShader.setMat4("projection",projection);
-    // skybox cube
-    glBindVertexArray(skyboxVAO);
-    glActiveTexture(GL_TEXTURE0);
-    skyboxShader.setInt("skybox",0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-    glDepthFunc(GL_LESS); // Set depth function back to default
+    renderSkybox();
 }
 
 void Game::start(){

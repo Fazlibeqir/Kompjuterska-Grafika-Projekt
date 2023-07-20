@@ -22,7 +22,13 @@ public:
     Model car;
     Camera camera;
 
+    void initSkybox();
+    void initTextures();
+    void initShaders();
     void initialStart();
+    void updateDeltaTime();
+    void setUniforms();
+    void renderSkybox();
     void start();
     static void quit(GLFWwindow* window);
     void settings();
@@ -34,7 +40,11 @@ public:
 private:
     GLuint VBO{}, VAO{}, EBO{};
     GLuint skyboxVAO{}, skyboxVBO{};
+    GLuint texture;
     GLuint cubemapTexture;
+    glm::mat4 view;
+    glm::mat4 model;
+    glm::mat4 projection;
     int idx=0;
     static glm::vec3 lightDirection();
     float rotationAngle;
@@ -43,7 +53,6 @@ private:
     float ambientS = 0.5;
     float diffuseS = 1.5;
     float specularS = 0.3;
-    char* planeText[];
 
 
 };
