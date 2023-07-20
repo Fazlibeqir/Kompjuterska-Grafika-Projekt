@@ -31,7 +31,6 @@ int main() {
             // Hide the main menu after starting the game
             menu.hide();
 
-            menu.game.initialStart();
             // To do Update ,render and cleanup the game
             // game.update();
             // game.render();
@@ -46,6 +45,7 @@ int main() {
             }
         } else {
             // Show the main menu
+            menu.game.initialStart();
             menu.renderImGui();
 
             // Check if the "Start Game" button is clicked in the main menu

@@ -55,7 +55,7 @@ private:
     float ambientS = 0.5;
     float diffuseS = 1.5;
     float specularS = 0.3;
-
+    float scale;
 
 };
 

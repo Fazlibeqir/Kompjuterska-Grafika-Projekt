@@ -42,12 +42,6 @@ void MainMenu:: initializeImGui() const
 {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330 core");
-
-    // Register mouse button callback
-//    glfwSetMouseButtonCallback(window, mouseButtonCallback);
-//
-//    // Register cursor position callback
-//    glfwSetCursorPosCallback(window, cursorPosCallback);
 }
 
 void MainMenu:: cleanImGui(){
@@ -70,6 +64,7 @@ void MainMenu:: renderImGui(){
 
 void MainMenu::startGame() {
     game.start();
+    startGameClicked = false; // Add this line to reset the flag
 }
 
 void MainMenu::quitGame() const {
@@ -79,18 +74,3 @@ void MainMenu::quitGame() const {
 void MainMenu::showSettings() {
     game.settings();
 }
-//void MainMenu::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-//{
-//    if (ImGui::GetIO().WantCaptureMouse)
-//        return;
-//
-//    // Add your code to handle mouse button clicks here
-//}
-//
-//void MainMenu::cursorPosCallback(GLFWwindow* window, double xpos, double ypos)
-//{
-//    if (ImGui::GetIO().WantCaptureMouse)
-//        return;
-//
-//    // Add your code to handle cursor position updates here
-//}

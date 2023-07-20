@@ -13,7 +13,7 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
          car(modelPath),
          camera(glm::vec3(0.0f, 0.0f, 50.0f)),
          texture(0),cubemapTexture(0),rotationAngle(0.0f),
-         deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5),specularS (0.3)
+         deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5),specularS (0.3), scale(7.0f)
 {
     initSkybox();
     initTextures();
@@ -151,7 +151,7 @@ void Game::initialStart(){
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(7.0f, 7.0f, 7.0f));
+    model = glm::scale(model, glm::vec3(scale));
     model = glm::rotate(model, glm::radians(rotationAngle),
                         glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
     ourShader.setMat4("model", model);
@@ -164,7 +164,39 @@ void Game::initialStart(){
 }
 
 void Game::start(){
-    initialStart();
+    updateDeltaTime();
+
+    // Background Fill Color
+    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    ourShader.use();
+    model = glm::mat4(1.0f);
+    ourShader.setFloat("model",1);
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
+    scale = 12.0f;
+
+    projection = glm::perspective(glm::radians(camera.zoom()),
+                                  (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    view = camera.GetViewMatrix();
+    ourShader.setMat4("projection", projection);
+    ourShader.setMat4("view", view);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -2.0f, -2.0f));
+    model = glm::scale(model, glm::vec3(scale));
+    model = glm::rotate(model, glm::radians(90.0f),
+                        glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
+    ourShader.setMat4("model", model);
+
+    car.Draw(ourShader);
+
+    //we can draw more models
+
+    renderSkybox();
 }
 void Game::quit(GLFWwindow* window){
     glfwSetWindowShouldClose(window, GLFW_TRUE);
