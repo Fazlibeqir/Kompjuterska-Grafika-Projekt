@@ -35,6 +35,7 @@ public:
     static void processInput(GLFWwindow* window);
     static GLuint loadTexture(GLchar* path);
     static GLuint loadCubemap(vector<const GLchar*> faces);
+    bool shouldReturnToMenu() const { return returnToMenuClicked; }
 
 
 private:
@@ -45,6 +46,7 @@ private:
     glm::mat4 view;
     glm::mat4 model;
     glm::mat4 projection;
+    bool returnToMenuClicked = false;
     int idx=0;
     static glm::vec3 lightDirection();
     float rotationAngle;

@@ -164,7 +164,7 @@ void Game::initialStart(){
 }
 
 void Game::start(){
-
+    initialStart();
 }
 void Game::quit(GLFWwindow* window){
     glfwSetWindowShouldClose(window, GLFW_TRUE);

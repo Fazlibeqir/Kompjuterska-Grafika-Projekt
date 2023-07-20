@@ -14,12 +14,14 @@ MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, cons
 }
 
 void MainMenu::renderMainMenu(){
-    game.initialStart();
     ImGui::Begin("Main Menu");
     if (ImGui::Button("Start Game"))
     {
         // Handle start game action
+        startGameClicked = true;
         startGame();
+    }else{
+        startGameClicked = false;
     }
 
     if (ImGui::Button("Settings"))

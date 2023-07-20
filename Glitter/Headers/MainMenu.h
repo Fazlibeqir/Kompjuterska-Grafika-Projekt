@@ -20,6 +20,11 @@ public:
     void initializeImGui() const;
     static void cleanImGui();
     void renderImGui();
+    bool shouldStartGame() const { return startGameClicked; }
+    bool shouldReturnToMenu() const { return returnToMenuClicked; }
+    void hide() { showMenu = false; }
+    void show() { showMenu = true; }
+
     GLFWwindow* window;
     Game game;
 //
@@ -27,6 +32,9 @@ public:
 //    static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 
 private:
+    bool showMenu;
+    bool startGameClicked = false;
+    bool returnToMenuClicked = false;
     void startGame();
     void quitGame() const;
     void showSettings();
