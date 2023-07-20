@@ -83,7 +83,9 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Sources/MainMenu.cpp
         Glitter/Headers/MainMenu.h
         Glitter/Sources/Game.cpp
-        Glitter/Headers/Game.h)
+        Glitter/Headers/Game.h
+        Glitter/Headers/Skybox.hpp
+        Glitter/Headers/Skybox.cpp)
 target_link_libraries(
         ${PROJECT_NAME}
         assimp

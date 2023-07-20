@@ -7,6 +7,7 @@
 #pragma once
 
 #include "shader.hpp"
+#include "Skybox.hpp"
 #include "Model.hpp"
 #include "init.h"
 #include "GLFW/glfw3.h"
