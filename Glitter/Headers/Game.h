@@ -35,8 +35,6 @@ public:
     void processInput(GLFWwindow* window);
     static GLuint loadTexture(GLchar* path);
     static GLuint loadCubemap(vector<const GLchar*> faces);
-    void returnMenu(){ returnToMenuClicked= true;}
-    void stayMenu(){returnToMenuClicked=false;}
     bool shouldReturnToMenu() const { return returnToMenuClicked; }
 
 

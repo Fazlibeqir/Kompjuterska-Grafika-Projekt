@@ -2,6 +2,7 @@
 // Created by Elena on 09.7.2023.
 //
 
+#include <thread>
 #include "Game.h"
 
 
@@ -208,9 +209,14 @@ void Game::settings(){
 void Game::processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
-        returnMenu();
-    }else{
-       stayMenu();
+        // Toggle menu visibility when the Escape key is pressed
+        returnToMenuClicked = !returnToMenuClicked;
+
+        // You may want to add additional logic here, such as pausing the game
+        // when the menu is visible and resuming when it's hidden.
+
+        // Wait a short duration to prevent multiple toggles on a single key press
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
 }
