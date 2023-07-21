@@ -207,8 +207,12 @@ void Game::settings(){
 
 void Game::processInput(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+        returnMenu();
+    }else{
+       stayMenu();
+    }
+
 }
 GLuint  Game::loadCubemap(std::vector<const GLchar*> faces)
 {

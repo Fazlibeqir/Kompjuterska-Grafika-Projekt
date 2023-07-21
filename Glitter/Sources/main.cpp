@@ -25,7 +25,7 @@ int main() {
     while (!glfwWindowShouldClose(mWindow)) {
 
 
-        Game::processInput(mWindow);
+        menu.game.processInput(mWindow);
 
         if (gameStarted) {
             // Check if the game is finished or if the player wants to go back to the main menu

@@ -21,7 +21,6 @@ public:
     static void cleanImGui();
     void renderImGui();
     bool shouldStartGame() const { return startGameClicked; }
-    bool shouldReturnToMenu() const { return returnToMenuClicked; }
     void hide() { showMenu = false; }
     void show() { showMenu = true; }
     bool isMenuVisible() const {
@@ -37,7 +36,6 @@ public:
 private:
     bool showMenu= true;
     bool startGameClicked = false;
-    bool returnToMenuClicked = false;
     void startGame();
     void quitGame() const;
     void showSettings();
