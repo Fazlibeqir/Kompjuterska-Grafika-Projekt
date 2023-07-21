@@ -4,36 +4,40 @@
 
 #ifndef KOMPJUTERSKA_GRAFIKA_PROJEKT_MAINMENU_H
 #define KOMPJUTERSKA_GRAFIKA_PROJEKT_MAINMENU_H
-#pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
 #include "Game.h"
-#include <string> // Add this line
+#include <string>
 
 class MainMenu {
 public:
-    MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath, const std::string& modelPath);
+    MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath);
     void renderMainMenu();
-    void initializeImGui();
-    void cleanImGui();
+    void initializeImGui() const;
+    static void cleanImGui();
     void renderImGui();
+    bool shouldStartGame() const { return startGameClicked; }
+    void hide() { showMenu = false; }
+    void show() { showMenu = true; }
+    bool isMenuVisible() const {
+        return showMenu;
+    }
+
     GLFWwindow* window;
     Game game;
-
 //
 //    static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 //    static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 
 private:
+    bool showMenu= true;
+    bool startGameClicked = false;
     void startGame();
-    void quitGame();
+    void quitGame() const;
     void showSettings();
 };
 

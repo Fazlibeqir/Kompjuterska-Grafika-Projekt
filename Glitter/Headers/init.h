@@ -16,11 +16,13 @@
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 700;
 
+extern Camera camera;
 extern float lastX;
 extern float lastY;
 extern bool firstMouse;
 
 GLFWwindow* initializeWindow();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_INIT_H

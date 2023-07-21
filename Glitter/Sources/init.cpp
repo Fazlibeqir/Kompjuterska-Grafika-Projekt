@@ -4,6 +4,7 @@
 
 #include "init.h"
 
+Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -13,7 +14,7 @@ GLFWwindow* initializeWindow(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* mWindow = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL", nullptr, nullptr);
+    GLFWwindow* mWindow = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Velocity Xtreme", nullptr, nullptr);
 
 // Check for Valid Context
     if (mWindow == nullptr) {
@@ -24,7 +25,7 @@ GLFWwindow* initializeWindow(){
 // Create Context and Load OpenGL Functions
     glfwMakeContextCurrent(mWindow);
     glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
-//    glfwSetScrollCallback(mWindow, scroll_callback);
+   // glfwSetScrollCallback(mWindow, scroll_callback);
     glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -41,5 +42,3 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-
-

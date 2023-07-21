@@ -1,45 +1,60 @@
-// System Headers
-#include <GLFW/glfw3.h>
-
 #include "init.h"
 #include "MainMenu.h"
 
-int main() {
+#include <iostream>
+using namespace std;
 
-    const string vertPath= string(SHADER_DIR)+"\\belt.vert";
-    const string fragmentPath= string(SHADER_DIR)+ "\\belt.frag";
+
+int main() {
+    const string vertPath= string(SHADER_DIR)+"\\default.vert";
+    const string fragmentPath= string(SHADER_DIR)+ "\\default.frag";
+    const string skyVertPath= string(SHADER_DIR)+"\\skybox.vert";
+    const string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
     const string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
 
     GLFWwindow* mWindow = initializeWindow();
-    MainMenu menu(mWindow, vertPath, fragmentPath, modelPath);
+    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,modelPath);
     menu.initializeImGui();
+    menu.show();
+   //    Light light;
 
-
-//    std::vector<std::string> skyboxTextures = {
-//            "assets/img/skybox/right.png",
-//            "assets/img/skybox/left.png",
-//            "assets/img/skybox/top.png",
-//            "assets/img/skybox/bottom.png",
-//            "assets/img/skybox/back.png",
-//            "assets/img/skybox/front.png"
-//    };
-
+    enum GameState { MENU, GAME };
+    GameState gameState = MENU;
+    bool gameStarted = false;
 
     while (!glfwWindowShouldClose(mWindow)) {
 
-        //Load menu
-        menu.renderImGui();
+
         menu.game.processInput(mWindow);
 
-        //Load menu again
-        menu.renderImGui();
+        if (gameStarted) {
+            // Check if the game is finished or if the player wants to go back to the main menu
+            if (menu.game.shouldReturnToMenu()) {
+                // Transition back to the main menu
+                gameState = MENU;
+               // game.cleanup();
+                gameStarted = false;
+                menu.show();
+            }
+        } else {
+            // Show the main menu
 
+            menu.game.initialStart();
+            menu.renderImGui();
+
+            // Check if the "Start Game" button is clicked in the main menu
+            if (menu.shouldStartGame()) {
+                // Transition to the actual game
+                gameState = GAME;
+                gameStarted = true;
+            }
+        }
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }
 
-    menu.cleanImGui();
+    MainMenu::cleanImGui();
     glfwTerminate();
     return 0;
 }

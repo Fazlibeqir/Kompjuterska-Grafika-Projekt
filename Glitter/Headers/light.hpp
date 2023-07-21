@@ -59,12 +59,12 @@ const float light_vertices[] =
 class Light
 {
 public:
-    unsigned int VAO;
+    unsigned int VAO{};
     Light()
     {
         setupMesh();
     }
-    void drawCube(Shader& shader, glm::vec3 pos, glm::vec3 color, glm::mat4 projection, glm::mat4 view, glm::mat4 model)
+    void drawCube(Shader& shader, glm::vec3 pos, glm::vec3 color, glm::mat4 projection, glm::mat4 view, glm::mat4 model) const
     {
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
@@ -78,7 +78,7 @@ public:
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 private:
-    unsigned int VBO;
+    unsigned int VBO{};
 
     void setupMesh()
     {
@@ -89,7 +89,7 @@ private:
         glBufferData(GL_ARRAY_BUFFER, 288 * sizeof(float), &light_vertices[0], GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)nullptr);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(2);

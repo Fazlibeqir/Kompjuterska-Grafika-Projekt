@@ -10,8 +10,8 @@
 class Shader
 {
 public:
-    unsigned int ID;
-    Shader(){}
+    unsigned int ID{};
+    Shader()= default;
     Shader(const char* vertexPath, const char* fragmentPath)
     {
         std::string vertexCode;
@@ -64,7 +64,6 @@ public:
         glDeleteShader(vertex);
         glDeleteShader(fragment);
     }
-
     Shader(const Shader& other)
     {
         // Copy the shader program ID
@@ -74,7 +73,7 @@ public:
         glUseProgram(other.ID);
         GLint shaderCount;
         glGetProgramiv(other.ID, GL_ATTACHED_SHADERS, &shaderCount);
-        GLuint* shaders = new GLuint[shaderCount];
+        auto shaders = new GLuint[shaderCount];
         glGetAttachedShaders(other.ID, shaderCount, nullptr, shaders);
 
         for (int i = 0; i < shaderCount; ++i) {
@@ -87,7 +86,7 @@ public:
 
             GLint sourceLength;
             glGetShaderiv(shader, GL_SHADER_SOURCE_LENGTH, &sourceLength);
-            GLchar* shaderSource = new GLchar[sourceLength];
+            auto shaderSource = new GLchar[sourceLength];
             glGetShaderSource(shader, sourceLength, nullptr, shaderSource);
             const GLchar* shaderSourcePtr = shaderSource;
             glShaderSource(newShader, 1, &shaderSourcePtr, nullptr);
@@ -118,7 +117,7 @@ public:
             glUseProgram(other.ID);
             GLint shaderCount;
             glGetProgramiv(other.ID, GL_ATTACHED_SHADERS, &shaderCount);
-            GLuint* shaders = new GLuint[shaderCount];
+            auto shaders = new GLuint[shaderCount];
             glGetAttachedShaders(other.ID, shaderCount, nullptr, shaders);
 
             for (int i = 0; i < shaderCount; ++i) {
@@ -131,7 +130,7 @@ public:
 
                 GLint sourceLength;
                 glGetShaderiv(shader, GL_SHADER_SOURCE_LENGTH, &sourceLength);
-                GLchar* shaderSource = new GLchar[sourceLength];
+                auto shaderSource = new GLchar[sourceLength];
                 glGetShaderSource(shader, sourceLength, nullptr, shaderSource);
                 const GLchar* shaderSourcePtr = shaderSource;
                 glShaderSource(newShader, 1, &shaderSourcePtr, nullptr);
@@ -156,7 +155,7 @@ public:
     {
         glDeleteProgram(ID);
     }
-    void use()
+    void use() const
     {
         glUseProgram(ID);
     }
@@ -196,7 +195,7 @@ public:
 
 private:
 
-    void checkCompileErrors(unsigned int shader, std::string type)
+    static void checkCompileErrors(unsigned int shader, const std::string& type)
     {
         int success;
         char infoLog[1024];
