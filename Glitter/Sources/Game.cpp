@@ -13,8 +13,8 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
         skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
          car(modelPath),
          camera(glm::vec3(0.0f, 0.0f, 50.0f)),
-         texture(0),cubemapTexture(0),rotationAngle(0.0f),
-         deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5),specularS (0.3), scale(7.0f)
+         texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),
+         rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5), specularS (0.3),scale(7.0f)
 {
     initSkybox();
     initTextures();
@@ -136,7 +136,7 @@ void Game::initialStart(){
 
     glBindTexture(GL_TEXTURE_2D, texture);
     ourShader.use();
-    model = glm::mat4(1.0f);
+
     ourShader.setFloat("model",1);
 
     glBindVertexArray(VAO);
@@ -145,7 +145,7 @@ void Game::initialStart(){
     setUniforms();
 
     projection = glm::perspective(glm::radians(camera.zoom()),
-                                            (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+                                  (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     view = camera.GetViewMatrix();
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);

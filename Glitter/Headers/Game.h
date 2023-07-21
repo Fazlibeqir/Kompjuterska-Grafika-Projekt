@@ -52,9 +52,9 @@ private:
     float rotationAngle;
     float deltaTime;
     float lastFrame;
-    float ambientS = 0.5;
-    float diffuseS = 1.5;
-    float specularS = 0.3;
+    float ambientS;
+    float diffuseS;
+    float specularS;
     float scale;
 
 };
