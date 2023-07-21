@@ -15,7 +15,11 @@ MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, cons
 
 void MainMenu::renderMainMenu(){
     ImGui::Begin("Main Menu");
-    if (ImGui::Button("Start Game"))
+    ImGui::Separator();
+    // Set the button size and style
+    ImVec2 buttonSize(200, 40);
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10));
+    if (ImGui::Button("Start Game",buttonSize))
     {
         // Handle start game action
         startGameClicked = true;
@@ -24,18 +28,18 @@ void MainMenu::renderMainMenu(){
         startGameClicked = false;
     }
 
-    if (ImGui::Button("Settings"))
+    if (ImGui::Button("Settings",buttonSize))
     {
         // Handle settings action
         showSettings();
     }
 
-    if (ImGui::Button("Quit"))
+    if (ImGui::Button("Quit",buttonSize))
     {
         // Handle quit action
         quitGame();
     }
-
+    ImGui::PopStyleVar();
     ImGui::End();
 }
 void MainMenu:: initializeImGui() const
