@@ -15,7 +15,7 @@
 
 class MainMenu {
 public:
-    MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath);
+    MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath, const std::string& mapModelPath);
     void renderMainMenu();
     void initializeImGui() const;
     static void cleanImGui();

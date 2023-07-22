@@ -1,5 +1,6 @@
 #include "init.h"
 #include "MainMenu.h"
+#include "CarPhysics.hpp"
 
 #include <iostream>
 using namespace std;
@@ -11,12 +12,14 @@ int main() {
     const string skyVertPath= string(SHADER_DIR)+"\\skybox.vert";
     const string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
     const string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
-
+    const string mapModelPath=string(MODEL_DIR)+"\\map2\\RaceTrack.obj";
     GLFWwindow* mWindow = initializeWindow();
-    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,modelPath);
+    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,modelPath,mapModelPath);
     menu.initializeImGui();
     menu.show();
    //    Light light;
+   CarPhysics carPhysics;
+   Game game(vertPath,fragmentPath,skyVertPath,skyFragPath,modelPath,mapModelPath);
 
     enum GameState { MENU, GAME };
     GameState gameState = MENU;
@@ -32,9 +35,11 @@ int main() {
             if (menu.game.shouldReturnToMenu()) {
                 // Transition back to the main menu
                 gameState = MENU;
-               // game.cleanup();
                 gameStarted = false;
                 menu.show();
+            }else{
+                carPhysics.update(mWindow,game.getDeltaTime());
+                game.start(mWindow);
             }
         } else {
             // Show the main menu

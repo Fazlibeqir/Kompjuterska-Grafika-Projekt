@@ -8,13 +8,16 @@
 
 
 Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-           const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
+           const std::string& skyVertPath, const std::string& skyFragPath,
+           const std::string& modelPath, const std::string& mapModelPath)
+
         :ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
         skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
-         car(modelPath),
+         car(modelPath),map(mapModelPath),
          camera(glm::vec3(0.0f, 0.0f, 50.0f)),
          texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),
-         rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5), specularS (0.3),scale(7.0f)
+         cameraSpeed(2.5f),rotationAngle(0.0f),deltaTime( 0.0f),
+         lastFrame(0.0f),ambientS(0.5), diffuseS(1.5),specularS (0.3), scale(7.0f)
 {
     initSkybox();
     initTextures();
@@ -144,13 +147,13 @@ void Game::initialStart(){
 
     setUniforms();
 
-    projection = glm::perspective(glm::radians(camera.zoom()),
+    glm::mat4 projection = glm::perspective(glm::radians(camera.zoom()),
                                   (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    view = camera.GetViewMatrix();
+    glm::mat4 view = camera.GetViewMatrix();
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
 
-    model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
     model = glm::scale(model, glm::vec3(scale));
     model = glm::rotate(model, glm::radians(rotationAngle),
@@ -163,10 +166,34 @@ void Game::initialStart(){
 
     renderSkybox();
 }
+void Game::renderCar() {
+    glm::vec3 carPosition = carPhysics.getPosition();
+    float carRotation = carPhysics.getRotation();
+    // Draw the car
+    model = glm::mat4(1.0f);
+    model = glm::translate(model,carPosition);
+    model = glm::scale(model, glm::vec3(scale));
+    model = glm::rotate(model, glm::radians(carRotation), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
+    ourShader.setMat4("model", model);
+    car.Draw(ourShader);
+}
+void Game::renderRacetrack(Shader& shader) {
+    glm::vec3 cameraPos = camera.position();
+    // Draw the racetrack (map)
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, cameraPos + glm::vec3(0.0f, 0.0f, -10.0f));
+    model = glm::scale(model, glm::vec3(scale));
+    // You can adjust the orientation of the racetrack using rotation operations
+    // For example, to rotate it 90 degrees around the y-axis:
+    // model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    ourShader.setMat4("model", model);
+    map.Draw(shader);
+}
 
-void Game::start(){
+
+void Game::start(GLFWwindow* window){
     updateDeltaTime();
-
+    carPhysics.update(window, deltaTime);
     // Background Fill Color
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -178,7 +205,7 @@ void Game::start(){
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
-    scale = 12.0f;
+    scale = 10.0f;
 
     projection = glm::perspective(glm::radians(camera.zoom()),
                                   (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -186,15 +213,10 @@ void Game::start(){
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
 
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -2.0f, -2.0f));
-    model = glm::scale(model, glm::vec3(scale));
-    model = glm::rotate(model, glm::radians(90.0f),
-                        glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
-    ourShader.setMat4("model", model);
+    renderCar();
 
-    car.Draw(ourShader);
-
+    ourShader.use();
+    renderRacetrack(ourShader);
     //we can draw more models
 
     renderSkybox();
@@ -208,6 +230,16 @@ void Game::settings(){
 
 void Game::processInput(GLFWwindow* window)
 {
+    if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
+        // Toggle menu visibility when the Escape key is pressed
+        startWithEnter = !startWithEnter;
+
+        // You may want to add additional logic here, such as pausing the game
+        // when the menu is visible and resuming when it's hidden.
+
+        // Wait a short duration to prevent multiple toggles on a single key press
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
         // Toggle menu visibility when the Escape key is pressed
         returnToMenuClicked = !returnToMenuClicked;
@@ -218,6 +250,14 @@ void Game::processInput(GLFWwindow* window)
         // Wait a short duration to prevent multiple toggles on a single key press
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(kForward, deltaTime * cameraSpeed);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard( kBackward, deltaTime * cameraSpeed);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(kLeft, deltaTime * cameraSpeed);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(kRight, deltaTime * cameraSpeed);
 
 }
 GLuint  Game::loadCubemap(std::vector<const GLchar*> faces)
@@ -283,4 +323,8 @@ GLuint  Game::loadTexture(GLchar* path)
 
 glm::vec3 Game::lightDirection() {
     return {-10.2f, 0.0f, -5.0f};
+}
+
+float Game::getDeltaTime() const {
+    return deltaTime;
 }

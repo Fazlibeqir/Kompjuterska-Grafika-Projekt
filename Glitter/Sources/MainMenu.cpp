@@ -4,8 +4,8 @@
 
 #include "MainMenu.h"
 
-MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
-: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,modelPath)
+MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath,const std::string& mapModelPath)
+: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,modelPath,mapModelPath)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -19,7 +19,7 @@ void MainMenu::renderMainMenu(){
     // Set the button size and style
     ImVec2 buttonSize(200, 40);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10));
-    if (ImGui::Button("Start Game",buttonSize))
+    if (ImGui::Button("Start Game",buttonSize)|| game.shouldStartTheGame())
     {
         // Handle start game action
         startGameClicked = true;
@@ -68,7 +68,7 @@ void MainMenu:: renderImGui(){
 }
 
 void MainMenu::startGame() {
-    game.start();
+    game.start(window);
     hide();
     startGameClicked = false; // Add this line to reset the flag
 }
