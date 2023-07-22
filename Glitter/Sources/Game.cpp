@@ -14,12 +14,15 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
          car(modelPath),
          camera(glm::vec3(0.0f, 0.0f, 50.0f)),
          texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),
-         rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5), specularS (0.3),scale(7.0f)
+         rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5), specularS (0.3),scale(7.0f),
+         physics()
 {
+    physics.initPhysics();
     initSkybox();
     initTextures();
     initShaders();
-
+// Reset the gameStarted state to false in the constructor
+    gameStarted = false;
 }
 void Game::initShaders() {
     ourShader.setInt("material.diffuse",0);
@@ -129,39 +132,45 @@ void Game::initialStart(){
 
     updateDeltaTime();
 
-    rotationAngle += 45.0f * deltaTime; // Adjust the rotation speed as desired
-    // Background Fill Color
-    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    if (!gameStarted) {
+        // The game just started, reset the rotation angle to 0 and set the gameStarted flag to true
+        rotationAngle += 45.0f * deltaTime; // Adjust the rotation speed as desired
+        // Background Fill Color
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBindTexture(GL_TEXTURE_2D, texture);
-    ourShader.use();
+        glBindTexture(GL_TEXTURE_2D, texture);
+        ourShader.use();
 
-    ourShader.setFloat("model",1);
+        ourShader.setFloat("model", 1);
 
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
 
-    setUniforms();
+        setUniforms();
 
-    projection = glm::perspective(glm::radians(camera.zoom()),
-                                  (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    view = camera.GetViewMatrix();
-    ourShader.setMat4("projection", projection);
-    ourShader.setMat4("view", view);
+        projection = glm::perspective(glm::radians(camera.zoom()),
+                                      (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        view = camera.GetViewMatrix();
+        ourShader.setMat4("projection", projection);
+        ourShader.setMat4("view", view);
 
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(scale));
-    model = glm::rotate(model, glm::radians(rotationAngle),
-                        glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
-    ourShader.setMat4("model", model);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(scale));
+        model = glm::rotate(model, glm::radians(rotationAngle),
+                            glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
+        ourShader.setMat4("model", model);
 
-    car.Draw(ourShader);
+        car.Draw(ourShader);
 
-    //we can draw more models
+        //we can draw more models
+        renderSkybox();
 
-    renderSkybox();
+        if (rotationAngle >= 360.0f) {
+            rotationAngle = 0.0f;
+        }
+    }
 }
 
 void Game::start(){
@@ -180,17 +189,17 @@ void Game::start(){
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
     scale = 12.0f;
 
-    projection = glm::perspective(glm::radians(camera.zoom()),
+    projection = glm::perspective(glm::radians(90.0f),
                                   (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     view = camera.GetViewMatrix();
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
 
     model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -2.0f, -2.0f));
+    model = glm::translate(model, glm::vec3(0.0f, -12.0f, -10.0f)); // Move the car backward on the z-axis
+    model = glm::rotate(model, glm::radians(180.0f),
+                        glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the car 180 degrees around the y-axis (to face forward)
     model = glm::scale(model, glm::vec3(scale));
-    model = glm::rotate(model, glm::radians(90.0f),
-                        glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
     ourShader.setMat4("model", model);
 
     car.Draw(ourShader);
@@ -198,6 +207,8 @@ void Game::start(){
     //we can draw more models
 
     renderSkybox();
+    physics.update(deltaTime);
+
 }
 void Game::quit(GLFWwindow* window){
     glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -284,3 +295,8 @@ GLuint  Game::loadTexture(GLchar* path)
 glm::vec3 Game::lightDirection() {
     return {-10.2f, 0.0f, -5.0f};
 }
+
+void Game::setRotationAngle(){
+    rotationAngle = 0.0f;
+}
+

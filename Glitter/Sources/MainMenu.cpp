@@ -22,10 +22,11 @@ void MainMenu::renderMainMenu(){
     if (ImGui::Button("Start Game",buttonSize))
     {
         // Handle start game action
-        startGameClicked = true;
-        startGame();
+        game.gameStarted = true;
+        hide();
+
     }else{
-        startGameClicked = false;
+        game.gameStarted = false;
     }
 
     if (ImGui::Button("Settings",buttonSize))
@@ -65,12 +66,6 @@ void MainMenu:: renderImGui(){
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
-}
-
-void MainMenu::startGame() {
-    game.start();
-    hide();
-    startGameClicked = false; // Add this line to reset the flag
 }
 
 void MainMenu::quitGame() const {

@@ -12,6 +12,8 @@
 #include "init.h"
 #include "GLFW/glfw3.h"
 #include "camera.hpp"
+#include "Physics.h"
+
 class Game {
 public:
     Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
@@ -36,8 +38,8 @@ public:
     static GLuint loadTexture(GLchar* path);
     static GLuint loadCubemap(vector<const GLchar*> faces);
     bool shouldReturnToMenu() const { return returnToMenuClicked; }
-
-
+    bool gameStarted = false;
+    void setRotationAngle();
 private:
     GLuint VBO{}, VAO{}, EBO{};
     GLuint skyboxVAO{}, skyboxVBO{};
@@ -56,6 +58,7 @@ private:
     float diffuseS;
     float specularS;
     float scale;
+    Physics physics; // Step b: Create a Physics object as a member variable
 
 };
 

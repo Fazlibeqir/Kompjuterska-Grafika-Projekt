@@ -20,7 +20,6 @@ public:
     void initializeImGui() const;
     static void cleanImGui();
     void renderImGui();
-    bool shouldStartGame() const { return startGameClicked; }
     void hide() { showMenu = false; }
     void show() { showMenu = true; }
     bool isMenuVisible() const {
@@ -35,8 +34,6 @@ public:
 
 private:
     bool showMenu= true;
-    bool startGameClicked = false;
-    void startGame();
     void quitGame() const;
     void showSettings();
 };

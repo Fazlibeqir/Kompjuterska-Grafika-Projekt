@@ -20,35 +20,36 @@ int main() {
 
     enum GameState { MENU, GAME };
     GameState gameState = MENU;
-    bool gameStarted = false;
+    bool stateChanged = false;
 
     while (!glfwWindowShouldClose(mWindow)) {
-
-
         menu.game.processInput(mWindow);
 
-        if (gameStarted) {
+        if (gameState == GAME) {
+            // Game state
+            menu.game.start();
+
             // Check if the game is finished or if the player wants to go back to the main menu
             if (menu.game.shouldReturnToMenu()) {
                 // Transition back to the main menu
                 gameState = MENU;
-               // game.cleanup();
-                gameStarted = false;
                 menu.show();
             }
         } else {
-            // Show the main menu
+            // Menu state
 
+            // Show the main menu
             menu.game.initialStart();
             menu.renderImGui();
 
             // Check if the "Start Game" button is clicked in the main menu
-            if (menu.shouldStartGame()) {
+            if (menu.game.gameStarted) {
                 // Transition to the actual game
                 gameState = GAME;
-                gameStarted = true;
+                menu.game.setRotationAngle();
             }
         }
+
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
