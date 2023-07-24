@@ -17,11 +17,13 @@
 class Game {
 public:
     Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-         const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath);
+         const std::string& skyVertPath, const std::string& skyFragPath,const std::string& mapVertPath ,const std::string& mapFragPath, const std::string& modelPath,const std::string& mapModelPath);
 
     Shader ourShader;
     Shader skyboxShader;
+    Shader mapShader;
     Model car;
+    Model map;
     Camera camera;
 
     void initSkybox();
@@ -31,7 +33,7 @@ public:
     void updateDeltaTime();
     void setUniforms();
     void renderSkybox();
-    void start();
+    void start(GLFWwindow* window);
     static void quit(GLFWwindow* window);
     void settings();
     void processInput(GLFWwindow* window);
@@ -48,6 +50,10 @@ private:
     glm::mat4 view;
     glm::mat4 model;
     glm::mat4 projection;
+    float carAcc;
+    float carTurn;
+    float mapTr;
+    float mapfw;
     bool returnToMenuClicked = false;
     int idx=0;
     static glm::vec3 lightDirection();

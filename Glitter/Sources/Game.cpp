@@ -8,14 +8,16 @@
 
 
 Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-           const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
+           const std::string& skyVertPath, const std::string& skyFragPath,const std::string& mapVertPath ,const std::string& mapFragPath, const std::string& modelPath,const std::string& mapModelPath)
         :ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
         skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
+         mapShader(mapVertPath.c_str() ,mapFragPath.c_str()),
          car(modelPath),
+         map(mapModelPath),
          camera(glm::vec3(0.0f, 0.0f, 50.0f)),
          texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),
-         rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5),diffuseS(1.5), specularS (0.3),scale(7.0f),
-         physics()
+         carAcc(5.0f),carTurn(5.0f),mapTr(5.0f),mapfw(5.0f),rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5), diffuseS(1.5),specularS (0.3),
+         scale(7.0f),physics()
 {
     physics.initPhysics();
     initSkybox();
@@ -173,43 +175,85 @@ void Game::initialStart(){
     }
 }
 
-void Game::start(){
+void Game::start(GLFWwindow* window) {
     updateDeltaTime();
+
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+    // Calculate camera position and orientation to follow the car
+    glm::vec3 carPosition = glm::vec3(carTurn, -12.0f, carAcc);
+    glm::vec3 cameraOffset = glm::vec3(0.0f, 5.0f, -10.0f); // Adjust the offset as needed
+    glm::vec3 cameraPosition = carPosition + cameraOffset;
+    glm::vec3 cameraTarget = carPosition; // Look at the car's position
+
+    // Calculate the minimum and maximum camera positions based on window dimensions
+    const float halfWindowWidth = windowWidth / 2.0f;
+    const float halfWindowHeight = windowHeight / 2.0f;
+    const float minX = -halfWindowWidth;
+    const float maxX = halfWindowWidth;
+    const float minY = -halfWindowHeight;
+    const float maxY = halfWindowHeight;
+
+    // Clamp camera position to stay within window bounds
+    cameraPosition.x = glm::clamp(cameraPosition.x, minX, maxX);
+    cameraPosition.y = glm::clamp(cameraPosition.y, minY, maxY);
+
+    // Set the view matrix for all shaders
+   view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+    ourShader.setMat4("view", view);
+    skyboxShader.setMat4("view", view);
+    mapShader.setMat4("view", view);
 
     // Background Fill Color
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Set the projection matrix (assuming this is constant throughout the scene)
+     projection = glm::perspective(glm::radians(90.0f),
+                                            (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    ourShader.setMat4("projection", projection);
+    skyboxShader.setMat4("projection", projection);
+    mapShader.setMat4("projection", projection);
+
+
+
+    // Draw the scene
     glBindTexture(GL_TEXTURE_2D, texture);
     ourShader.use();
     model = glm::mat4(1.0f);
-    ourShader.setFloat("model",1);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
+
     scale = 12.0f;
+    float scale1 = 5.0f;
 
-    projection = glm::perspective(glm::radians(90.0f),
-                                  (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    view = camera.GetViewMatrix();
-    ourShader.setMat4("projection", projection);
-    ourShader.setMat4("view", view);
+    setUniforms();
 
+    // Draw the car
     model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -12.0f, -10.0f)); // Move the car backward on the z-axis
-    model = glm::rotate(model, glm::radians(180.0f),
-                        glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate the car 180 degrees around the y-axis (to face forward)
+    model = glm::translate(model, glm::vec3(carTurn, -12.0f, carAcc));
+    model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     model = glm::scale(model, glm::vec3(scale));
     ourShader.setMat4("model", model);
-
     car.Draw(ourShader);
 
-    //we can draw more models
-
+    // Draw the skybox
     renderSkybox();
-    physics.update(deltaTime);
 
+    // Draw the map
+     model= glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(mapTr,-12.0f,mapfw));
+    model= glm::scale(model, glm::vec3(scale1));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    mapShader.setMat4("model", model);
+    map.Draw(mapShader);
+
+    // Update physics
+    physics.update(deltaTime);
 }
+
 void Game::quit(GLFWwindow* window){
     glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
@@ -229,6 +273,25 @@ void Game::processInput(GLFWwindow* window)
         // Wait a short duration to prevent multiple toggles on a single key press
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+        carAcc-=1.0f;
+        carAcc = glm::clamp(carAcc, -33.0f, -4.0f);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+        carAcc+=1.0f;
+        carAcc = glm::clamp(carAcc, -33.0f, -4.0f);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        carTurn+=1.0f;
+        carTurn = glm::clamp(carTurn, -17.0f, 15.0f);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+        carTurn-=1.0f;
+        carTurn = glm::clamp(carTurn, -17.0f, 15.0f);
+    }
+
+
+
 
 }
 GLuint  Game::loadCubemap(std::vector<const GLchar*> faces)

@@ -8,12 +8,15 @@ using namespace std;
 int main() {
     const string vertPath= string(SHADER_DIR)+"\\default.vert";
     const string fragmentPath= string(SHADER_DIR)+ "\\default.frag";
+    const string mapVertPath= string(SHADER_DIR)+"\\belt.vert";
+    const string mapFragPath= string(SHADER_DIR)+ "\\belt.frag";
     const string skyVertPath= string(SHADER_DIR)+"\\skybox.vert";
     const string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
+    const string mapModelPath= string (MODEL_DIR)+"\\racetrack\\source\\autodraha.blend";
     const string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
 
     GLFWwindow* mWindow = initializeWindow();
-    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,modelPath);
+    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,mapVertPath,mapFragPath,modelPath,mapModelPath);
     menu.initializeImGui();
     menu.show();
    //    Light light;
@@ -27,7 +30,7 @@ int main() {
 
         if (gameState == GAME) {
             // Game state
-            menu.game.start();
+            menu.game.start( mWindow);
 
             // Check if the game is finished or if the player wants to go back to the main menu
             if (menu.game.shouldReturnToMenu()) {
