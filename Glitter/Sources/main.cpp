@@ -8,15 +8,12 @@ using namespace std;
 int main() {
     const string vertPath= string(SHADER_DIR)+"\\default.vert";
     const string fragmentPath= string(SHADER_DIR)+ "\\default.frag";
-    const string mapVertPath= string(SHADER_DIR)+"\\belt.vert";
-    const string mapFragPath= string(SHADER_DIR)+ "\\belt.frag";
     const string skyVertPath= string(SHADER_DIR)+"\\skybox.vert";
     const string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
-    const string mapModelPath= string (MODEL_DIR)+"\\racetrack\\source\\autodraha.blend";
     const string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
 
     GLFWwindow* mWindow = initializeWindow();
-    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,mapVertPath,mapFragPath,modelPath,mapModelPath);
+    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,modelPath);
     menu.initializeImGui();
     menu.show();
    //    Light light;
