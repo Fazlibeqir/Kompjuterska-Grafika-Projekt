@@ -17,13 +17,12 @@
 class Game {
 public:
     Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-         const std::string& skyVertPath, const std::string& skyFragPath,const std::string& mapVertPath ,const std::string& mapFragPath, const std::string& modelPath,const std::string& mapModelPath);
+         const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath);
 
     Shader ourShader;
     Shader skyboxShader;
     Shader mapShader;
     Model car;
-    Model map;
     Camera camera;
 
     void initSkybox();

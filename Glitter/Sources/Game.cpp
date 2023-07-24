@@ -8,12 +8,10 @@
 
 
 Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-           const std::string& skyVertPath, const std::string& skyFragPath,const std::string& mapVertPath ,const std::string& mapFragPath, const std::string& modelPath,const std::string& mapModelPath)
+           const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
         :ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
         skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
-         mapShader(mapVertPath.c_str() ,mapFragPath.c_str()),
          car(modelPath),
-         map(mapModelPath),
          camera(glm::vec3(0.0f, 0.0f, 50.0f)),
          texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),
          carAcc(5.0f),carTurn(5.0f),mapTr(5.0f),mapfw(5.0f),rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5), diffuseS(1.5),specularS (0.3),
@@ -242,13 +240,6 @@ void Game::start(GLFWwindow* window) {
     // Draw the skybox
     renderSkybox();
 
-    // Draw the map
-     model= glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(mapTr,-12.0f,mapfw));
-    model= glm::scale(model, glm::vec3(scale1));
-    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    mapShader.setMat4("model", model);
-    map.Draw(mapShader);
 
     // Update physics
     physics.update(deltaTime);
