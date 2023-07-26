@@ -8,30 +8,35 @@
 
 
 Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-           const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
+           const std::string& skyVertPath, const std::string& skyFragPath,
+//           const std::string& heightVertPath, const std::string& heightFragPath,
+           const std::string& modelPath)
         :ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
         skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
+//        mapShader(heightVertPath.c_str(),heightFragPath.c_str()),
          car(modelPath),
-         camera(glm::vec3(0.0f, 0.0f, 50.0f)),
-         texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),
-         carAcc(5.0f),carTurn(5.0f),mapTr(5.0f),mapfw(5.0f),rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5), diffuseS(1.5),specularS (0.3),
-         scale(7.0f),physics()
+         camera(glm::vec3(67.0f, 627.5f, 169.9f),
+                glm::vec3(0.0f, 1.0f, 0.0f),
+                -128.1f, -42.4f),
+         texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),carAcc(5.0f),carTurn(5.0f), rotationAngle(0.0f),deltaTime( 0.0f),
+         lastFrame(0.0f),ambientS(0.5),diffuseS(1.5),specularS (0.3),scale(7.0f),physics()
 {
     physics.initPhysics();
     initSkybox();
     initTextures();
+//    initMap();
     initShaders();
 // Reset the gameStarted state to false in the constructor
     gameStarted = false;
 }
-void Game::initShaders() {
+void Game::initShaders() const {
     ourShader.setInt("material.diffuse",0);
     ourShader.setInt("material.specular",0);
 }
 void Game::initSkybox() {
     Skybox entity;
     const std::vector<GLfloat>& vertices=entity.getVertices();
-    const std::vector<GLuint>& indices=entity.getIndices();
+    const std::vector<GLuint>& getIndices=entity.getIndices();
     const std::vector<GLfloat>& skyboxVertices=entity.getSkyboxVertices();
     glGenVertexArrays(1,&VAO);
     glGenBuffers(1, &VBO);
@@ -42,7 +47,7 @@ void Game::initSkybox() {
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, getIndices.size() * sizeof(GLuint), getIndices.data(), GL_STATIC_DRAW);
 
     // Set vertices position pointer
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)nullptr);
@@ -95,14 +100,14 @@ void Game::updateDeltaTime()
     lastFrame = currentFrame;
 }
 void Game::setUniforms() {
-    ourShader.setVec3("viewPos",camera.position());
+    ourShader.setVec3("viewPos",camera.Position);
     // Set material properties
     ourShader.setFloat("material.shininess",32.0f);
     ourShader.setVec3("dir.direction", lightDirection().x,lightDirection().y,lightDirection().z);
     ourShader.setVec3("dirLight.ambient", ambientS,ambientS,ambientS);
     ourShader.setVec3("dirLight.diffuse", diffuseS,diffuseS,diffuseS);
     ourShader.setVec3("dirLight.specular", specularS,specularS,specularS);
-    ourShader.setVec3("spotLight.position",camera.position());
+    ourShader.setVec3("spotLight.position",camera.Position);
     ourShader.setVec3("spotLight.ambient",1.0f, 1.0f, 1.0f);
     ourShader.setVec3("spotLight.diffuse",1.0f, 1.0f, 1.0f);
     ourShader.setVec3("spotLight.specular",1.0f, 1.0f, 1.0f);
@@ -149,7 +154,7 @@ void Game::initialStart(){
 
         setUniforms();
 
-        projection = glm::perspective(glm::radians(camera.zoom()),
+        projection = glm::perspective(glm::radians(camera.Zoom),
                                       (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
@@ -172,61 +177,170 @@ void Game::initialStart(){
         }
     }
 }
+void Game::initMap(){
+    const string mapPath= string(SKY_DIR)+"\\terrian\\iceland_heightmap.png";
+    unsigned char *data = stbi_load(mapPath.c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        std::cout << "Loaded heightmap of size " << height << " x " << width << std::endl;
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    std::vector<float> vertices;
+    float yScale = 64.0f / 256.0f;
+    float yShift = 16.0f;
+
+    unsigned bytePerPixel = nrChannels;
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
+        {
+            unsigned char* pixelOffset = data + (j + width * i) * bytePerPixel;
+            unsigned char y = pixelOffset[0];
+
+            // vertex
+            vertices.push_back( -height/2.0f + height*i/(float)height );   // vx
+            vertices.push_back( (int) y * yScale - yShift);   // vy
+            vertices.push_back( -width/2.0f + width*j/(float)width );   // vz
+        }
+    }
+    std::cout << "Loaded " << vertices.size() / 3 << " vertices" << std::endl;
+    stbi_image_free(data);
+    const unsigned int RESTART_INDEX = std::numeric_limits<unsigned int>::max();
+
+
+    for(int i = 0; i < height-1; i += rez)
+    {
+        for(int j = 0; j < width; j += rez)
+        {
+            for(int k = 0; k < 2; k++)
+            {
+                indices.push_back(j + width * (i + k*rez));
+            }
+            indices.push_back(RESTART_INDEX);
+        }
+    }
+    std::cout << "Loaded " << indices.size() << " indices" << std::endl;
+
+
+    std::cout << "Created lattice of " << numStrips << " strips with " << numTrisPerStrip << " triangles each" << std::endl;
+    std::cout << "Created " << numStrips * numTrisPerStrip << " triangles total" << std::endl;
+
+    // first, configure the cube's VAO (and terrainVBO + terrainIBO)
+
+    glGenVertexArrays(1, &terrainVAO);
+    glBindVertexArray(terrainVAO);
+
+    glGenBuffers(1, &terrainVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
+    glEnableVertexAttribArray(0);
+
+    glGenBuffers(1, &terrainIBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainIBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned), &indices[0], GL_STATIC_DRAW);
+
+    // Unbind the VAO to avoid accidental changes
+    glBindVertexArray(0);
+
+    // Enable the depth test
+    glEnable(GL_DEPTH_TEST);
+}
+void Game::renderTerrian(){
+    //mapShader.use();
+
+    // view/projection transformations
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f)); // Adjust the position of the terrain
+    model = glm::scale(model, glm::vec3(scale)); // Adjust the scale of the terrain
+  //  mapShader.setMat4("model", model);
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+    //mapShader.setMat4("projection", projection);
+  //  mapShader.setMat4("view", view);
+
+    // render the cube
+    glBindVertexArray(terrainVAO);
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    for( int strip = 0; strip < numStrips;  strip++)
+    {
+        glDrawElements(GL_TRIANGLE_STRIP,   // primitive type
+                       numTrisPerStrip+2,   // number of indices to render
+                       GL_UNSIGNED_INT,     // index data type
+                       (void*)(sizeof(unsigned) * (numTrisPerStrip+2) * strip)); // offset to starting index
+    }
+  }
 
 void Game::start(GLFWwindow* window) {
-    updateDeltaTime();
+    // Calculate delta time
+    auto currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
 
-    int windowWidth, windowHeight;
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+    // Calculate FPS
+    static int frames = 0;
+    static double totalTime = 0.0;
+    frames++;
+    totalTime += deltaTime;
+    if (totalTime >= 1.0) {
+        double fps = static_cast<double>(frames) / totalTime;
+        std::cout << "FPS: " << fps << std::endl;
+        frames = 0;
+        totalTime = 0.0;
+    }
 
-    // Calculate camera position and orientation to follow the car
+    // Process input
+    processInput(window);
+
+
+    // Update camera position and orientation to follow the car
     glm::vec3 carPosition = glm::vec3(carTurn, -12.0f, carAcc);
     glm::vec3 cameraOffset = glm::vec3(0.0f, 5.0f, -10.0f); // Adjust the offset as needed
     glm::vec3 cameraPosition = carPosition + cameraOffset;
     glm::vec3 cameraTarget = carPosition; // Look at the car's position
 
-    // Calculate the minimum and maximum camera positions based on window dimensions
-    const float halfWindowWidth = windowWidth / 2.0f;
-    const float halfWindowHeight = windowHeight / 2.0f;
+    // Clamp camera position to stay within window bounds
+    const float halfWindowWidth = SCR_WIDTH / 2.0f;
+    const float halfWindowHeight = SCR_HEIGHT / 2.0f;
     const float minX = -halfWindowWidth;
     const float maxX = halfWindowWidth;
     const float minY = -halfWindowHeight;
     const float maxY = halfWindowHeight;
 
-    // Clamp camera position to stay within window bounds
     cameraPosition.x = glm::clamp(cameraPosition.x, minX, maxX);
     cameraPosition.y = glm::clamp(cameraPosition.y, minY, maxY);
 
-    // Set the view matrix for all shaders
-   view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
-    ourShader.setMat4("view", view);
-    skyboxShader.setMat4("view", view);
-    mapShader.setMat4("view", view);
 
-    // Background Fill Color
+    // Clear the screen
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Set the projection matrix (assuming this is constant throughout the scene)
-     projection = glm::perspective(glm::radians(90.0f),
-                                            (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    ourShader.setMat4("projection", projection);
-    skyboxShader.setMat4("projection", projection);
-    mapShader.setMat4("projection", projection);
-
+    // Set the view matrix for all shaders
+    view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+    ourShader.setMat4("view", view);
+    skyboxShader.setMat4("view", view);
+//    mapShader.setMat4("view", view);
+//    // Draw the terrain
+//    renderTerrian();
 
 
     // Draw the scene
     glBindTexture(GL_TEXTURE_2D, texture);
     ourShader.use();
     model = glm::mat4(1.0f);
-
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
 
-    scale = 12.0f;
-    float scale1 = 5.0f;
-
+    // Set uniforms for lighting
     setUniforms();
 
     // Draw the car
@@ -239,11 +353,11 @@ void Game::start(GLFWwindow* window) {
 
     // Draw the skybox
     renderSkybox();
-
-
-    // Update physics
-    physics.update(deltaTime);
+    // Swap buffers and poll events
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }
+
 
 void Game::quit(GLFWwindow* window){
     glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -264,22 +378,30 @@ void Game::processInput(GLFWwindow* window)
         // Wait a short duration to prevent multiple toggles on a single key press
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-        carAcc-=1.0f;
-        carAcc = glm::clamp(carAcc, -33.0f, -4.0f);
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-        carAcc+=1.0f;
-        carAcc = glm::clamp(carAcc, -33.0f, -4.0f);
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-        carTurn+=1.0f;
-        carTurn = glm::clamp(carTurn, -17.0f, 15.0f);
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-        carTurn-=1.0f;
-        carTurn = glm::clamp(carTurn, -17.0f, 15.0f);
-    }
+//    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+//        carAcc-=1.0f;
+//        carAcc = glm::clamp(carAcc, -33.0f, -4.0f);
+//    }
+//    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+//        carAcc+=1.0f;
+//        carAcc = glm::clamp(carAcc, -33.0f, -4.0f);
+//    }
+//    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+//        carTurn+=1.0f;
+//        carTurn = glm::clamp(carTurn, -17.0f, 15.0f);
+//    }
+//    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+//        carTurn-=1.0f;
+//        carTurn = glm::clamp(carTurn, -17.0f, 15.0f);
+//    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
 
 
 

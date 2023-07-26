@@ -4,8 +4,13 @@
 
 #include "MainMenu.h"
 
-MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
-: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,modelPath)
+MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath
+                   ,const std::string& skyVertPath, const std::string& skyFragPath,
+// const std::string& heightVertPath, const std::string& heightFragPath,
+const std::string& modelPath)
+: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,
+        // heightVertPath,heightFragPath,
+                         modelPath)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

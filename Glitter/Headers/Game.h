@@ -17,17 +17,22 @@
 class Game {
 public:
     Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-         const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath);
+         const std::string& skyVertPath, const std::string& skyFragPath,
+//    const std::string& heightVertPath, const std::string& heightFragPath,
+
+    const std::string& modelPath);
 
     Shader ourShader;
     Shader skyboxShader;
-    Shader mapShader;
+    //  Shader mapShader;
     Model car;
     Camera camera;
 
     void initSkybox();
     void initTextures();
-    void initShaders();
+    void initShaders() const;
+    void initMap();
+    void renderTerrian();
     void initialStart();
     void updateDeltaTime();
     void setUniforms();
@@ -42,17 +47,21 @@ public:
     bool gameStarted = false;
     void setRotationAngle();
 private:
+    unsigned int terrainVAO{}, terrainVBO{}, terrainIBO{};
     GLuint VBO{}, VAO{}, EBO{};
     GLuint skyboxVAO{}, skyboxVBO{};
     GLuint texture;
     GLuint cubemapTexture;
-    glm::mat4 view;
+    glm::mat4 view{};
     glm::mat4 model;
-    glm::mat4 projection;
+    glm::mat4 projection{};
+    int width{}, height{},nrChannels{};
+    int rez = 1;
+    const int numStrips = (height-1)/rez;
+    const int numTrisPerStrip = (width/rez)*2-2;
+    std::vector<unsigned> indices;
     float carAcc;
     float carTurn;
-    float mapTr;
-    float mapfw;
     bool returnToMenuClicked = false;
     int idx=0;
     static glm::vec3 lightDirection();
