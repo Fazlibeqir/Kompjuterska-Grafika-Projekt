@@ -9,17 +9,17 @@
 
 Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
            const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
-        :ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
-        skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
-         car(modelPath),
-         camera(glm::vec3(0.0f, 0.0f, 50.0f)),
-         texture(0),cubemapTexture(0),model(glm::mat4(1.0f)),
-         carAcc(5.0f),carTurn(5.0f),mapTr(5.0f),mapfw(5.0f),rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),ambientS(0.5), diffuseS(1.5),specularS (0.3),
-         scale(7.0f),physics()
+        : ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
+        car(modelPath),
+         frameBuffer(skyVertPath,skyFragPath),
+         camera(glm::vec3(0.0f, 0.0f, 50.0f)),carAcc(5.0f),carTurn(5.0f),
+         rotationAngle(0.0f),deltaTime( 0.0f),lastFrame(0.0f),
+         ambientS(0.5), diffuseS(1.5),specularS (0.3),
+         scale(7.0f)
 {
-    physics.initPhysics();
-    initSkybox();
-    initTextures();
+
+    frameBuffer.frameBufferInitSkyBox();
+    frameBuffer.frameBufferInitTextures();
     initShaders();
 // Reset the gameStarted state to false in the constructor
     gameStarted = false;
@@ -27,66 +27,6 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
 void Game::initShaders() {
     ourShader.setInt("material.diffuse",0);
     ourShader.setInt("material.specular",0);
-}
-void Game::initSkybox() {
-    Skybox entity;
-    const std::vector<GLfloat>& vertices=entity.getVertices();
-    const std::vector<GLuint>& indices=entity.getIndices();
-    const std::vector<GLfloat>& skyboxVertices=entity.getSkyboxVertices();
-    glGenVertexArrays(1,&VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    // !!! Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-
-    // Set vertices position pointer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)nullptr);
-    glEnableVertexAttribArray(0);
-
-    // Set vertices color pointer
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(4 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
-
-    glEnable( GL_LINE_SMOOTH );
-    glBindVertexArray(0);
-
-    glGenVertexArrays(1, &skyboxVAO);
-    glGenBuffers(1, &skyboxVBO);
-    glBindVertexArray(skyboxVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-    glBufferData(GL_ARRAY_BUFFER, skyboxVertices.size()*sizeof(GLfloat), skyboxVertices.data(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)nullptr);
-    glBindVertexArray(0);
-}
-void Game::initTextures() {
-    string right = string(SKY_DIR) + "\\skybox\\right.png";
-    string left = string(SKY_DIR) + "\\skybox\\left.png";
-    string top = string(SKY_DIR) + "\\skybox\\top.png";
-    string bottom = string(SKY_DIR) + "\\skybox\\bottom.png";
-    string back = string(SKY_DIR) + "\\skybox\\back.png";
-    string front = string(SKY_DIR) + "\\skybox\\front.png";
-
-    vector<const GLchar*> faces;
-    faces.push_back(right.c_str());
-    faces.push_back(left.c_str());
-    faces.push_back(top.c_str());
-    faces.push_back(bottom.c_str());
-    faces.push_back(back.c_str());
-    faces.push_back(front.c_str());
-
-    cubemapTexture = loadCubemap(faces);
-
-    string texture0=string(SKY_DIR)+"\\textures\\text0.jpg";
-    texture = loadTexture(const_cast<GLchar *>(texture0.c_str()));
 }
 void Game::updateDeltaTime()
 {
@@ -113,21 +53,6 @@ void Game::setUniforms() {
     ourShader.setFloat("spotLight.outerCutOff",glm::cos(glm::radians(15.0f)));
 
 }
-void Game::renderSkybox(){
-    glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
-    skyboxShader.use();
-    view = glm::mat4(glm::mat3(camera.GetViewMatrix()));    // Remove any translation component of the view matrix
-    skyboxShader.setMat4("view",view);
-    skyboxShader.setMat4("projection",projection);
-    // skybox cube
-    glBindVertexArray(skyboxVAO);
-    glActiveTexture(GL_TEXTURE0);
-    skyboxShader.setInt("skybox",0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-    glDepthFunc(GL_LESS); // Set depth function back to default
-}
 void Game::initialStart(){
 
     updateDeltaTime();
@@ -139,33 +64,33 @@ void Game::initialStart(){
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, frameBuffer.texture);
         ourShader.use();
 
         ourShader.setFloat("model", 1);
 
-        glBindVertexArray(VAO);
+        glBindVertexArray(frameBuffer.VAO);
         glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
 
         setUniforms();
 
-        projection = glm::perspective(glm::radians(camera.zoom()),
+        frameBuffer.projection = glm::perspective(glm::radians(camera.zoom()),
                                       (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        view = camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+        frameBuffer.view = camera.GetViewMatrix();
+        ourShader.setMat4("projection", frameBuffer.projection);
+        ourShader.setMat4("view", frameBuffer.view);
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(scale));
-        model = glm::rotate(model, glm::radians(rotationAngle),
+        frameBuffer.model = glm::mat4(1.0f);
+        frameBuffer.model = glm::translate(frameBuffer.model, glm::vec3(0.0f, -3.0f, 0.0f));
+        frameBuffer.model = glm::scale(frameBuffer.model, glm::vec3(scale));
+        frameBuffer.model = glm::rotate(frameBuffer.model, glm::radians(rotationAngle),
                             glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
-        ourShader.setMat4("model", model);
+        ourShader.setMat4("model", frameBuffer.model);
 
         car.Draw(ourShader);
 
         //we can draw more models
-        renderSkybox();
+        frameBuffer.frameBufferRenderSkyBox();
 
         if (rotationAngle >= 360.0f) {
             rotationAngle = 0.0f;
@@ -198,51 +123,47 @@ void Game::start(GLFWwindow* window) {
     cameraPosition.y = glm::clamp(cameraPosition.y, minY, maxY);
 
     // Set the view matrix for all shaders
-   view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
-    ourShader.setMat4("view", view);
-    skyboxShader.setMat4("view", view);
-    mapShader.setMat4("view", view);
+    frameBuffer.view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+    ourShader.setMat4("view", frameBuffer.view);
+    frameBuffer.skyboxShader.setMat4("view", frameBuffer.view);
+
 
     // Background Fill Color
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Set the projection matrix (assuming this is constant throughout the scene)
-     projection = glm::perspective(glm::radians(90.0f),
+    frameBuffer.projection = glm::perspective(glm::radians(90.0f),
                                             (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    ourShader.setMat4("projection", projection);
-    skyboxShader.setMat4("projection", projection);
-    mapShader.setMat4("projection", projection);
+    ourShader.setMat4("projection", frameBuffer.projection);
+    frameBuffer.skyboxShader.setMat4("projection", frameBuffer.projection);
+
 
 
 
     // Draw the scene
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, frameBuffer.texture);
     ourShader.use();
-    model = glm::mat4(1.0f);
+    frameBuffer.model = glm::mat4(1.0f);
 
-    glBindVertexArray(VAO);
+    glBindVertexArray(frameBuffer.VAO);
     glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
 
     scale = 12.0f;
-    float scale1 = 5.0f;
 
     setUniforms();
 
     // Draw the car
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(carTurn, -12.0f, carAcc));
-    model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(scale));
-    ourShader.setMat4("model", model);
+    frameBuffer.model = glm::mat4(1.0f);
+    frameBuffer.model = glm::translate(frameBuffer.model, glm::vec3(carTurn, -12.0f, carAcc));
+    frameBuffer.model = glm::rotate(frameBuffer.model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    frameBuffer.model = glm::scale(frameBuffer.model, glm::vec3(scale));
+    ourShader.setMat4("model", frameBuffer.model);
     car.Draw(ourShader);
 
     // Draw the skybox
-    renderSkybox();
+    frameBuffer.frameBufferRenderSkyBox();
 
-
-    // Update physics
-    physics.update(deltaTime);
 }
 
 void Game::quit(GLFWwindow* window){
@@ -281,69 +202,6 @@ void Game::processInput(GLFWwindow* window)
         carTurn = glm::clamp(carTurn, -17.0f, 15.0f);
     }
 
-
-
-
-}
-GLuint  Game::loadCubemap(std::vector<const GLchar*> faces)
-{
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height, channels;
-    unsigned char* image;
-
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-    for (GLuint i = 0; i < faces.size(); i++)
-    {
-        image = stbi_load(faces[i], &width, &height, &channels, 0);
-        GLint  format;
-        switch (channels)
-        {
-            case 1: format = GL_ALPHA;     break;
-            case 2: format = GL_LUMINANCE; break;
-            case 3: format = GL_RGB;       break;
-            case 4: format = GL_RGBA;      break;
-            default: format = GL_RGB;      break;
-        }
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
-        stbi_image_free(image);
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-    return textureID;
-}
-GLuint  Game::loadTexture(GLchar* path)
-{
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    int width, height, channels;
-    unsigned char* image = stbi_load(path, &width, &height, &channels, 0);
-    GLint format;
-    switch (channels)
-    {
-        case 1: format = GL_ALPHA;     break;
-        case 2: format = GL_LUMINANCE; break;
-        case 3: format = GL_RGB;       break;
-        case 4: format = GL_RGBA;      break;
-        default: format = GL_RGB;      break;
-    }
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    stbi_image_free(image);
-    return textureID;
 }
 
 glm::vec3 Game::lightDirection() {

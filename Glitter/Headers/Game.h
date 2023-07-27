@@ -7,12 +7,12 @@
 #pragma once
 
 #include "shader.hpp"
-#include "Skybox.hpp"
 #include "Model.hpp"
 #include "init.h"
 #include "GLFW/glfw3.h"
 #include "camera.hpp"
 #include "Physics.h"
+#include "FrameBuffer.hpp"
 
 class Game {
 public:
@@ -20,39 +20,25 @@ public:
          const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath);
 
     Shader ourShader;
-    Shader skyboxShader;
-    Shader mapShader;
     Model car;
+    FrameBuffer frameBuffer;
     Camera camera;
 
-    void initSkybox();
-    void initTextures();
     void initShaders();
     void initialStart();
     void updateDeltaTime();
     void setUniforms();
-    void renderSkybox();
     void start(GLFWwindow* window);
     static void quit(GLFWwindow* window);
     void settings();
     void processInput(GLFWwindow* window);
-    static GLuint loadTexture(GLchar* path);
-    static GLuint loadCubemap(vector<const GLchar*> faces);
     bool shouldReturnToMenu() const { return returnToMenuClicked; }
     bool gameStarted = false;
     void setRotationAngle();
 private:
-    GLuint VBO{}, VAO{}, EBO{};
-    GLuint skyboxVAO{}, skyboxVBO{};
-    GLuint texture;
-    GLuint cubemapTexture;
-    glm::mat4 view;
-    glm::mat4 model;
-    glm::mat4 projection;
+
     float carAcc;
     float carTurn;
-    float mapTr;
-    float mapfw;
     bool returnToMenuClicked = false;
     int idx=0;
     static glm::vec3 lightDirection();
@@ -63,7 +49,6 @@ private:
     float diffuseS;
     float specularS;
     float scale;
-    Physics physics; // Step b: Create a Physics object as a member variable
 
 };
 

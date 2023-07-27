@@ -20,12 +20,14 @@ public:
 
     const std::vector<GLfloat> &getSkyboxVertices() const;
 
+
 private:
     std::vector<GLfloat> vertices;
     std::vector<GLuint> indices;
     std::vector<GLfloat> skyboxVertices;
 
 };
+
 
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_SKYBOX_HPP
