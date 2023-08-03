@@ -64,15 +64,16 @@ source_group("Shaders" FILES ${PROJECT_SHADERS})
 source_group("Sources" FILES ${PROJECT_SOURCES})
 source_group("Vendors" FILES ${VENDORS_SOURCES})
 
+add_library(stb_image ${CMAKE_SOURCE_DIR}/Glitter/Vendor/stb/deprecated/stb_image.c)
 add_definitions(-DGLFW_INCLUDE_NONE
-                -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
+                -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"
+        -DASSIMP_WARNINGS_AS_ERRORS=OFF)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES}
 
         Glitter/Headers/shader.hpp
         Glitter/Headers/mesh.hpp
-        Glitter/Vendor/stb/deprecated/stb_image.c
         Glitter/Vendor/stb/deprecated/rrsprintf.h
         Glitter/Vendor/stb/deprecated/stretchy_buffer.h
         Glitter/Vendor/imgui/imgui.h
@@ -85,11 +86,16 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Sources/Game.cpp
         Glitter/Headers/Game.h
         Glitter/Headers/Skybox.hpp
-        Glitter/Sources/Skybox.cpp Glitter/Sources/Physics.cpp Glitter/Headers/Physics.h Glitter/Headers/FrameBuffer.hpp Glitter/Sources/FrameBuffer.cpp)
+        Glitter/Sources/Skybox.cpp
+        Glitter/Sources/Physics.cpp
+        Glitter/Headers/Physics.h
+        Glitter/Headers/FrameBuffer.hpp
+        Glitter/Sources/FrameBuffer.cpp Glitter/Sources/camera.cpp)
 target_link_libraries(
         ${PROJECT_NAME}
         assimp
         glfw
+        stb_image
         ${GLFW_LIBRARIES}
         ${GLAD_LIBRARIES}
         BulletDynamics

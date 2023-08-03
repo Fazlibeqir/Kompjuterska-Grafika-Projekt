@@ -11,21 +11,29 @@
 
 class FrameBuffer {
 public:
-    FrameBuffer(const std::string& skyVertPath, const std::string& skyFragPath);
+    FrameBuffer(const std::string& skyVertPath, const std::string& skyFragPath,const std::string& heightVertPath, const std::string& heightFragPath);
     void frameBufferInitSkyBox();
     void frameBufferRenderSkyBox();
+    void frameBufferInitTerrian();
+    void frameBufferRenderTerrian();
     void frameBufferInitTextures();
     static GLuint loadTexture(GLchar* path);
     static GLuint loadCubemap(std::vector<const GLchar*> faces);
     GLuint texture{};
     GLuint VBO{}, VAO{}, EBO{};
     GLuint skyboxVAO{}, skyboxVBO{};
+    GLuint terrainVAO, terrainVBO, terrainIBO;
     GLuint cubemapTexture{};
     Shader skyboxShader;
+    Shader mapShader;
     Skybox entity;
     glm::mat4 view{};
     glm::mat4 model{};
     glm::mat4 projection{};
+    glm::mat4 skyboxModel{};
+    glm::mat4 skyboxView{};
+    int numStrips;
+     int numTrisPerStrip;
 
 };
 

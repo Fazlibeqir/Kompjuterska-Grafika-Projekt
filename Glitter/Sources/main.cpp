@@ -5,15 +5,18 @@
 using namespace std;
 
 
+
 int main() {
     const string vertPath= string(SHADER_DIR)+"\\default.vert";
     const string fragmentPath= string(SHADER_DIR)+ "\\default.frag";
     const string skyVertPath= string(SHADER_DIR)+"\\skybox.vert";
     const string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
+    const string heightVertPath= string(SHADER_DIR)+"\\terrian.vert";
+    const string heightFragPath= string(SHADER_DIR)+"\\terrian.frag";
     const string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
 
     GLFWwindow* mWindow = initializeWindow();
-    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,modelPath);
+    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,heightVertPath,heightFragPath,modelPath);
     menu.initializeImGui();
     menu.show();
    //    Light light;
@@ -23,14 +26,15 @@ int main() {
     bool stateChanged = false;
 
     while (!glfwWindowShouldClose(mWindow)) {
-        menu.game.processInput(mWindow);
+
 
         if (gameState == GAME) {
+
             // Game state
             menu.game.start( mWindow);
 
             // Check if the game is finished or if the player wants to go back to the main menu
-            if (menu.game.shouldReturnToMenu()) {
+            if (returnToMenuClicked) {
                 // Transition back to the main menu
                 gameState = MENU;
                 menu.show();

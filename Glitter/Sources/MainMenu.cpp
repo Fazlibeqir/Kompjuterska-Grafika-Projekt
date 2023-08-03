@@ -4,8 +4,11 @@
 
 #include "MainMenu.h"
 
-MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath)
-: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,modelPath)
+MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,
+                   const std::string& skyVertPath, const std::string& skyFragPath,
+                   const std::string& heightVertPath, const std::string& heightFragPath,
+                   const std::string& modelPath)
+: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,heightVertPath,heightFragPath,modelPath)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -19,7 +22,7 @@ void MainMenu::renderMainMenu(){
     // Set the button size and style
     ImVec2 buttonSize(200, 40);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10));
-    if (ImGui::Button("Start Game",buttonSize))
+    if (ImGui::Button("Start Game",buttonSize)|| glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
     {
         // Handle start game action
         game.gameStarted = true;
@@ -57,7 +60,7 @@ void MainMenu:: cleanImGui(){
 
 
 void MainMenu:: renderImGui(){
-    if(isMenuVisible() || game.shouldReturnToMenu()) {
+    if(isMenuVisible() || returnToMenuClicked) {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();

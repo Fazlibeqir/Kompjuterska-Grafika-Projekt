@@ -17,7 +17,9 @@
 class Game {
 public:
     Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-         const std::string& skyVertPath, const std::string& skyFragPath, const std::string& modelPath);
+         const std::string& skyVertPath, const std::string& skyFragPath,
+         const std::string& heightVertPath,const std::string&heightFragPath,
+         const std::string& modelPath);
 
     Shader ourShader;
     Model car;
@@ -26,25 +28,16 @@ public:
 
     void initShaders();
     void initialStart();
-    void updateDeltaTime();
     void setUniforms();
     void start(GLFWwindow* window);
     static void quit(GLFWwindow* window);
     void settings();
-    void processInput(GLFWwindow* window);
-    bool shouldReturnToMenu() const { return returnToMenuClicked; }
     bool gameStarted = false;
     void setRotationAngle();
 private:
 
-    float carAcc;
-    float carTurn;
-    bool returnToMenuClicked = false;
     int idx=0;
     static glm::vec3 lightDirection();
-    float rotationAngle;
-    float deltaTime;
-    float lastFrame;
     float ambientS;
     float diffuseS;
     float specularS;
