@@ -30,23 +30,23 @@ void Game::initShaders() {
     ourShader.setInt("material.diffuse",0);
     ourShader.setInt("material.specular",0);
 }
-void Game::setUniforms() {
-    ourShader.setVec3("viewPos",camera.Position);
+void Game::setUniforms(Shader& shader) {
+    shader.setVec3("viewPos",camera.Position);
     // Set material properties
-    ourShader.setFloat("material.shininess",32.0f);
-    ourShader.setVec3("dir.direction", lightDirection().x,lightDirection().y,lightDirection().z);
-    ourShader.setVec3("dirLight.ambient", ambientS,ambientS,ambientS);
-    ourShader.setVec3("dirLight.diffuse", diffuseS,diffuseS,diffuseS);
-    ourShader.setVec3("dirLight.specular", specularS,specularS,specularS);
-    ourShader.setVec3("spotLight.position",camera.Position);
-    ourShader.setVec3("spotLight.ambient",1.0f, 1.0f, 1.0f);
-    ourShader.setVec3("spotLight.diffuse",1.0f, 1.0f, 1.0f);
-    ourShader.setVec3("spotLight.specular",1.0f, 1.0f, 1.0f);
-    ourShader.setFloat("spotLight.constant",1.0f);
-    ourShader.setFloat("spotLight.linear",0.9f);
-    ourShader.setFloat("spotLight.quadratic",0.032);
-    ourShader.setFloat("spotLight.cuOff",glm::cos(glm::radians(12.5f)));
-    ourShader.setFloat("spotLight.outerCutOff",glm::cos(glm::radians(15.0f)));
+    shader.setFloat("material.shininess",32.0f);
+    shader.setVec3("dir.direction", lightDirection().x,lightDirection().y,lightDirection().z);
+    shader.setVec3("dirLight.ambient", ambientS,ambientS,ambientS);
+    shader.setVec3("dirLight.diffuse", diffuseS,diffuseS,diffuseS);
+    shader.setVec3("dirLight.specular", specularS,specularS,specularS);
+    shader.setVec3("spotLight.position",camera.Position);
+    shader.setVec3("spotLight.ambient",1.0f, 1.0f, 1.0f);
+    shader.setVec3("spotLight.diffuse",1.0f, 1.0f, 1.0f);
+    shader.setVec3("spotLight.specular",1.0f, 1.0f, 1.0f);
+    shader.setFloat("spotLight.constant",1.0f);
+    shader.setFloat("spotLight.linear",0.9f);
+    shader.setFloat("spotLight.quadratic",0.032);
+    shader.setFloat("spotLight.cuOff",glm::cos(glm::radians(12.5f)));
+    shader.setFloat("spotLight.outerCutOff",glm::cos(glm::radians(15.0f)));
 
 }
 void Game::initialStart(){
@@ -68,7 +68,7 @@ void Game::initialStart(){
         glBindVertexArray(frameBuffer.VAO);
         glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
 
-        setUniforms();
+        setUniforms(ourShader);
 
         frameBuffer.projection = glm::perspective(glm::radians(camera.Zoom),
                                       (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -98,11 +98,9 @@ void Game::start(GLFWwindow* window) {
     updateDeltaTime();
     processInput(window);
 
-    int windowWidth, windowHeight;
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
     // Calculate camera position and orientation to follow the car
-    carPosition = glm::vec3(0.0f, 350, 0.0f); // Initialize the car position at the origin with a y-offset of -12.0f
+    carPosition = glm::vec3(0.0f, 700.0f, 0.0f); // Initialize the car position at the origin with a y-offset of -12.0f
     glm::vec3 cameraOffset = glm::vec3(0.0f, 11.5f, 35.0f); // Adjust the offset as needed
     glm::vec3 cameraPosition = carPosition + cameraOffset;
     glm::vec3 cameraTarget = carPosition; // Look at the car's position
@@ -133,13 +131,15 @@ void Game::start(GLFWwindow* window) {
 
     // Draw the skybox
     frameBuffer.frameBufferRenderSkyBox();
+    setUniforms(frameBuffer.mapShader);
 
     frameBuffer.frameBufferRenderTerrian();
+
     ourShader.use();
     frameBuffer.model = glm::mat4(1.0f);
 
     scale = 12.0f;
-    setUniforms();
+    setUniforms(ourShader);
 
     // Draw the car
     frameBuffer.model = glm::mat4(1.0f);

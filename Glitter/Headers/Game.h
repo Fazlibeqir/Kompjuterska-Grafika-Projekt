@@ -28,21 +28,19 @@ public:
 
     void initShaders();
     void initialStart();
-    void setUniforms();
+    void setUniforms(Shader& shader);
     void start(GLFWwindow* window);
     static void quit(GLFWwindow* window);
     void settings();
     bool gameStarted = false;
     void setRotationAngle();
 private:
-
     int idx=0;
     static glm::vec3 lightDirection();
     float ambientS;
     float diffuseS;
     float specularS;
     float scale;
-
 };
 
 

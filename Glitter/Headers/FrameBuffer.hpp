@@ -20,6 +20,7 @@ public:
     static GLuint loadTexture(GLchar* path);
     static GLuint loadCubemap(std::vector<const GLchar*> faces);
     GLuint texture{};
+    GLuint terrainTexture{};
     GLuint VBO{}, VAO{}, EBO{};
     GLuint skyboxVAO{}, skyboxVBO{};
     GLuint terrainVAO, terrainVBO, terrainIBO;
@@ -32,8 +33,10 @@ public:
     glm::mat4 projection{};
     glm::mat4 skyboxModel{};
     glm::mat4 skyboxView{};
+    std::vector<float> vertices;
     int numStrips;
      int numTrisPerStrip;
+    int width, height, nrChannels;
 
 };
 

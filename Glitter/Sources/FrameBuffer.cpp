@@ -48,7 +48,7 @@ void FrameBuffer::frameBufferInitSkyBox() {
 }
 void FrameBuffer::frameBufferInitTerrian() {
     const std::string mapPath= std::string(SKY_DIR)+"\\terrian\\iceland_heightmap.png";
-    int width, height, nrChannels;
+
     unsigned char *data = stbi_load(mapPath.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
@@ -58,7 +58,7 @@ void FrameBuffer::frameBufferInitTerrian() {
     {
         std::cout << "Failed to load texture" << std::endl;
     }
-    std::vector<float> vertices;
+
     float yScale = 64.0f / 256.0f, yShift = 16.0f;
     int rez = 1;
     unsigned bytePerPixel = nrChannels;
@@ -110,8 +110,25 @@ void FrameBuffer::frameBufferInitTerrian() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainIBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned), &indices[0], GL_STATIC_DRAW);
 
-
+    glGenTextures(1, &terrainTexture);
+    glBindTexture(GL_TEXTURE_2D, terrainTexture);
 }
+//float FrameBuffer::getTerrainHeightAtPosition(const glm::vec3& position) {
+//    // Calculate the normalized coordinates within the heightmap
+//    float xNormalized = (position.x + width * 0.5f) / static_cast<float>(width);
+//    float zNormalized = (position.z + height * 0.5f) / static_cast<float>(height);
+//
+//    // Calculate the vertex index
+//    int xIndex = static_cast<int>(xNormalized * (width - 1));
+//    int zIndex = static_cast<int>(zNormalized * (height - 1));
+//    int vertexIndex = zIndex * width + xIndex;
+//
+//    // Retrieve the height value from the vertices array
+//    float terrainHeight = vertices[vertexIndex * 3 + 1];
+//
+//    return terrainHeight;
+//}
+
 void FrameBuffer::frameBufferInitTextures(){
     std::string right = std::string(SKY_DIR) + "\\skybox\\right.png";
     std::string left = std::string(SKY_DIR) + "\\skybox\\left.png";
@@ -132,6 +149,8 @@ void FrameBuffer::frameBufferInitTextures(){
 
     std::string texture0=std::string(SKY_DIR)+"\\textures\\text0.jpg";
     texture = loadTexture(const_cast<GLchar *>(texture0.c_str()));
+    std::string texture1=std::string(SKY_DIR)+"\\textures\\iclandColor.png";
+    terrainTexture = loadTexture(const_cast<GLchar *>(texture1.c_str()));
 }
 void FrameBuffer::frameBufferRenderSkyBox() {
     glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
@@ -140,6 +159,7 @@ void FrameBuffer::frameBufferRenderSkyBox() {
     skyboxShader.setMat4("view",view);
     skyboxShader.setMat4("projection",projection);
     // skybox cube
+
 
     glBindVertexArray(skyboxVAO);
     glActiveTexture(GL_TEXTURE0);
@@ -159,8 +179,15 @@ void FrameBuffer::frameBufferRenderTerrian() {
     mapShader.setMat4("view", view);
 
     // world transformation
-    model = glm::mat4(1.0f);
-    mapShader.setMat4("model", model);
+    glm::mat4 modelTerrian = glm::mat4(1.0f);
+    modelTerrian = glm::translate(modelTerrian, glm::vec3(0.0f, -50.0f, 0.0f));
+    mapShader.setMat4("model", modelTerrian);
+    mapShader.setFloat("width", static_cast<float>(width));
+    mapShader.setFloat("height", static_cast<float>(height));
+
+
+    mapShader.setInt("terrianTexture",0);
+    glBindTexture(GL_TEXTURE_2D, terrainTexture);
 
     // render the cube
     glBindVertexArray(terrainVAO);
