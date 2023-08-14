@@ -7,8 +7,8 @@
 MainMenu::MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,
                    const std::string& skyVertPath, const std::string& skyFragPath,
                    const std::string& heightVertPath, const std::string& heightFragPath,
-                   const std::string& modelPath)
-: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,heightVertPath,heightFragPath,modelPath)
+                   const std::string modelPaths[])
+: window(inWindow), game(shaderVertPath, shaderFragPath,skyVertPath, skyFragPath,heightVertPath,heightFragPath,modelPaths)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -43,6 +43,8 @@ void MainMenu::renderMainMenu(){
         // Handle quit action
         quitGame();
     }
+
+    ImGui::Text("Right or left to choose a car");
     ImGui::PopStyleVar();
     ImGui::End();
 }
@@ -66,8 +68,18 @@ void MainMenu:: renderImGui(){
         ImGui::NewFrame();
 
         renderMainMenu();
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+    else{
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        game.RenderScore();
+
+        ImGui::Render();
     }
 }
 

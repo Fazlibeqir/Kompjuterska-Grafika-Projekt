@@ -13,10 +13,11 @@ int main() {
     const string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
     const string heightVertPath= string(SHADER_DIR)+"\\terrian.vert";
     const string heightFragPath= string(SHADER_DIR)+"\\terrian.frag";
-    const string modelPath= string(MODEL_DIR)+ "\\car\\050 Low Poly Camaro.obj";
+    const string modelPath= string(MODEL_DIR)+ "\\car\\car.obj";
+    const string modelPaths[] = { string(MODEL_DIR)+"\\car\\050 Low Poly Camaro.obj", string(MODEL_DIR)+"\\car\\car.obj" };
 
     GLFWwindow* mWindow = initializeWindow();
-    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,heightVertPath,heightFragPath,modelPath);
+    MainMenu menu(mWindow,vertPath,fragmentPath,skyVertPath,skyFragPath,heightVertPath,heightFragPath,modelPaths);
     menu.initializeImGui();
     menu.show();
    //    Light light;
@@ -27,11 +28,13 @@ int main() {
 
     while (!glfwWindowShouldClose(mWindow)) {
 
+        processInput(mWindow, &menu.game.chosenCarIndex, menu.game.gameStarted);
 
         if (gameState == GAME) {
 
             // Game state
             menu.game.start( mWindow);
+            menu.renderImGui();
 
             // Check if the game is finished or if the player wants to go back to the main menu
             if (returnToMenuClicked) {

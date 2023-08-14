@@ -18,7 +18,7 @@ public:
     MainMenu(GLFWwindow* inWindow, const std::string& shaderVertPath, const std::string& shaderFragPath,
              const std::string& skyVertPath, const std::string& skyFragPath,
              const std::string& heightVertPath, const std::string& heightFragPath,
-             const std::string& modelPath);
+             const std::string modelPaths[]);
     void renderMainMenu();
     void initializeImGui() const;
     static void cleanImGui();

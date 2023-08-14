@@ -9,23 +9,22 @@
 
 Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
            const std::string& skyVertPath, const std::string& skyFragPath,
-           const std::string& heightVertPath,const std::string& heightFragPath,
-           const std::string& modelPath)
-        : ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
-          car(modelPath),
-         frameBuffer(skyVertPath,skyFragPath,heightVertPath,heightFragPath),
-         camera(glm::vec3(0.0f, 0.0f, 50.0f)),
-         ambientS(0.5), diffuseS(1.5),specularS (0.3),
-         scale(7.0f)
-{
+           const std::string& heightVertPath, const std::string& heightFragPath,
+           const std::string modelPaths[])
+        : ourShader(shaderVertPath.c_str(), shaderFragPath.c_str()),
+          cars{Model(modelPaths[0]), Model(modelPaths[1])},
+          frameBuffer(skyVertPath, skyFragPath, heightVertPath, heightFragPath),
+          camera(glm::vec3(0.0f, 0.0f, 50.0f)), ambientS(0.5), diffuseS(1.5),
+          specularS(0.3), scale(7.0f), score(0), chosenCarIndex(1) {
 
     frameBuffer.frameBufferInitSkyBox();
     frameBuffer.frameBufferInitTextures();
     frameBuffer.frameBufferInitTerrian();
     initShaders();
-// Reset the gameStarted state to false in the constructor
+    // Reset the gameStarted state to false in the constructor
     gameStarted = false;
 }
+
 void Game::initShaders() {
     ourShader.setInt("material.diffuse",0);
     ourShader.setInt("material.specular",0);
@@ -83,7 +82,7 @@ void Game::initialStart(){
                             glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
         ourShader.setMat4("model", frameBuffer.model);
 
-        car.Draw(ourShader);
+        cars[chosenCarIndex].Draw(ourShader);
 
         //we can draw more models
         frameBuffer.frameBufferRenderSkyBox();
@@ -96,8 +95,6 @@ void Game::initialStart(){
 
 void Game::start(GLFWwindow* window) {
     updateDeltaTime();
-    processInput(window);
-
 
     // Calculate camera position and orientation to follow the car
     carPosition = glm::vec3(0.0f, 700.0f, 0.0f); // Initialize the car position at the origin with a y-offset of -12.0f
@@ -147,9 +144,11 @@ void Game::start(GLFWwindow* window) {
     frameBuffer.model = glm::rotate(frameBuffer.model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     frameBuffer.model = glm::scale(frameBuffer.model, glm::vec3(scale));
     ourShader.setMat4("model", frameBuffer.model);
-    car.Draw(ourShader);
+    cars[chosenCarIndex].Draw(ourShader);
 
     scale=7.0f;
+
+    score += 1;
 }
 
 void Game::quit(GLFWwindow* window){
@@ -166,4 +165,13 @@ glm::vec3 Game::lightDirection() {
 void Game::setRotationAngle(){
     rotationAngle = 0.0f;
 }
+void Game::RenderScore()
+{
+    ImGui::SetNextWindowPos(ImVec2(10, 10)); // Set the position of the ImGui window
+    ImGui::Begin("Score"); // Begin a new ImGui window with the title "Score"
 
+    // Render the score text using ImGui::Text
+    ImGui::Text("Score: %d", score);
+
+    ImGui::End(); // End the ImGui window
+}

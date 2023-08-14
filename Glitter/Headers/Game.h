@@ -13,16 +13,19 @@
 #include "camera.hpp"
 #include "Physics.h"
 #include "FrameBuffer.hpp"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 class Game {
 public:
     Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
          const std::string& skyVertPath, const std::string& skyFragPath,
          const std::string& heightVertPath,const std::string&heightFragPath,
-         const std::string& modelPath);
+         const std::string modelPaths[]);
 
     Shader ourShader;
-    Model car;
+    Model cars[2];
     FrameBuffer frameBuffer;
     Camera camera;
 
@@ -34,6 +37,11 @@ public:
     void settings();
     bool gameStarted = false;
     void setRotationAngle();
+    void RenderScore();
+    int chosenCarIndex;
+    // in order to keep track which car is being chosen
+    // it is better to keep its index,
+    // instead of copying the data from one Model to another.
 private:
     int idx=0;
     static glm::vec3 lightDirection();
@@ -41,6 +49,8 @@ private:
     float diffuseS;
     float specularS;
     float scale;
+    int score;
+
 };
 
 
