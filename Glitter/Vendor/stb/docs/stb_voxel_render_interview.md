@@ -71,7 +71,7 @@ technology that could be used multiple ways.
 One thing I did intentionally was try to make it possible to
 make nicer looking ground terrain, using the half-height
 slopes and "weird slopes". There are Minecraft mods with
-drivable cars and they just go up these blocky slopes and,
+drivable modelCars and they just go up these blocky slopes and,
 like, what? So I wanted you to be able to make smoother
 terrain, either just for the look, or for vehicles etc.
 Also, you can spatially cross-fade between two ground textures for

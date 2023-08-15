@@ -20,9 +20,14 @@ public:
          const std::string& modelPath,const std::string& mapModelPath);
 
     Shader ourShader;
+<<<<<<< Updated upstream
     Shader skyboxShader;
     Model car;
     Model map;
+=======
+    Model modelCars[2];
+    FrameBuffer frameBuffer;
+>>>>>>> Stashed changes
     Camera camera;
 
     void initShaders();

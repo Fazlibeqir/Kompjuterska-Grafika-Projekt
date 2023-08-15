@@ -4,6 +4,19 @@
 
 #include "init.h"
 
+<<<<<<< Updated upstream
+=======
+
+float deltaTime = 1.0f;
+float lastFrame = 0.0f;
+float carSpeed = 5.0f;
+float rotationAngle = 0.0f;
+glm::vec3 carPosition = glm::vec3(0.0f, 700.0f, 0.0f);
+glm::vec3 carFront = glm::vec3(0.0f, 0.0f, -1.0f);
+float carRotationSpeed = 50.0f;
+bool returnToMenuClicked= false;
+
+>>>>>>> Stashed changes
 Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;

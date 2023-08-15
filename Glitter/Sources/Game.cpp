@@ -9,7 +9,17 @@
 
 Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
            const std::string& skyVertPath, const std::string& skyFragPath,
+<<<<<<< Updated upstream
            const std::string& modelPath, const std::string& mapModelPath)
+=======
+           const std::string& heightVertPath, const std::string& heightFragPath,
+           const std::string modelPaths[])
+        : ourShader(shaderVertPath.c_str(), shaderFragPath.c_str()),
+          modelCars{Model(modelPaths[0]), Model(modelPaths[1])},
+          frameBuffer(skyVertPath, skyFragPath, heightVertPath, heightFragPath),
+          camera(glm::vec3(0.0f, 0.0f, 50.0f)), chosenCarIndex(1), ambientS(0.5),
+          diffuseS(1.5), specularS(0.3), scale(7.0f), score(0) {
+>>>>>>> Stashed changes
 
         :ourShader(shaderVertPath.c_str(),shaderFragPath.c_str()),
         skyboxShader(skyVertPath.c_str(),skyFragPath.c_str()),
@@ -132,7 +142,76 @@ void Game::initialStart(){
 
     updateDeltaTime();
 
+<<<<<<< Updated upstream
     rotationAngle += 45.0f * deltaTime; // Adjust the rotation speed as desired
+=======
+    if (!gameStarted) {
+        // The game just started, reset the rotation angle to 0 and set the gameStarted flag to true
+        rotationAngle += 45.0f * deltaTime; // Adjust the rotation speed as desired
+        // Background Fill Color
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glBindTexture(GL_TEXTURE_2D, frameBuffer.texture);
+        ourShader.use();
+
+        ourShader.setFloat("model", 1);
+
+        glBindVertexArray(frameBuffer.VAO);
+        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, nullptr);
+
+        setUniforms(ourShader);
+
+        frameBuffer.projection = glm::perspective(glm::radians(camera.Zoom),
+                                      (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        frameBuffer.view = camera.GetViewMatrix();
+        ourShader.setMat4("projection", frameBuffer.projection);
+        ourShader.setMat4("view", frameBuffer.view);
+
+        frameBuffer.model = glm::mat4(1.0f);
+        frameBuffer.model = glm::translate(frameBuffer.model, glm::vec3(0.0f, -3.0f, 0.0f));
+        frameBuffer.model = glm::scale(frameBuffer.model, glm::vec3(scale));
+        frameBuffer.model = glm::rotate(frameBuffer.model, glm::radians(rotationAngle),
+                            glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around the y-axis
+        ourShader.setMat4("model", frameBuffer.model);
+
+        modelCars[chosenCarIndex].Draw(ourShader);
+
+        //we can draw more models
+        frameBuffer.frameBufferRenderSkyBox();
+
+        if (rotationAngle >= 360.0f) {
+            rotationAngle = 0.0f;
+        }
+    }
+}
+float rotateAngle=0.0f;
+float rotationSpeed=2.5f;
+void Game::start(GLFWwindow* window) {
+    updateDeltaTime();
+
+    // Calculate camera position and orientation to follow the car
+    double moseX,mouseY;
+    glfwGetCursorPos(window, &moseX,&mouseY);
+    rotateAngle= glm::radians(static_cast<float>(moseX))*rotationSpeed;
+    float distanceFromCar=35.0f;
+    glm::vec3 cameraOffset = glm::vec3(distanceFromCar*glm::cos(rotateAngle),
+                                       11.5f,
+                                       distanceFromCar*glm::sin(rotateAngle)); // Adjust the offset as needed
+    glm::vec3 cameraPosition = carPosition + cameraOffset;
+    glm::vec3 cameraTarget = carPosition; // Look at the car's position
+
+
+    // Set the view matrix for all shaders
+    frameBuffer.view = glm::lookAt(cameraPosition, cameraTarget, glm::vec3(0.0f, 1.0f, 0.0f));
+    ourShader.setMat4("view", frameBuffer.view);
+
+    glm::vec3 skyboxCameraPosition= carPosition+glm::vec3(0.0f,1.0f,0.0f);
+    frameBuffer.skyboxView= glm::lookAt(skyboxCameraPosition, carPosition, glm::vec3(0.0f, 1.0f, 0.0f));
+    frameBuffer.skyboxShader.setMat4("view",frameBuffer.skyboxView);
+
+
+>>>>>>> Stashed changes
     // Background Fill Color
     glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -170,6 +249,7 @@ void Game::renderCar() {
     glm::vec3 carPosition = carPhysics.getPosition();
     float carRotation = carPhysics.getRotation();
     // Draw the car
+<<<<<<< Updated upstream
     model = glm::mat4(1.0f);
     model = glm::translate(model,carPosition);
     model = glm::scale(model, glm::vec3(scale));
@@ -188,6 +268,18 @@ void Game::renderRacetrack(Shader& shader) {
     // model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     ourShader.setMat4("model", model);
     map.Draw(shader);
+=======
+    frameBuffer.model = glm::mat4(1.0f);
+    frameBuffer.model = glm::translate(frameBuffer.model, carPosition);
+    frameBuffer.model = glm::rotate(frameBuffer.model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    frameBuffer.model = glm::scale(frameBuffer.model, glm::vec3(scale));
+    ourShader.setMat4("model", frameBuffer.model);
+    modelCars[chosenCarIndex].Draw(ourShader);
+
+    scale=7.0f;
+
+    score += 1;
+>>>>>>> Stashed changes
 }
 
 

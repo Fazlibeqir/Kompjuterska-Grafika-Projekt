@@ -85,7 +85,17 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Sources/Game.cpp
         Glitter/Headers/Game.h
         Glitter/Headers/Skybox.hpp
+<<<<<<< Updated upstream
         Glitter/Sources/Skybox.cpp Glitter/Headers/CarPhysics.hpp Glitter/Sources/CarPhysics.cpp)
+=======
+        Glitter/Sources/Skybox.cpp
+        Glitter/Sources/Physics.cpp
+        Glitter/Headers/Physics.h
+        Glitter/Headers/FrameBuffer.hpp
+        Glitter/Sources/FrameBuffer.cpp
+        Glitter/Sources/camera.cpp
+        Glitter/Headers/Car.hpp)
+>>>>>>> Stashed changes
 target_link_libraries(
         ${PROJECT_NAME}
         assimp
