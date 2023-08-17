@@ -113,21 +113,6 @@ void FrameBuffer::frameBufferInitTerrian() {
     glGenTextures(1, &terrainTexture);
     glBindTexture(GL_TEXTURE_2D, terrainTexture);
 }
-//float FrameBuffer::getTerrainHeightAtPosition(const glm::vec3& position) {
-//    // Calculate the normalized coordinates within the heightmap
-//    float xNormalized = (position.x + width * 0.5f) / static_cast<float>(width);
-//    float zNormalized = (position.z + height * 0.5f) / static_cast<float>(height);
-//
-//    // Calculate the vertex index
-//    int xIndex = static_cast<int>(xNormalized * (width - 1));
-//    int zIndex = static_cast<int>(zNormalized * (height - 1));
-//    int vertexIndex = zIndex * width + xIndex;
-//
-//    // Retrieve the height value from the vertices array
-//    float terrainHeight = vertices[vertexIndex * 3 + 1];
-//
-//    return terrainHeight;
-//}
 
 void FrameBuffer::frameBufferInitTextures(){
     std::string right = std::string(SKY_DIR) + "\\skybox\\right.png";

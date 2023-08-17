@@ -11,12 +11,14 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
            const std::string& skyVertPath, const std::string& skyFragPath,
            const std::string& heightVertPath, const std::string& heightFragPath,
            const std::string modelPaths[])
-        : ourShader(shaderVertPath.c_str(), shaderFragPath.c_str()),
-          cars{Model(modelPaths[0]), Model(modelPaths[1])},
+        :  ourShader(shaderVertPath.c_str(), shaderFragPath.c_str()),
+        cars{Model(modelPaths[0]), Model(modelPaths[1])},
           frameBuffer(skyVertPath, skyFragPath, heightVertPath, heightFragPath),
-          camera(glm::vec3(0.0f, 0.0f, 50.0f)), ambientS(0.5), diffuseS(1.5),
-          specularS(0.3), scale(7.0f), score(0), chosenCarIndex(1) {
-
+          camera(glm::vec3(0.0f, 0.0f, 50.0f)),
+          chosenCarIndex(1),
+          dynamicsWorld(nullptr), carPhysics(nullptr, modelPaths[1]), ambientS(0.5),
+          diffuseS(1.5), specularS(0.3), scale(7.0f), score(0) {
+    carPhysics.initialize(modelPaths->c_str());
     frameBuffer.frameBufferInitSkyBox();
     frameBuffer.frameBufferInitTextures();
     frameBuffer.frameBufferInitTerrian();
@@ -95,9 +97,10 @@ void Game::initialStart(){
 
 void Game::start(GLFWwindow* window) {
     updateDeltaTime();
+    carPhysics.update(deltaTime);
 
     // Calculate camera position and orientation to follow the car
-    carPosition = glm::vec3(0.0f, 700.0f, 0.0f); // Initialize the car position at the origin with a y-offset of -12.0f
+    carPosition = carPhysics.getCarPosition(); // Initialize the car position at the origin with a y-offset of -12.0f
     glm::vec3 cameraOffset = glm::vec3(0.0f, 11.5f, 35.0f); // Adjust the offset as needed
     glm::vec3 cameraPosition = carPosition + cameraOffset;
     glm::vec3 cameraTarget = carPosition; // Look at the car's position

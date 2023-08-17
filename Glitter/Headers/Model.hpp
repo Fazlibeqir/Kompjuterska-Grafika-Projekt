@@ -34,6 +34,9 @@ public:
     string directory;
     bool gammaCorrection;
 
+    const vector<Vertex>& GetChassisVertices() const { return chassisVertices; }
+    const vector<Vertex>& GetWheelVertices() const { return wheelVertices; }
+
     // constructor, expects a filepath to a 3D model.
     explicit Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
     {
@@ -47,6 +50,8 @@ public:
             mesh.Draw(shader);
     }
 private:
+    vector<Vertex> chassisVertices;
+    vector<Vertex> wheelVertices;
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const &path)
     {
@@ -165,6 +170,11 @@ private:
         vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
+        if(isWheelMesh(mesh)){
+            wheelVertices.insert(wheelVertices.end(), vertices.begin(), vertices.end());
+        }else{
+            chassisVertices.insert(chassisVertices.end(), vertices.begin(), vertices.end());
+        }
         // return a mesh object created from the extracted mesh data
         return {vertices, indices, textures};
     }
@@ -201,6 +211,12 @@ private:
             }
         }
         return textures;
+    }
+    bool isWheelMesh(aiMesh *mesh){
+        return mesh->mName.C_Str() == "node-0.001_buffer-0-mesh-0.003" ||
+               mesh->mName.C_Str() == "node-0.002_buffer-0-mesh-0.004" ||
+               mesh->mName.C_Str() == "node-0.003_buffer-0-mesh-0.005" ||
+               mesh->mName.C_Str() == "node-0.004_buffer-0-mesh-0.006";
     }
     static unsigned int TextureFromFile(const char *path, const string &directory, bool gamma)
     {

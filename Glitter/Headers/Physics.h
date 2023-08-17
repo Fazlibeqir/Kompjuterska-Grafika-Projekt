@@ -8,19 +8,24 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <memory>
+#include "glm/vec3.hpp"
 
 class Physics {
 public:
-    Physics();
+    Physics(btDiscreteDynamicsWorld* dynamicsWorld, const std::string& modelPath);
     ~Physics();
 
-    void initPhysics();
+    void initialize(const std::vector<std::string>& modelPaths);
     void update(float deltaTime);
+    glm::vec3 getCarPosition() const;
+    void applyEngineForce(float force);
+    void applyBrake(float brake);
+    void applySteering(float steering);
 
 private:
-    btDefaultCollisionConfiguration* collisionConfig;
-    btCollisionDispatcher* dispatcher;
-    btBroadphaseInterface* broadPhase;
+    btDiscreteDynamicsWorld* m_dynamicsWorld;
+    btRigidBody* m_carChassis;
+    btRigidBody* m_wheelRigidBodies[4];
 };
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_PHYSICS_H

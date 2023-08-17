@@ -43,6 +43,8 @@ public:
     // it is better to keep its index,
     // instead of copying the data from one Model to another.
 private:
+    btDiscreteDynamicsWorld* dynamicsWorld; // Declare the dynamics world
+    Physics carPhysics; // Declare an instance of the Physics class
     int idx=0;
     static glm::vec3 lightDirection();
     float ambientS;
