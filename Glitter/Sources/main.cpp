@@ -4,8 +4,6 @@
 #include <iostream>
 using namespace std;
 
-
-
 int main() {
     const string vertPath= string(SHADER_DIR)+"\\default.vert";
     const string fragmentPath= string(SHADER_DIR)+ "\\default.frag";

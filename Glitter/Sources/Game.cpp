@@ -18,7 +18,7 @@ Game::Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
           chosenCarIndex(1),
           dynamicsWorld(nullptr), carPhysics(nullptr, modelPaths[1]), ambientS(0.5),
           diffuseS(1.5), specularS(0.3), scale(7.0f), score(0) {
-    carPhysics.initialize(modelPaths->c_str());
+    carPhysics.initialize(modelPaths);
     frameBuffer.frameBufferInitSkyBox();
     frameBuffer.frameBufferInitTextures();
     frameBuffer.frameBufferInitTerrian();
