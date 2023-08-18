@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "Glitter/Vendor/bullet/src/BulletInverseDynamics",
+		"source" : "Glitter/Vendor/bullet/src/BulletInverseDynamics"
+	}
+}

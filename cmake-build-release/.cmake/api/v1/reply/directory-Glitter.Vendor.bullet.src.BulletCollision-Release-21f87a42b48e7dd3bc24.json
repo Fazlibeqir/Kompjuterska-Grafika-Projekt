@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "Glitter/Vendor/bullet/src/BulletCollision",
+		"source" : "Glitter/Vendor/bullet/src/BulletCollision"
+	}
+}

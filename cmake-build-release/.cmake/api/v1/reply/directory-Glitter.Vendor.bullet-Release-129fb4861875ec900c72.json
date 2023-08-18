@@ -1,0 +1,44 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"Glitter/Vendor/bullet/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 508,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/bullet",
+			"paths" : 
+			[
+				"Glitter/Vendor/bullet/UseBullet.cmake",
+				"cmake-build-release/Glitter/Vendor/bullet/BulletConfig.cmake"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "Glitter/Vendor/bullet",
+		"source" : "Glitter/Vendor/bullet"
+	}
+}

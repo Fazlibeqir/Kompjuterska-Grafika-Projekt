@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "Glitter/Vendor/bullet/src/Bullet3Geometry",
+		"source" : "Glitter/Vendor/bullet/src/Bullet3Geometry"
+	}
+}

@@ -77,20 +77,19 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Vendor/stb/deprecated/rrsprintf.h
         Glitter/Vendor/stb/deprecated/stretchy_buffer.h
         Glitter/Vendor/imgui/imgui.h
-        Glitter/Headers/light.hpp
         Glitter/Headers/camera.hpp
         Glitter/Sources/init.cpp
         Glitter/Headers/init.h
-        Glitter/Sources/MainMenu.cpp
-        Glitter/Headers/MainMenu.h
-        Glitter/Sources/Game.cpp
-        Glitter/Headers/Game.h
-        Glitter/Headers/Skybox.hpp
-        Glitter/Sources/Skybox.cpp
-        Glitter/Sources/Physics.cpp
+        #Glitter/Sources/MainMenu.cpp
+        #Glitter/Headers/MainMenu.h
+        #Glitter/Sources/Game.cpp
+        #Glitter/Headers/Game.h
+        #Glitter/Headers/Skybox.hpp
+        #Glitter/Sources/Skybox.cpp
         Glitter/Headers/Physics.h
-        Glitter/Headers/FrameBuffer.hpp
-        Glitter/Sources/FrameBuffer.cpp Glitter/Sources/camera.cpp)
+        #Glitter/Headers/FrameBuffer.hpp
+        #Glitter/Sources/FrameBuffer.cpp
+        )
 target_link_libraries(
         ${PROJECT_NAME}
         assimp

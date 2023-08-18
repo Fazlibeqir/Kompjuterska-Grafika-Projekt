@@ -6,125 +6,181 @@
 #include "init.h"
 
 
-float deltaTime = 1.0f;
-float lastFrame = 0.0f;
-float carSpeed = 5.0f;
-float rotationAngle = 0.0f;
-glm::vec3 carPosition = glm::vec3(0.0f);
-glm::vec3 carFront = glm::vec3(0.0f, 0.0f, -1.0f);
-float carRotationSpeed = 50.0f;
+
+
 bool returnToMenuClicked= false;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
 
-GLFWwindow* initializeWindow(){
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* mWindow = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Velocity Xtreme", nullptr, nullptr);
-
-// Check for Valid Context
-    if (mWindow == nullptr) {
-        fprintf(stderr, "Failed to Create OpenGL Context");
-        exit(1);
-    }
-
-// Create Context and Load OpenGL Functions
-    glfwMakeContextCurrent(mWindow);
-    glfwSetFramebufferSizeCallback(mWindow, framebuffer_size_callback);
-//    glfwSetCursorPosCallback(mWindow,mouse_callback);
-    glfwSetScrollCallback(mWindow, scroll_callback);
-
-    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        exit(1);
-    }
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    return mWindow;
-}
-void updateDeltaTime()
-{
-    auto currentFrame = static_cast<float>(glfwGetTime());
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-}
-void processInput(GLFWwindow *window, int * chosenCarIndex,  bool gameHasStarted) {
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        glfwDestroyWindow(window);
-    }
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
-        // Toggle menu visibility when the Escape key is pressed
-        returnToMenuClicked = !returnToMenuClicked;
-
-        // You may want to add additional logic here, such as pausing the game
-        // when the menu is visible and resuming when it's hidden.
-
-        // Wait a short duration to prevent multiple toggles on a single key press
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    }
-    if(gameHasStarted){
-        // Update car's position based on user input (e.g., keyboard or controller)
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            carPosition += carFront * carSpeed * deltaTime;
-            camera.ProcessKeyboard(FORWARD, deltaTime);
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            carPosition -= carFront * carSpeed * deltaTime;
-            camera.ProcessKeyboard(BACKWARD, deltaTime);
-        }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            rotationAngle += carRotationSpeed * deltaTime;
-            camera.ProcessKeyboard(LEFT, deltaTime);
-        }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            rotationAngle -= carRotationSpeed * deltaTime;
-            camera.ProcessKeyboard(RIGHT, deltaTime);
-        }
-    }
-    else {
-        if ((glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)) {
-            *chosenCarIndex = 1;
-        }
-        if ((glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)) {
-            *chosenCarIndex = 0;
-        }
-    }
-
-    // Update car's front direction based on rotation
-    carFront.x = sin(glm::radians(rotationAngle));
-    carFront.z = -cos(glm::radians(rotationAngle));
-    carFront = glm::normalize(carFront);
-}
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
-//void mouse_callback(GLFWwindow *window, double xposd, double yposd) {
-//    float xpos = static_cast<float>(xposd);
-//    float ypos = static_cast<float>(yposd);
+//void processInput(GLFWwindow *window
+//                 // ,bool gameHasStarted
+//                  ) {
+//    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+//        glfwDestroyWindow(window);
+//    }
+//    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+//        // Toggle menu visibility when the Escape key is pressed
+//        returnToMenuClicked = !returnToMenuClicked;
+//
+//        // You may want to add additional logic here, such as pausing the game
+//        // when the menu is visible and resuming when it's hidden.
+//
+//        // Wait a short duration to prevent multiple toggles on a single key press
+//        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+//    }
+////    if(gameHasStarted){
+//        if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS && !switched) {
+//            cameraFollow = !cameraFollow;
+//            switched = TRUE;
+//            if (cameraFollow) {
+//                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+//            } else {
+//                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//            }
+//        }
+//        if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_RELEASE) {
+//            switched = FALSE;
+//        }
+//
+//        if (!cameraFollow) {
+//            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+//                camera.ProcessKeyboard(FORWARD, deltaTime);
+//            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+//                camera.ProcessKeyboard(BACKWARD, deltaTime);
+//            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+//                camera.ProcessKeyboard(LEFT, deltaTime);
+//            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+//                camera.ProcessKeyboard(RIGHT, deltaTime);
+//        }
+//
+//        float steering_limit = 1.0f;
+//        float steering_speed = 0.05f;
+//
+//        // Car controls - steering
+//        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+//            if (steering > -steering_limit)
+//                steering -= steering_speed;
+//        } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+//            if (steering < steering_limit)
+//                steering += steering_speed;
+//        } else {
+//            steering -= steering_speed * ((steering > 0) - (steering < 0));
+//            if (steering < steering_speed && steering > -steering_speed)
+//                steering = 0.0f;
+//        }
+//
+//        // Car controls - acceleration
+//        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+//            acceleration = 1;
+//        } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+//            acceleration = -1;
+//        } else {
+//            acceleration = 0;
+//            handbrake = TRUE;
+//        }
+//
+//        // Car controls - handbrake
+//        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+//            handbrake = TRUE;
+//        } else {
+//            handbrake = FALSE;
+//        }
+//
+//        // Car controls - reset
+//        if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS && !gotUp) {
+//            getUp = TRUE;
+//            gotUp = TRUE;
+//        } else {
+//            getUp = FALSE;
+//        }
+//        if (glfwGetKey(window, GLFW_KEY_R) == GLFW_RELEASE) {
+//            gotUp = FALSE;
+//        }
+//
+//        // Car controls - jump upwards
+//        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && !jumped) {
+//            jump = TRUE;
+//            jumped = TRUE;
+//        } else {
+//            jump = FALSE;
+//        }
+//        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE) {
+//            jumped = FALSE;
+//        }
+////    }
+////    else {
+////        if ((glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)) {
+////            *chosenCarIndex = 1;
+////        }
+////        if ((glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)) {
+////            *chosenCarIndex = 0;
+////        }
+////    }
+//}
+//void mouseCallback(GLFWwindow *window, double xposd, double yposd) {
 //    if (firstMouse) {
-//        lastX = xpos;
-//        lastY = ypos;
-//        firstMouse = false;
+//        lastX = xposd;
+//        lastY = yposd;
+//        firstMouse = FALSE;
 //    }
 //
-//    float xoffset = xpos - lastX;
-//    float yoffset =
-//            lastY - ypos; // reversed since y-coordinates go from bottom to top
+//    float xoffset = xposd - lastX;
+//    float yoffset = lastY - yposd;
 //
-//    lastX = xpos;
-//    lastY = ypos;
+//    lastX = xposd;
+//    lastY = yposd;
 //
-//    camera.ProcessMouseMovement(xoffset, yoffset);
+//    if (!cameraFollow) {
+//        camera.ProcessMouseMovement(xoffset, yoffset);
+//    } else if (rotating) {
+//        baseYaw += xoffset;
+//        basePitch += yoffset;
+//        if (basePitch > 89.0f)
+//            basePitch = 89.0f;
+//        if (basePitch < -89.0f)
+//            basePitch = -89.0f;
+//        camera.ProcessMouseMovement(0, yoffset);
+//    }
 //}
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
-}
+//void scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
+//    cameraRadius -= yoffset / 2;
+//    if (basePitch > 20.0f)
+//        basePitch = 20.0f;
+//    if (basePitch < 0.0f)
+//        basePitch = 0.0f;
+//}
+//unsigned int loadCubeMap() {
+//    string right = string(SKY_DIR) + "\\skybox\\right.png";
+//    string left = string(SKY_DIR) + "\\skybox\\left.png";
+//    string top = string(SKY_DIR) + "\\skybox\\top.png";
+//    string bottom = string(SKY_DIR) + "\\skybox\\bottom.png";
+//    string back = string(SKY_DIR) + "\\skybox\\back.png";
+//    string front = string(SKY_DIR) + "\\skybox\\front.png";
+//    unsigned int textureID;
+//    glGenTextures(1, &textureID);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+//
+//    int width, height, channels;
+//    unsigned char *data;
+//    std::vector<std::string> txt_faces;
+//    txt_faces.push_back(right.c_str());
+//    txt_faces.push_back(left.c_str());
+//    txt_faces.push_back(top.c_str());
+//    txt_faces.push_back(bottom.c_str());
+//    txt_faces.push_back(front.c_str());
+//    txt_faces.push_back(back.c_str());
+//    for (unsigned int i = 0; i < 6; i++) {
+//        data = stbi_load(txt_faces[i].c_str(), &width, &height, &channels, 0);
+//        glTexImage2D(
+//                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
+//                width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+//        );
+//        stbi_image_free(data);
+//    }
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+//
+//    return textureID;
+//}

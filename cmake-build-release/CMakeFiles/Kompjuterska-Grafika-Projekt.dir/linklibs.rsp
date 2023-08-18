@@ -1,0 +1,1 @@
+ Glitter/Vendor/assimp/lib/libassimp.a lib/libglfw3.a lib/libstb_image.a lib/libBulletDynamics.a lib/libBulletCollision.a lib/libLinearMath.a lib/libzlibstatic.a -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lwinpthread -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
