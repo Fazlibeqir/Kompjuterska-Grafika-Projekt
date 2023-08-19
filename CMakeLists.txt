@@ -116,7 +116,15 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Sources/assets/model $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Sources/assets/img $<TARGET_FILE_DIR:${PROJECT_NAME}>
     DEPENDS ${PROJECT_SHADERS})
 if(WIN32)
     add_custom_target(build COMMAND make /m8)
 endif()
+#add_custom_command(
+#        TARGET ${PROJECT_NAME} POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders ${CMAKE_BINARY_DIR}/Glitter/Shaders
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Models ${CMAKE_BINARY_DIR}/Glitter/Models
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Skybox ${CMAKE_BINARY_DIR}/Glitter/Skybox
+#        DEPENDS ${PROJECT_SHADERS})

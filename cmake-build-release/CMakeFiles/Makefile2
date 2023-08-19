@@ -419,13 +419,13 @@ CMakeFiles/stb_image.dir/clean:
 # Target rules for target CMakeFiles/Kompjuterska-Grafika-Projekt.dir
 
 # All Build rule for target.
-CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: CMakeFiles/stb_image.dir/all
 CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: Glitter/Vendor/glfw/src/CMakeFiles/glfw.dir/all
+CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: CMakeFiles/stb_image.dir/all
 CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: Glitter/Vendor/assimp/code/CMakeFiles/assimp.dir/all
 CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: Glitter/Vendor/assimp/contrib/zlib/CMakeFiles/zlibstatic.dir/all
 CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: Glitter/Vendor/bullet/src/LinearMath/CMakeFiles/LinearMath.dir/all
-CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: Glitter/Vendor/bullet/src/BulletDynamics/CMakeFiles/BulletDynamics.dir/all
 CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: Glitter/Vendor/bullet/src/BulletCollision/CMakeFiles/BulletCollision.dir/all
+CMakeFiles/Kompjuterska-Grafika-Projekt.dir/all: Glitter/Vendor/bullet/src/BulletDynamics/CMakeFiles/BulletDynamics.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Kompjuterska-Grafika-Projekt.dir\build.make CMakeFiles/Kompjuterska-Grafika-Projekt.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Kompjuterska-Grafika-Projekt.dir\build.make CMakeFiles/Kompjuterska-Grafika-Projekt.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\Beqir\Desktop\KG\Repo\Kompjuterska-Grafika-Projekt\cmake-build-release\CMakeFiles --progress-num=43,44,45 "Built target Kompjuterska-Grafika-Projekt"

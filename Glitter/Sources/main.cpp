@@ -129,7 +129,9 @@ int main() {
     const string skyFragPath= string(SHADER_DIR)+"\\skybox.frag";
     const string terrainVertPath= string(SHADER_DIR)+"\\terrian.vert";
     const string terrainFragPath= string(SHADER_DIR)+"\\terrian.frag";
-    const string carModelPath =  string(MODEL_DIR)+"\\car\\car.obj";
+    //Glitter/Sources/assets/model/car/car.obj ande the bin car
+    //Glitter/Sources/assets/model/car1/car.obj Porch
+    const string carModelPath =  string(MODEL_DIR)+"\\car1\\car.obj";
     const string tyre1ModelPath =  string(MODEL_DIR)+"\\car\\tyref.obj";
     const string tyre2ModelPath =  string(MODEL_DIR)+"\\car\\tyreb.obj";
     const string terrainModel1Path =  string(SKY_DIR)+"\\terrian\\grass.obj";
@@ -531,7 +533,7 @@ int main() {
         GLfloat matrix[16];
         btTransform transform;
 
-        glm::vec3 obj_size(1.0f);
+        glm::vec3 obj_size(1.56f);
         Model *objectModel;
 
         int num_cobjs = simulation.dynamicsWorld->getNumCollisionObjects();

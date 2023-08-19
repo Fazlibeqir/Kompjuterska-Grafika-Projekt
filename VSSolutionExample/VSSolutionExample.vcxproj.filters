@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="VSSolutionExample.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ikpFlac.dll" />
+    <None Include="ikpMP3.dll" />
+    <None Include="irrKlang.dll" />
+    <None Include="media\getout.ogg" />
+    <None Include="media\Bullet for My Valentine - Hand of blood.ogg" />
+    <None Include="media\Celldweller - One good reason.ogg" />
+    <None Include="media\Celldweller - Shapeshifter (ft Styles of Beyond).ogg" />
+    <None Include="media\Diesel Boy + Kaos - Barrier break.ogg" />
+    <None Include="media\Disturbed - Decadence.ogg" />
+    <None Include="media\DJ Spooky &amp; Dave Lombardo - B-Side wins again (ft Chuck D).ogg" />
+    <None Include="media\Evol Intent - Broken sword (ft Mayhem &amp; Thinktank).ogg" />
+    <None Include="media\Hush - Fired up.ogg" />
+    <None Include="media\Hyper - We control.ogg" />
+    <None Include="media\Ils - Feed the addiction.ogg" />
+    <None Include="media\Jamiroquai - Feels just like it should (Timo Maas remix).ogg" />
+    <None Include="media\Juvenile - Sets go up.ogg" />
+    <None Include="media\Lupe Fiasco - Tilted.ogg" />
+    <None Include="media\Mastodon - Blood and thunder.ogg" />
+    <None Include="media\P$C - Do ya thang.ogg" />
+    <None Include="media\Paul Linford - Most Wanted mash up (ft Chris Vrenna).ogg" />
+    <None Include="media\Paul Linford - The mann (ft Chris Vrenna).ogg" />
+    <None Include="media\Rock - I am Rock.ogg" />
+    <None Include="media\Static-X - Skinnyman.ogg" />
+    <None Include="media\Stratus - You must follow (Evol Intent VIP).ogg" />
+    <None Include="media\Styles of Beyond - Nine thou (Superstars remix).ogg" />
+    <None Include="media\Suni Clay - In a hood near you.ogg" />
+    <None Include="media\The Perceptionists - Let%27s move.ogg" />
+    <None Include="media\The Prodigy - You%27ll be under my wheels.ogg" />
+    <None Include="media\The Roots - Tao of the machine (Scott Humphrey%27s remix) (ft BT).ogg" />
+    <None Include="media\Avenged Sevenfold - Blinded in chains.ogg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="song_list.txt" />
+  </ItemGroup>
+</Project>
