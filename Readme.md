@@ -15,7 +15,8 @@ Functionality           | Library
 ----------------------- | ------------------------------------------
 Mesh Loading            | [assimp](https://github.com/assimp/assimp)
 Physics                 | [bullet](https://github.com/bulletphysics/bullet3)
-OpenGL Function Loader  | [glad]
+OpenGL Function Loader  | glad
 Windowing and Input     | [glfw](https://github.com/glfw/glfw)
 OpenGL Mathematics      | [glm](https://github.com/g-truc/glm)
 Texture Loading         | [stb](https://github.com/nothings/stb)
+Audio                   | [irrKlang](https://www.ambiera.com/irrklang/downloads.html)
