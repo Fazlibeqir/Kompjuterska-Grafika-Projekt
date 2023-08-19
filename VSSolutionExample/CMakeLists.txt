@@ -15,10 +15,10 @@ else()
 endif()
 
 # Include directories
-include_directories(externals/includes)
+include_directories(../Glitter/Vendor/irrKlang/includes)
 
 # Collect list of source files
-file(GLOB PROJECT_AUDIO media/*.ogg)
+file(GLOB PROJECT_AUDIO ../Glitter/Sources/assets/media/*.ogg)
 
 # Group source files in the IDE (optional)
 source_group("audio" FILES ${PROJECT_AUDIO})
@@ -30,13 +30,13 @@ add_definitions(-DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
 add_executable(${PROJECT_NAME} main.cpp ${PROJECT_AUDIO})
 
 # Link irrKlang library
-target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/externals/libs/irrKlang.lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE ../Glitter/Vendor/irrKlang/libs/irrKlang.lib)
 
 # List of DLLs to copy
 set(DLL_LIST
-        "irrKlang.dll"
-        "ikpFlac.dll"
-        "ikpMP3.dll"
+        "../Glitter/irrKlang.dll"
+        "../Glitter/ikpFlac.dll"
+        "../Glitter/ikpMP3.dll"
         )
 
 # Copy DLLs to the build directory

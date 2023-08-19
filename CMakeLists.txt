@@ -21,8 +21,6 @@ add_subdirectory(Glitter/Vendor/bullet)
 
 if(MSVC)
     add_compile_options(/MP)
-    add_compile_options(/Gm)
-    add_compile_options(/W4)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /INCREMENTAL")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
@@ -40,6 +38,7 @@ include_directories(Glitter/Headers/
                     Glitter/Vendor/stb/
                     Glitter/Vendor/imgui/
                     Glitter/Vendor/imgui/backends/
+                    Glitter/Vendor/irrKlang/includes
 
         )
 
@@ -53,6 +52,7 @@ file(GLOB PROJECT_HEADERS Glitter/Headers/*.hpp
 file(GLOB PROJECT_SOURCES Glitter/Sources/*.cpp)
 file(GLOB PROJECT_SHADERS ${SHADER_DIR}/*.frag
                           ${SHADER_DIR}/*.vert)
+file(GLOB PROJECT_AUDIO Glitter/Sources/assets/media/*.ogg)
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
                           Readme.md
                          .gitattributes
@@ -63,6 +63,7 @@ source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
 source_group("Sources" FILES ${PROJECT_SOURCES})
 source_group("Vendors" FILES ${VENDORS_SOURCES})
+source_group("audio" FILES ${PROJECT_AUDIO})
 
 add_library(stb_image ${CMAKE_SOURCE_DIR}/Glitter/Vendor/stb/deprecated/stb_image.c)
 add_definitions(-DGLFW_INCLUDE_NONE
@@ -70,7 +71,7 @@ add_definitions(-DGLFW_INCLUDE_NONE
         -DASSIMP_WARNINGS_AS_ERRORS=OFF)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES}
+                               ${VENDORS_SOURCES} ${PROJECT_AUDIO}
 
         Glitter/Headers/shader.hpp
         Glitter/Headers/mesh.hpp
@@ -100,7 +101,22 @@ target_link_libraries(
         BulletDynamics
         BulletCollision
         LinearMath
+        C:/Users/Beqir/Desktop/KG/Repo/Kompjuterska-Grafika-Projekt/Glitter/Vendor/irrKlang/libs/irrKlang.lib
     )
+set(DLL_LIST
+        "Glitter/irrKlang.dll"
+        "Glitter/ikpFlac.dll"
+        "Glitter/ikpMP3.dll"
+        )
+
+# Copy DLLs to the build directory
+foreach(DLL ${DLL_LIST})
+    add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/${DLL}"
+            $<TARGET_FILE_DIR:${PROJECT_NAME}
+            )
+endforeach()
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 #Specify relative paths for shader and model files

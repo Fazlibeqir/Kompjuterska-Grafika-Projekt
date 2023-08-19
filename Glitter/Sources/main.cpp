@@ -21,12 +21,23 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <iostream>
+#include <vector>
+#include <irrKlang.h>
+#include <string>
+#include <Windows.h>
+#include <algorithm>
+#include <random>
+using namespace irrklang;
+using namespace std;
+#pragma comment(lib, "irrKlang.lib")
 
 const unsigned int scrWidth = 960;
 const unsigned int scrHeight = 540;
 const char *appName = "Velocity Xtreme";
 
-
+bool shouldStopPlaying = false;
+void SongPlaybackThread(ISoundEngine* engine, const vector<string>& songList);
 
 // General callback functions
 void mouseCallback(GLFWwindow *window, double xposd, double yposd);
@@ -399,9 +410,32 @@ int main() {
 
     GLfloat maxSecPerFrame = 1.0f / 50.0f;
 
+    ISoundEngine* engine = createIrrKlangDevice();
+    if (!engine) {
+        cout << "Failed to create IrrKlang device." << endl;
+        return 1;
+    }
+    string mediaPath = "C:\\Users\\Beqir\\Desktop\\KG\\Repo\\Kompjuterska-Grafika-Projekt\\Glitter\\Sources\\assets\\media\\";
+
+    vector<string> songList;
+    WIN32_FIND_DATA findFileData;
+    HANDLE hFind = FindFirstFile((mediaPath + "*.ogg").c_str(), &findFileData);
+    if (hFind != INVALID_HANDLE_VALUE) {
+        do {
+            songList.push_back(mediaPath + findFileData.cFileName);
+        } while (FindNextFile(hFind, &findFileData) != 0);
+        FindClose(hFind);
+    }
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(songList.begin(), songList.end(), g);
+
+    thread songThread(SongPlaybackThread, engine, songList);
 
 
     while (!glfwWindowShouldClose(window)) {
+
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -611,16 +645,39 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    songThread.join();
+    engine->drop();
 
     glfwTerminate();
     return EXIT_SUCCESS;
+}
+void SongPlaybackThread(ISoundEngine* engine, const vector<string>& songList) {
+    for (const string& song : songList) {
+        if (shouldStopPlaying) {
+            break;  // Exit the loop if we need to stop playing
+        }
+
+        cout << "Playing song: " << song << endl;
+        ISound* sound = engine->play2D(song.c_str(), false, false, true);
+        sound->setVolume(0.4f);
+        while (!sound->isFinished()) {
+            if (shouldStopPlaying) {
+                sound->stop();  // Stop the song if we need to stop playing
+                break;
+            }
+            this_thread::sleep_for(chrono::milliseconds(100));
+        }
+        sound->drop();
+    }
 }
 
 void processInput(GLFWwindow *window
         // ,bool gameHasStarted
 ) {
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        shouldStopPlaying = true;
         glfwDestroyWindow(window);
+        glfwSetWindowShouldClose(window, true);
     }
 //    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
 //        // Toggle menu visibility when the Escape key is pressed
