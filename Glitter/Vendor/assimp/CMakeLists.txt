@@ -632,7 +632,7 @@ ELSE()
       find_package(draco CONFIG REQUIRED)
       set(draco_LIBRARIES draco::draco)
     ELSE()
-      # Draco 1.4.1 has many warnings and will not build with /WX or -Werror
+      # Draco 1.4.1 has many warnings and will not build with /WX
       # See https://github.com/google/draco/issues/672
       # and https://github.com/google/draco/issues/673
       IF(MSVC)

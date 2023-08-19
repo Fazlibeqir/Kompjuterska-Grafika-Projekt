@@ -87,6 +87,13 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         #Glitter/Headers/Skybox.hpp
         #Glitter/Sources/Skybox.cpp
         Glitter/Headers/Physics.h
+        Glitter/Sources/Car.cpp
+        Glitter/Sources/Car.h
+        Glitter/Sources/Terrain.cpp
+        Glitter/Sources/Terrain.h
+        Glitter/Headers/GlobalVariables.h
+        Glitter/Sources/GlobalVariables.cpp
+        Glitter/Sources/Physics.cpp
         #Glitter/Headers/FrameBuffer.hpp
         #Glitter/Sources/FrameBuffer.cpp
         )

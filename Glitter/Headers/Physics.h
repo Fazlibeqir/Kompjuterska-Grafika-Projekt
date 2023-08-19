@@ -8,6 +8,7 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
+#include "GlobalVariables.h"
 
 enum shapes {
     BOX, SPHERE, CYLINDER
@@ -28,116 +29,31 @@ public:
     btBroadphaseInterface *overlappingPairCache; // method for the broadphase collision detection
     btSequentialImpulseConstraintSolver *solver; // constraints solver
 
-    Physics() {
-        this->collisionConfiguration = new btDefaultCollisionConfiguration();
+    btRigidBody *car;
+    btRigidBody *t1, *t2, *t3, *t4;
+    btGeneric6DofSpringConstraint *c1, *c2, *c3, *c4;
+    glm::vec3 plane_pos[GlobalVariables::tiles];
 
-        // default collision dispatcher (collision detection method)
-        this->dispatcher = new btCollisionDispatcher(this->collisionConfiguration);
-        this->overlappingPairCache = new btDbvtBroadphase();
-        this->solver = new btSequentialImpulseConstraintSolver();
+    Physics();
+    btRigidBody * createRigidBody(int type, glm::vec3 pos,
+                                    glm::vec3 size,
+                                    glm::vec3 rot,
+                                    float m, float friction,
+                                    float restitution,
+                                    short group, short mask);
+    void generateTerrain();
+    void generateInvisibleWalls();
+    void generateCamaro();
+    void addConstraints();
+    void updateMovements();
+    ~Physics();
 
-        // DynamicsWorld (main class for the physical simulation)
-        this->dynamicsWorld = new btDiscreteDynamicsWorld(this->dispatcher, this->overlappingPairCache, this->solver,
-                                                          this->collisionConfiguration);
-
-        // set the gravity force
-        this->dynamicsWorld->setGravity(btVector3(0.0f, -9.82f, 0.0f));
-    }
-    btRigidBody *
-    createRigidBody(int type, glm::vec3 pos, glm::vec3 size, glm::vec3 rot, float m, float friction, float restitution,
-                    short group, short mask) {
-
-        btCollisionShape *cShape = NULL;
-        btVector3 position = btVector3(pos.x, pos.y, pos.z);
-        btQuaternion rotation;
-        rotation.setEuler(rot.x, rot.y, rot.z);
-
-        // Box Collision shape
-        if (type == BOX) {
-            btVector3 dim = btVector3(size.x, size.y, size.z);
-            cShape = new btBoxShape(dim);
-        }
-            // Sphere Collision Shape
-        else if (type == SPHERE) {
-            cShape = new btSphereShape(size.x);
-        } else if (type == CYLINDER) {
-            btVector3 dim = btVector3(size.x, size.y, size.z);
-            cShape = new btCylinderShape(dim);
-        }
-
-        // add this Collision Shape to the vector
-        this->collisionShapes.push_back(cShape);
-
-        // set the initial transformations
-        btTransform objTransform;
-        objTransform.setIdentity();
-        objTransform.setRotation(rotation);
-        objTransform.setOrigin(position);
-
-        // if object has mass = 0 -> then it is static
-        btScalar mass = m;
-        bool isDynamic = (mass != 0.0f);
-
-        // if it is dynamic (mass > 0) then calculate local inertia
-        btVector3 localInertia(0.0f, 0.0f, 0.0f);
-        if (isDynamic)
-            cShape->calculateLocalInertia(mass, localInertia);
-
-        btDefaultMotionState *motionState = new btDefaultMotionState(objTransform);
-
-        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, cShape, localInertia);
-        rbInfo.m_friction = friction;
-        rbInfo.m_restitution = restitution;
-
-        if (type == SPHERE) {
-            rbInfo.m_angularDamping = 0.3f;
-            rbInfo.m_rollingFriction = 0.3f;
-        } else if (type == CYLINDER) {
-            rbInfo.m_angularDamping = 0.25f;
-            rbInfo.m_rollingFriction = 0.75f;
-        }
-
-        // rigid body creation
-        btRigidBody *body = new btRigidBody(rbInfo);
-        this->dynamicsWorld->addRigidBody(body, group, mask);
-        return body;
-    }
-    void Clear() {
-
-        for (int i = this->dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--) {
-            btCollisionObject *obj = this->dynamicsWorld->getCollisionObjectArray()[i];
-            btRigidBody *body = btRigidBody::upcast(obj);
-            if (body && body->getMotionState()) {
-                delete body->getMotionState();
-            }
-            this->dynamicsWorld->removeCollisionObject(obj);
-            delete obj;
-        }
-
-        // remove all the Collision Shapes
-        for (int j = 0; j < this->collisionShapes.size(); j++) {
-            btCollisionShape *shape = this->collisionShapes[j];
-            this->collisionShapes[j] = 0;
-            delete shape;
-        }
-
-        // delete dynamics world
-        delete this->dynamicsWorld;
-
-        // delete solver
-        delete this->solver;
-
-        // delete broadphase
-        delete this->overlappingPairCache;
-
-        // delete dispatcher
-        delete this->dispatcher;
-
-        delete this->collisionConfiguration;
-
-        this->collisionShapes.clear();
-    }
-
+private:
+    void accelerationMovement(btMatrix3x3 &rot, short &braking);
+    void brakingMovement(btMatrix3x3 &rot, short &braking);
+    void handbrakeMovement(btMatrix3x3 &rot, short &braking);
+    void resetMovement(btMatrix3x3 &rot);
+    void jumpMovement();
 };
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_PHYSICS_H

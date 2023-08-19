@@ -1,2 +1,0 @@
-C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin\ar.exe qc lib\libstb_image.a CMakeFiles/stb_image.dir/Glitter/Vendor/stb/deprecated/stb_image.c.obj
-C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin\ranlib.exe lib\libstb_image.a
