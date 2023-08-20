@@ -655,28 +655,33 @@ int main() {
     return EXIT_SUCCESS;
 }
 void SongPlaybackThread(ISoundEngine* engine, const vector<string>& songList) {
-    for (const string& song : songList) {
-        if (shouldStopPlaying) {
-            break;  // Exit the loop if we need to stop playing
-        }
-        size_t lastSlash= song.find_last_of("/\\");
-        string songName = (lastSlash != string::npos) ? song.substr(lastSlash+1):song;
+    bool shouldContinuePlaying = true;
 
-        size_t extensionPos= songName.find_last_of('.');
-        if(extensionPos != string::npos && extensionPos>0){
-            songName=songName.substr(0,extensionPos);
-        }
-        cout << "Playing song: " << songName  << endl;
-        ISound* sound = engine->play2D(song.c_str(), false, false, true);
-        sound->setVolume(0.4f);
-        while (!sound->isFinished()) {
+    while (shouldContinuePlaying) {
+        for (const string &song: songList) {
             if (shouldStopPlaying) {
-                sound->stop();  // Stop the song if we need to stop playing
-                break;
+                shouldContinuePlaying = false;
+                break;  // Exit the loop if we need to stop playing
             }
-            this_thread::sleep_for(chrono::milliseconds(100));
+            size_t lastSlash = song.find_last_of("/\\");
+            string songName = (lastSlash != string::npos) ? song.substr(lastSlash + 1) : song;
+
+            size_t extensionPos = songName.find_last_of('.');
+            if (extensionPos != string::npos && extensionPos > 0) {
+                songName = songName.substr(0, extensionPos);
+            }
+            cout << "Playing song: " << songName << endl;
+            ISound *sound = engine->play2D(song.c_str(), false, false, true);
+            sound->setVolume(1.0f);
+            while (!sound->isFinished()) {
+                if (shouldStopPlaying) {
+                    sound->stop();  // Stop the song if we need to stop playing
+                    break;
+                }
+                this_thread::sleep_for(chrono::milliseconds(100));
+            }
+            sound->drop();
         }
-        sound->drop();
     }
 }
 
