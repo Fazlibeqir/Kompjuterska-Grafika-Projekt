@@ -9,8 +9,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
-map_Bump BMWM3GTR.jpg
+map_Kd BMWM3GTRE46_BADGING.jpg
+map_bump BMWM3GTRE46_BADGING.jpg
+
 
 newmtl BRAKDISC
 Ns 2.500001
@@ -30,7 +31,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
+map_Kd BMWM3GTRE46_KIT00_BRAKE_OF.jpg
 
 newmtl Bottom
 Ns 3.300002
@@ -41,7 +42,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd BOTTOM.jpg
-map_Bump BOTTOM.jpg
+map_bump BOTTOM.jpg
 
 newmtl Chrome
 Ns 2.100002
@@ -81,7 +82,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
+map_Kd BMWM3GTRE46_KIT00_HEADL.jpg
 
 newmtl Interior
 Ns 2.100002
@@ -91,8 +92,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
-map_Bump BMWM3GTR.jpg
+map_Kd BMWM3GTRE46_INTERIOR.jpg
+map_bump BMWM3GTRE46_INTERIOR.jpg
 
 newmtl Licens
 Ns 2.700002
@@ -102,7 +103,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd LICENSE.psd
+map_Kd R_(1).png
 
 newmtl MISC
 Ns 3.300002
@@ -112,8 +113,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
-map_Bump BMWM3GTR.jpg
+map_Kd BMWM3GTRE46_MISC.jpg
+map_bump BMWM3GTRE46_MISC.jpg
 
 newmtl PSRTEST
 Ns 0.999999
@@ -123,7 +124,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
+map_Kd PSRTEST.jpg
 
 newmtl TIRE
 Ns 3.300002
@@ -133,7 +134,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
+map_Kd BMWM3GTRE46_TIRE.jpg
 
 newmtl TIRE-chrome
 Ns 3.200002
@@ -143,7 +144,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd BMWM3GTR.jpg
+map_Kd BMWM3GTRE46_TIRE.jpg
 
 newmtl Tread
 Ns 3.300002
@@ -154,7 +155,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd TREAD_MI.jpg
-map_Bump TREAD_MI.jpg
+map_bump TREAD_MI.jpg
 
 newmtl black
 Ns 3.300002

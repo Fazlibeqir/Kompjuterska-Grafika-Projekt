@@ -50,7 +50,7 @@ void processInput(GLFWwindow *window
         //, bool gameHasStarted
 );
 
-unsigned int loadCubeMap(const std::string& combinedTexturePath);
+unsigned int loadCubeMap();
 
 // Camera controls
 Camera camera(glm::vec3(0.0f, 2.5f, 8.0f), GL_FALSE);
@@ -212,7 +212,7 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
-    //unsigned int cubemapTexture = loadCubeMap();
+    unsigned int cubemapTexture = loadCubeMap();
 
     // Physics simulation
     Physics simulation;
@@ -434,8 +434,8 @@ int main() {
 
     thread songThread(SongPlaybackThread, engine, songList);
     // string right = string(SKY_DIR) + "\\skybox2\\clouds1_east.bmp"; Glitter/Sources/assets/img/world0/sunrise.png
-    std::string combinedTexturePath=string(SKY_DIR)+"/world0/sunrise.png";
-    unsigned int combinedSkyboxTexture= loadCubeMap(combinedTexturePath);
+//    std::string combinedTexturePath=string(SKY_DIR)+"/world0/sunrise.png";
+//    unsigned int combinedSkyboxTexture= loadCubeMap(combinedTexturePath);
 
     while (!glfwWindowShouldClose(window)) {
 
@@ -624,7 +624,7 @@ int main() {
 
             glActiveTexture(GL_TEXTURE3);
             carShader.setInt("skybox", 3);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, combinedSkyboxTexture);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 
             objectModel->Draw(carShader);
 
@@ -640,7 +640,7 @@ int main() {
         skyBoxShader.setMat4("view", view);
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, combinedSkyboxTexture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
 
@@ -831,36 +831,35 @@ void scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
         basePitch = 0.0f;
 }
 // string right = string(SKY_DIR) + "\\skybox2\\clouds1_east.bmp";
-unsigned int loadCubeMap(const std::string& combinedTexturePath) {
+unsigned int loadCubeMap() {
+    string right = string(SKY_DIR) + "\\skybox2\\clouds1_east.bmp";
+    string left = string(SKY_DIR) + "\\skybox2\\clouds1_west.bmp";
+    string top = string(SKY_DIR) + "\\skybox2\\clouds1_up.bmp";
+    string bottom = string(SKY_DIR) + "\\skybox2\\clouds1_down.bmp";
+    string back = string(SKY_DIR) + "\\skybox2\\clouds1_south.bmp";
+    string front = string(SKY_DIR) + "\\skybox2\\clouds1_north.bmp";
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-
+    std::vector<std::string> txt_faces;
+    txt_faces.push_back(right.c_str());
+    txt_faces.push_back(left.c_str());
+    txt_faces.push_back(top.c_str());
+    txt_faces.push_back(bottom.c_str());
+    txt_faces.push_back(front.c_str());
+    txt_faces.push_back(back.c_str());
     int width, height, channels;
-    unsigned char *data = stbi_load(combinedTexturePath.c_str(), &width, &height, &channels, 0);
-    if (!data) {
-        std::cerr << "Failed to load combined texture: " << combinedTexturePath << std::endl;
-        return 0;
-    }
-
-    int faceWidth = width / 4;  // Assuming combined texture has 4 columns (day, night, day, night)
-    int faceHeight = height / 3; // Assuming combined texture has 3 rows (up, down, horizontal)
-
-    for (int i = 0; i < 6; i++) {
-        int col = i % 4;
-        int row = (i / 4) * 2; // Adjust row for day or night (0 for day, 1 for night)
-
+    unsigned char *data;
+    for (unsigned int i = 0; i < 6; i++) {
+        data = stbi_load(txt_faces[i].c_str(), &width, &height, &channels, 0);
         glTexImage2D(
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
-                faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                data + (row * height + faceHeight) * width + col * faceWidth * channels
+                width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
         );
+        stbi_image_free(data);
     }
-
-    stbi_image_free(data);
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
