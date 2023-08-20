@@ -50,7 +50,7 @@ void processInput(GLFWwindow *window
         //, bool gameHasStarted
 );
 
-unsigned int loadCubeMap();
+unsigned int loadCubeMap(const std::string& combinedTexturePath);
 
 // Camera controls
 Camera camera(glm::vec3(0.0f, 2.5f, 8.0f), GL_FALSE);
@@ -142,11 +142,12 @@ int main() {
     const string terrainFragPath= string(SHADER_DIR)+"\\terrian.frag";
     //Glitter/Sources/assets/model/car/car.obj ande the bin car
     //Glitter/Sources/assets/model/car1/car.obj Porch
-    const string carModelPath =  string(MODEL_DIR)+"\\car1\\car.obj";
+    const string carModelPath =  string(MODEL_DIR)+"\\bmw\\bmw.obj";
     const string tyre1ModelPath =  string(MODEL_DIR)+"\\car\\tyref.obj";
     const string tyre2ModelPath =  string(MODEL_DIR)+"\\car\\tyreb.obj";
-    const string terrainModel1Path =  string(SKY_DIR)+"\\terrian\\grass.obj";
-    const string terrainModel2Path =  string(SKY_DIR)+"\\terrian\\asphalt.obj";
+    //Glitter/Sources/assets/img/desertRace/RaceGameDesertV2.fbx
+    const string terrainModel1Path =  string(SKY_DIR)+"\\pre-game\\untitled.obj";
+   // const string terrainModel2Path =  string(SKY_DIR)+"\\terrian\\asphalt.obj";
 
     Shader carShader(carVertPath.c_str(),carFragPath.c_str());
     Model carModel(carModelPath);
@@ -155,7 +156,7 @@ int main() {
 
     Shader terrainShader(terrainVertPath.c_str(),terrainFragPath.c_str());
     Model terrainModel1(terrainModel1Path);
-    Model terrainModel2(terrainModel2Path);
+    //Model terrainModel2(terrainModel2Path);
 
     Shader skyBoxShader(skyVertPath.c_str(),skyFragPath.c_str());
 
@@ -211,7 +212,7 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
-    unsigned int cubemapTexture = loadCubeMap();
+    //unsigned int cubemapTexture = loadCubeMap();
 
     // Physics simulation
     Physics simulation;
@@ -245,7 +246,7 @@ int main() {
     btRigidBody *plane[tiles];
     glm::vec3 plane_pos[tiles];
     glm::vec3 plane_size[tiles];
-    const float plane_edge = 20.0f;
+    const float plane_edge = 100.0f;
     for (unsigned int i = 0; i < grid_width; i++) {
         for (unsigned int j = 0; j < grid_height; j++) {
             plane_pos[i * (grid_height) + j] = glm::vec3(2 * plane_edge * i - plane_edge * (grid_width - 1),
@@ -432,7 +433,9 @@ int main() {
     std::shuffle(songList.begin(), songList.end(), g);
 
     thread songThread(SongPlaybackThread, engine, songList);
-
+    // string right = string(SKY_DIR) + "\\skybox2\\clouds1_east.bmp"; Glitter/Sources/assets/img/world0/sunrise.png
+    std::string combinedTexturePath=string(SKY_DIR)+"/world0/sunrise.png";
+    unsigned int combinedSkyboxTexture= loadCubeMap(combinedTexturePath);
 
     while (!glfwWindowShouldClose(window)) {
 
@@ -532,29 +535,29 @@ int main() {
         glm::mat4 model = glm::mat4(1.0f);
 
         glm::mat4 planeModelMatrix = glm::mat4(1.0f);
-        for (unsigned int i = 0; i < grid_width; i++) {
-            for (unsigned int j = 0; j < grid_height; j++) {
-                planeModelMatrix = glm::translate(planeModelMatrix, plane_pos[i * (grid_height) + j]);
+//        for (unsigned int i = 0; i < 1; i++) {
+//            for (unsigned int j = 0; j < 1; j++) {
+                planeModelMatrix = glm::translate(planeModelMatrix, plane_pos[grid_height]);
                 glUniformMatrix4fv(glGetUniformLocation(terrainShader.Program, "model"), 1, GL_FALSE,
                                    glm::value_ptr(planeModelMatrix));
 
-                if (track[j][i] == 0) {
+
                     // Grass
                     terrainShader.setFloat("material.shininess", 4.0f);
                     terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
                     terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
                     terrainModel1.Draw(terrainShader);
-                } else if (track[j][i] == 1) {
+
                     // Asphalt
                     terrainShader.setFloat("material.shininess", 16.0f);
                     terrainShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
                     terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
-                    terrainModel2.Draw(terrainShader);
-                }
+                    //terrainModel2.Draw(terrainShader);
+
 
                 planeModelMatrix = glm::mat4(1.0f);
-            }
-        }
+//            }
+//        }
         carShader.Use();
         carShader.setMat4("projection", projection);
         carShader.setMat4("view", view);
@@ -567,7 +570,7 @@ int main() {
         GLfloat matrix[16];
         btTransform transform;
 
-        glm::vec3 obj_size(1.56f);
+        glm::vec3 obj_size(1.0f);
         Model *objectModel;
 
         int num_cobjs = simulation.dynamicsWorld->getNumCollisionObjects();
@@ -621,7 +624,7 @@ int main() {
 
             glActiveTexture(GL_TEXTURE3);
             carShader.setInt("skybox", 3);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, combinedSkyboxTexture);
 
             objectModel->Draw(carShader);
 
@@ -637,7 +640,7 @@ int main() {
         skyBoxShader.setMat4("view", view);
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, combinedSkyboxTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
 
@@ -656,8 +659,14 @@ void SongPlaybackThread(ISoundEngine* engine, const vector<string>& songList) {
         if (shouldStopPlaying) {
             break;  // Exit the loop if we need to stop playing
         }
+        size_t lastSlash= song.find_last_of("/\\");
+        string songName = (lastSlash != string::npos) ? song.substr(lastSlash+1):song;
 
-        cout << "Playing song: " << song << endl;
+        size_t extensionPos= songName.find_last_of('.');
+        if(extensionPos != string::npos && extensionPos>0){
+            songName=songName.substr(0,extensionPos);
+        }
+        cout << "Playing song: " << songName  << endl;
         ISound* sound = engine->play2D(song.c_str(), false, false, true);
         sound->setVolume(0.4f);
         while (!sound->isFinished()) {
@@ -816,36 +825,37 @@ void scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
     if (basePitch < 0.0f)
         basePitch = 0.0f;
 }
-unsigned int loadCubeMap() {
-    string right = string(SKY_DIR) + "\\skybox\\right.png";
-    string left = string(SKY_DIR) + "\\skybox\\left.png";
-    string top = string(SKY_DIR) + "\\skybox\\top.png";
-    string bottom = string(SKY_DIR) + "\\skybox\\bottom.png";
-    string back = string(SKY_DIR) + "\\skybox\\back.png";
-    string front = string(SKY_DIR) + "\\skybox\\front.png";
+// string right = string(SKY_DIR) + "\\skybox2\\clouds1_east.bmp";
+unsigned int loadCubeMap(const std::string& combinedTexturePath) {
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     int width, height, channels;
-    unsigned char *data;
-    std::vector<std::string> txt_faces;
-    txt_faces.push_back(right.c_str());
-    txt_faces.push_back(left.c_str());
-    txt_faces.push_back(top.c_str());
-    txt_faces.push_back(bottom.c_str());
-    txt_faces.push_back(front.c_str());
-    txt_faces.push_back(back.c_str());
-    for (unsigned int i = 0; i < 6; i++) {
-        data = stbi_load(txt_faces[i].c_str(), &width, &height, &channels, 0);
+    unsigned char *data = stbi_load(combinedTexturePath.c_str(), &width, &height, &channels, 0);
+    if (!data) {
+        std::cerr << "Failed to load combined texture: " << combinedTexturePath << std::endl;
+        return 0;
+    }
+
+    int faceWidth = width / 4;  // Assuming combined texture has 4 columns (day, night, day, night)
+    int faceHeight = height / 3; // Assuming combined texture has 3 rows (up, down, horizontal)
+
+    for (int i = 0; i < 6; i++) {
+        int col = i % 4;
+        int row = (i / 4) * 2; // Adjust row for day or night (0 for day, 1 for night)
+
         glTexImage2D(
                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB,
-                width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+                faceWidth, faceHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
+                data + (row * height + faceHeight) * width + col * faceWidth * channels
         );
-        stbi_image_free(data);
     }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    stbi_image_free(data);
+
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
