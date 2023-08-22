@@ -21,8 +21,6 @@ add_subdirectory(Glitter/Vendor/bullet)
 
 if(MSVC)
     add_compile_options(/MP)
-    add_compile_options(/Gm)
-    add_compile_options(/W4)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /INCREMENTAL")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
@@ -32,45 +30,48 @@ else()
 endif()
 
 include_directories(Glitter/Headers/
-                    Glitter/Vendor/assimp/include/
-                    Glitter/Vendor/bullet/src/
-                    Glitter/Vendor/glad/include/
-                    Glitter/Vendor/glfw/include/
-                    Glitter/Vendor/glm/
-                    Glitter/Vendor/stb/
-                    Glitter/Vendor/imgui/
-                    Glitter/Vendor/imgui/backends/
+        Glitter/Vendor/assimp/include/
+        Glitter/Vendor/bullet/src/
+        Glitter/Vendor/glad/include/
+        Glitter/Vendor/glfw/include/
+        Glitter/Vendor/glm/
+        Glitter/Vendor/stb/
+        Glitter/Vendor/imgui/
+        Glitter/Vendor/imgui/backends/
+        Glitter/Vendor/irrKlang/includes
 
         )
 
 file(GLOB VENDORS_SOURCES Glitter/Vendor/glad/src/glad.c
-                          Glitter/Vendor/imgui/backends/imgui_impl_glfw.cpp
-                          Glitter/Vendor/imgui/backends/imgui_impl_opengl3.cpp
-                          Glitter/Vendor/imgui/imgui*.cpp
+        Glitter/Vendor/imgui/backends/imgui_impl_glfw.cpp
+        Glitter/Vendor/imgui/backends/imgui_impl_opengl3.cpp
+        Glitter/Vendor/imgui/imgui*.cpp
         )
 file(GLOB PROJECT_HEADERS Glitter/Headers/*.hpp
-                          Glitter/Headers/*.h)
+        Glitter/Headers/*.h)
 file(GLOB PROJECT_SOURCES Glitter/Sources/*.cpp)
 file(GLOB PROJECT_SHADERS ${SHADER_DIR}/*.frag
-                          ${SHADER_DIR}/*.vert)
+        ${SHADER_DIR}/*.vert)
+file(GLOB PROJECT_AUDIO Glitter/Sources/assets/media/*.ogg)
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
-                          Readme.md
-                         .gitattributes
-                         .gitignore
-                         .gitmodules)
+        Readme.md
+        .gitattributes
+        .gitignore
+        .gitmodules)
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
 source_group("Sources" FILES ${PROJECT_SOURCES})
 source_group("Vendors" FILES ${VENDORS_SOURCES})
+source_group("audio" FILES ${PROJECT_AUDIO})
 
 add_library(stb_image ${CMAKE_SOURCE_DIR}/Glitter/Vendor/stb/deprecated/stb_image.c)
 add_definitions(-DGLFW_INCLUDE_NONE
-                -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"
+        -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"
         -DASSIMP_WARNINGS_AS_ERRORS=OFF)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
-                               ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES}
+        ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
+        ${VENDORS_SOURCES} ${PROJECT_AUDIO}
 
         Glitter/Headers/shader.hpp
         Glitter/Headers/mesh.hpp
@@ -87,13 +88,6 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         #Glitter/Headers/Skybox.hpp
         #Glitter/Sources/Skybox.cpp
         Glitter/Headers/Physics.h
-        Glitter/Sources/Car.cpp
-        Glitter/Sources/Car.h
-        Glitter/Sources/Terrain.cpp
-        Glitter/Sources/Terrain.h
-        Glitter/Headers/GlobalVariables.h
-        Glitter/Sources/GlobalVariables.cpp
-        Glitter/Sources/Physics.cpp
         #Glitter/Headers/FrameBuffer.hpp
         #Glitter/Sources/FrameBuffer.cpp
         )
@@ -107,23 +101,48 @@ target_link_libraries(
         BulletDynamics
         BulletCollision
         LinearMath
-    )
+        ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Vendor/irrKlang/libs/irrKlang.lib
+)
+set(DLL_LIST
+        "Glitter/irrKlang.dll"
+        "Glitter/ikpFlac.dll"
+        "Glitter/ikpMP3.dll"
+        )
+
+# Copy DLLs to the build directory
+foreach(DLL ${DLL_LIST})
+    add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/${DLL}"
+            $<TARGET_FILE_DIR:${PROJECT_NAME}
+            )
+endforeach()
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 #Specify relative paths for shader and model files
 set(SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Shaders")
 set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/model")
 set(SKY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/img")
+set(AUDIO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/media")
 #Add preprocessor definitions for the relative paths
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         SHADER_DIR="${SHADER_DIR}"
         MODEL_DIR="${MODEL_DIR}"
         SKY_DIR="${SKY_DIR}"
+        AUDIO_DIR="${AUDIO_DIR}"
         )
 add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    DEPENDS ${PROJECT_SHADERS})
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Sources/assets/model $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Sources/assets/img $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        DEPENDS ${PROJECT_SHADERS})
 if(WIN32)
     add_custom_target(build COMMAND make /m8)
 endif()
+#add_custom_command(
+#        TARGET ${PROJECT_NAME} POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders ${CMAKE_BINARY_DIR}/Glitter/Shaders
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Models ${CMAKE_BINARY_DIR}/Glitter/Models
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Skybox ${CMAKE_BINARY_DIR}/Glitter/Skybox
+#        DEPENDS ${PROJECT_SHADERS})

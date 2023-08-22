@@ -6,6 +6,7 @@
 #include "Skybox.hpp"
 #include "GlobalVariables.h"
 #include "Game.h"
+#include "Audio.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -26,6 +27,7 @@ int main() {
               mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"],
               mapForPaths["skyVertPath"],mapForPaths["skyFragPath"]);
     game.initialize();
+    Audio audio;
 
     while (!glfwWindowShouldClose(window)) {
         Init::updateDeltaTime();
