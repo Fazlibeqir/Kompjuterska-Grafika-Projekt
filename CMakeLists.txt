@@ -103,20 +103,20 @@ target_link_libraries(
         LinearMath
         ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Vendor/irrKlang/libs/irrKlang.lib
 )
-set(DLL_LIST
-        "Glitter/irrKlang.dll"
-        "Glitter/ikpFlac.dll"
-        "Glitter/ikpMP3.dll"
-        )
-
-# Copy DLLs to the build directory
-foreach(DLL ${DLL_LIST})
-    add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/${DLL}"
-            $<TARGET_FILE_DIR:${PROJECT_NAME}
-            )
-endforeach()
+#set(DLL_LIST
+#        "Glitter/irrKlang.dll"
+#        "Glitter/ikpFlac.dll"
+#        "Glitter/ikpMP3.dll"
+#        )
+#
+## Copy DLLs to the build directory
+#foreach(DLL ${DLL_LIST})
+#    add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
+#            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#            "${CMAKE_CURRENT_SOURCE_DIR}/${DLL}"
+#            $<TARGET_FILE_DIR:${PROJECT_NAME}
+#            )
+#endforeach()
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 #Specify relative paths for shader and model files
@@ -136,6 +136,7 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Sources/assets/model $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Sources/assets/img $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/dll $<TARGET_FILE_DIR:${PROJECT_NAME}>
         DEPENDS ${PROJECT_SHADERS})
 if(WIN32)
     add_custom_target(build COMMAND make /m8)
