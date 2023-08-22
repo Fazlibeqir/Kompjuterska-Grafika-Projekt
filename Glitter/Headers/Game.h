@@ -2,56 +2,49 @@
 //// Created by Elena on 09.7.2023.
 ////
 //
-//#ifndef KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H
-//#define KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H
-//#pragma once
-//
-//#include "shader.hpp"
-//#include "Model.hpp"
-//#include "init.h"
-//#include "GLFW/glfw3.h"
-//#include "camera.hpp"
-//#include "Physics.h"
-//#include "FrameBuffer.hpp"
-//#include <imgui.h>
-//#include <imgui_impl_glfw.h>
-//#include <imgui_impl_opengl3.h>
-//
-//class Game {
-//public:
-//    Game(const std::string& shaderVertPath, const std::string& shaderFragPath,
-//         const std::string& skyVertPath, const std::string& skyFragPath,
-//         const std::string& heightVertPath,const std::string&heightFragPath,
-//         const std::string modelPaths);
-//
-//    Shader ourShader;
-//    Model cars;
-//    FrameBuffer frameBuffer;
-//    Camera camera;
-//
-//    void initShaders();
-//    void initialStart();
-//    void setUniforms(Shader& shader);
-//    void start(GLFWwindow* window);
-//    static void quit(GLFWwindow* window);
-//    void settings();
-//    bool gameStarted = false;
-//    void setRotationAngle();
-//    void RenderScore();
-//    int chosenCarIndex;
-//    // in order to keep track which car is being chosen
-//    // it is better to keep its index,
-//    // instead of copying the data from one Model to another.
-//private:
-//    int idx=0;
-//    static glm::vec3 lightDirection();
-//    float ambientS;
-//    float diffuseS;
-//    float specularS;
-//    float scale;
-//    int score;
-//
-//};
-//
-//
-//#endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H
+#ifndef KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H
+#define KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H
+#pragma once
+
+#include "../Sources/Car.h"
+#include "../Sources/Terrain.h"
+#include "Skybox.hpp"
+#include "Physics.h"
+#include "GLFW/glfw3.h"
+
+class Game {
+public:
+    Car carForGame;
+    Terrain terrain;
+    Skybox skybox;
+    Physics simulation;
+    unsigned int skyboxVAO, skyboxVBO;
+    unsigned int cubeMapTexture;
+    glm::mat4 projection;
+    glm::mat4 view;
+
+    Game(const string& carShaderVertexPath,
+         const string& carShaderFragmentPath,
+         const string& carModelPath,
+         const string& tyre1ModelPath,
+         const string& tyre2ModelPath,
+         const string& terrainShaderVertexPath,
+         const string& terrainShaderFragmentPath,
+         const string& terrainModel1Path,
+         const string& terrainModel2Path,
+         const string& skyboxShaderVertexPath,
+         const string& skyboxShaderFragmentPath);
+
+    void initialize();
+
+    void startGame(GLFWwindow *window);
+    void updateCameraPosition();
+    void transform();
+    void setSkybox();
+
+private:
+
+};
+
+
+#endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H

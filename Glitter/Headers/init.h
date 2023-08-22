@@ -19,11 +19,6 @@ using namespace std;
 class Init{
 public:
     // Delta time
-    static float deltaTime;
-    static float lastFrame;
-    const static unsigned int scrWidth = 960;
-    const static unsigned int scrHeight = 540;
-
     static void mouseCallback(GLFWwindow *window, double xposd, double yposd);
     static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
     static void scrollCallback(GLFWwindow *window, double d, double y);

@@ -3,6 +3,9 @@
 //
 #include "GlobalVariables.h"
 
+float GlobalVariables:: deltaTime = 0.0f;
+float GlobalVariables:: lastFrame = 0.0f;
+
 Camera GlobalVariables::camera(glm::vec3(0.0f, 2.5f, 8.0f), GL_FALSE);
 bool GlobalVariables::cameraFollow = TRUE;
 glm::vec3 GlobalVariables:: cameraFollowPos(0.0f);
@@ -54,3 +57,6 @@ const unsigned int GlobalVariables::track[grid_height][grid_width] = {
 };
 
 const float GlobalVariables:: plane_edge = 20.0f;
+
+float GlobalVariables:: maxSecPerFrame = 1.0f / 50.0f;
+glm::vec3 GlobalVariables:: lightPos(0.0,2.0,-1.0);

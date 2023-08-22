@@ -5,6 +5,7 @@
 #include "Terrain.h"
 #include "Skybox.hpp"
 #include "GlobalVariables.h"
+#include "Game.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -15,109 +16,31 @@
 
 int main() {
     GLFWwindow *window = Init::initializeWindow();
-    glm::vec3 lightPos(0.0,2.0,-1.0);
     map<const string, string> mapForPaths = Init::initializeShadersAndModelsPaths();
 
-    Car carForGame(mapForPaths["carVertPath"],mapForPaths["carFragPath"],
-                   mapForPaths["carModelPath"],
-                   mapForPaths["tyre1ModelPath"],
-                   mapForPaths["tyre2ModelPath"]);
-
-    Terrain terrain(mapForPaths["terrainVertPath"], mapForPaths["terrainFragPath"],
-                    mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"]);
-
-    Skybox skybox(mapForPaths["skyVertPath"],mapForPaths["skyFragPath"]);
-    
-    unsigned int skyboxVAO, skyboxVBO;
-    skybox.generateBuffers(skyboxVAO, skyboxVBO);
-
-    unsigned int cubeMapTexture = skybox.loadCubeMap();
-
-    // Physics simulation
-    Physics simulation;
-    simulation.generateTerrain();
-    simulation.generateInvisibleWalls();
-    simulation.generateCamaro();
-    simulation.addConstraints();
-
-    GLfloat maxSecPerFrame = 1.0f / 50.0f;
+    Game game(mapForPaths["carVertPath"],mapForPaths["carFragPath"],
+              mapForPaths["carModelPath"],
+              mapForPaths["tyre1ModelPath"],
+              mapForPaths["tyre2ModelPath"],
+              mapForPaths["terrainVertPath"], mapForPaths["terrainFragPath"],
+              mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"],
+              mapForPaths["skyVertPath"],mapForPaths["skyFragPath"]);
+    game.initialize();
 
     while (!glfwWindowShouldClose(window)) {
         Init::updateDeltaTime();
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         Init::processInput(window);
-
-        simulation.updateMovements();
+//        game.startGame(window);
+        game.simulation.updateMovements();
         // Step physics forward
-        simulation.dynamicsWorld->stepSimulation((Init::deltaTime < maxSecPerFrame ? Init::deltaTime : maxSecPerFrame), 10);
+        game.simulation.dynamicsWorld->stepSimulation((
+                GlobalVariables::deltaTime < GlobalVariables::maxSecPerFrame ?
+                GlobalVariables::deltaTime : GlobalVariables::maxSecPerFrame), 10);
 
-        // Update camera position
-        if (GlobalVariables::cameraFollow) {
-            btTransform temp;
-            btVector3 newPos;
-
-            simulation.car->getMotionState()->getWorldTransform(temp);
-            float aVelocity = -simulation.car->getAngularVelocity().y();
-            newPos = temp.getBasis() * btVector3(
-                    glm::cos(glm::radians(-10 * glm::sqrt(glm::abs(GlobalVariables::steering)) * aVelocity + 90 + GlobalVariables::baseYaw / 4)) *
-                            GlobalVariables:: cameraRadius, 0,
-                    glm::sin(glm::radians(-10 * glm::sqrt(glm::abs(GlobalVariables::steering)) * aVelocity + 90 +GlobalVariables:: baseYaw / 4)) *
-                            GlobalVariables::cameraRadius);
-
-            GlobalVariables:: cameraFollowPos.x = temp.getOrigin().getX() + newPos.x();
-            GlobalVariables::cameraFollowPos.y = temp.getOrigin().getY() - glm::sin(glm::radians(GlobalVariables::camera.Pitch)) *GlobalVariables:: cameraRadius + 1.5;
-            GlobalVariables::cameraFollowPos.z = temp.getOrigin().getZ() + newPos.z();
-
-            GlobalVariables:: camera.Position = GlobalVariables::cameraFollowPos;
-            GlobalVariables::camera.LookAt(-newPos.x(), newPos.y(), -newPos.z());
-        }
-
+        game.updateCameraPosition();
+        game.transform();
         // Transforms
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-                                                (float) Init::scrWidth / (float) Init::scrHeight,
-                                                0.1f, 10000.0f);
-        glm::mat4 view = GlobalVariables::camera.GetViewMatrix();
-
-        terrain.terrainShader.Use();
-        terrain.terrainShader.setMat4("projection", projection);
-        terrain.terrainShader.setMat4("view", view);
-        terrain.terrainShader.setVec3("viewPos", GlobalVariables::camera.Position);
-
-        terrain.terrainShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
-        terrain.terrainShader.setVec3("light.ambient", 0.473f, 0.428f, 0.322f);
-        glm::mat4 model = glm::mat4(1.0f);
-
-        glm::mat4 planeModelMatrix = glm::mat4(1.0f);
-        for (unsigned int i = 0; i < GlobalVariables::grid_width; i++) {
-            for (unsigned int j = 0; j < GlobalVariables::grid_height; j++) {
-                planeModelMatrix = glm::translate(planeModelMatrix, simulation.plane_pos[i * (GlobalVariables::grid_height) + j]);
-                glUniformMatrix4fv(glGetUniformLocation( terrain.terrainShader.Program, "model"), 1, GL_FALSE,
-                                   glm::value_ptr(planeModelMatrix));
-
-                if (GlobalVariables::track[j][i] == 0) {
-                    // Grass
-                    terrain.terrainShader.setFloat("material.shininess", 4.0f);
-                    terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
-                    terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-                    terrain.terrainModel1.Draw( terrain.terrainShader);
-                } else if (GlobalVariables::track[j][i] == 1) {
-                    // Asphalt
-                    terrain.terrainShader.setFloat("material.shininess", 16.0f);
-                    terrain.terrainShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-                    terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
-                    terrain.terrainModel2.Draw( terrain.terrainShader);
-                }
-
-                planeModelMatrix = glm::mat4(1.0f);
-            }
-        }
-        carForGame.carShader.Use();
-        carForGame.carShader.setMat4("projection", projection);
-        carForGame.carShader.setMat4("view", view);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model,glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
 
         glm::mat4 objModelMatrix;
         glm::mat3 objNormalMatrix;
@@ -128,26 +51,26 @@ int main() {
         glm::vec3 obj_size(1.0f);
         Model *objectModel;
 
-        int num_cobjs = simulation.dynamicsWorld->getNumCollisionObjects();
+        int num_cobjs = game.simulation.dynamicsWorld->getNumCollisionObjects();
 
         for (unsigned int i = GlobalVariables::tiles + GlobalVariables::walls; i < num_cobjs; i++) {
             switch (i) {
                 case GlobalVariables::tiles + GlobalVariables::walls:
-                    objectModel = &carForGame.carModel;
+                    objectModel = &game.carForGame.carModel;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 1:
                 case GlobalVariables::tiles + GlobalVariables::walls + 2:
-                    objectModel = &carForGame.tyre1Model;
+                    objectModel = &game.carForGame.tyre1Model;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 3:
                 case GlobalVariables::tiles + GlobalVariables::walls + 4:
-                    objectModel = &carForGame.tyre2Model;
+                    objectModel = &game.carForGame.tyre2Model;
                     break;
                 default:
                     return (EXIT_FAILURE);
             }
             // taking the Collision Object from the list
-            btCollisionObject *obj = simulation.dynamicsWorld->getCollisionObjectArray()[i];
+            btCollisionObject *obj = game.simulation.dynamicsWorld->getCollisionObjectArray()[i];
             btRigidBody *body = btRigidBody::upcast(obj);
 
             // transformation matrix of the rigid body, as calculated by the physics engine
@@ -161,49 +84,41 @@ int main() {
             objNormalMatrix = glm::transpose(glm::inverse(glm::mat3(objModelMatrix)));
 
             //normal matrix
-            glUniformMatrix4fv(glGetUniformLocation(carForGame.carShader.Program, "model"), 1, GL_FALSE,
+            glUniformMatrix4fv(glGetUniformLocation(game.carForGame.carShader.Program, "model"), 1, GL_FALSE,
                                glm::value_ptr(objModelMatrix));
-            glUniformMatrix3fv(glGetUniformLocation(carForGame.carShader.Program, "normal"), 1, GL_FALSE,
+            glUniformMatrix3fv(glGetUniformLocation(game.carForGame.carShader.Program, "normal"), 1, GL_FALSE,
                                glm::value_ptr(objNormalMatrix));
 
-            carForGame.carShader.setVec3("lightColor", glm::vec3(1.0));
-            carForGame.carShader.setVec3("lightPos", lightPos);
-            carForGame.carShader.setVec3("viewPos", GlobalVariables::camera.Position);
+            game.carForGame.carShader.setVec3("lightColor", glm::vec3(1.0));
+            game.carForGame.carShader.setVec3("lightPos", GlobalVariables::lightPos);
+            game.carForGame.carShader.setVec3("viewPos", GlobalVariables::camera.Position);
 
-            carForGame.carShader.setFloat("material.shininess", 128.0f);
+            game.carForGame.carShader.setFloat("material.shininess", 128.0f);
 
-            carForGame.carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
-            carForGame.carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
-            carForGame.carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-            carForGame.carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
+            game.carForGame.carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
+            game.carForGame.carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
+            game.carForGame.carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
+            game.carForGame.carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
 
             glActiveTexture(GL_TEXTURE3);
-            carForGame.carShader.setInt("skybox", 3);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
+            game.carForGame.carShader.setInt("skybox", 3);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, game.cubeMapTexture);
 
-            objectModel->Draw(carForGame.carShader);
+            objectModel->Draw(game.carForGame.carShader);
 
             objModelMatrix = glm::mat4(1.0f);
             objNormalMatrix = glm::mat4(1.0f);
         }
 
-        view = glm::mat4(glm::mat3(GlobalVariables::camera.GetViewMatrix()));
+        game.view = glm::mat4(glm::mat3(GlobalVariables::camera.GetViewMatrix()));
+
         // Skybox
-        glDepthFunc(GL_LEQUAL);
-        skybox.skyBoxShader.Use();
-        skybox.skyBoxShader.setMat4("projection", projection);
-        skybox.skyBoxShader.setMat4("view", view);
-        glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthFunc(GL_LESS);
+        game.setSkybox();
 
         // Flip Buffers and Draw
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
     glfwTerminate();
     return EXIT_SUCCESS;
 }

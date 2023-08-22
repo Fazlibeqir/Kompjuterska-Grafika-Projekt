@@ -11,6 +11,10 @@
 
 class GlobalVariables{
 public:
+    static float deltaTime;
+    static float lastFrame;
+    static const unsigned int scrWidth = 960;
+    static const unsigned int scrHeight = 540;
     // Camera controls
     static Camera camera;
     static bool cameraFollow;
@@ -56,6 +60,9 @@ public:
     static const unsigned int track[grid_height][grid_width];
     static const float plane_edge;
     static const unsigned int walls = 4;
+
+    static GLfloat maxSecPerFrame;
+    static glm::vec3 lightPos;
 };
 
 

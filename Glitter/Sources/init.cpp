@@ -4,9 +4,6 @@
 #include "init.h"
 #include "GlobalVariables.h"
 
-float Init:: deltaTime = 0.0f;
-float Init:: lastFrame = 0.0f;
-
 GLFWwindow * Init:: initializeWindow(){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -18,7 +15,7 @@ GLFWwindow * Init:: initializeWindow(){
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     char *appName = "Velocity Xtreme";
-    GLFWwindow *window = glfwCreateWindow(scrWidth, scrHeight, appName, NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(GlobalVariables::scrWidth, GlobalVariables::scrHeight, appName, NULL, NULL);
     if (window == NULL) {
         std::cout << "ERROR: failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -44,8 +41,8 @@ GLFWwindow * Init:: initializeWindow(){
 
 void Init:: updateDeltaTime(){
     float currentFrame = glfwGetTime();
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
+    GlobalVariables::deltaTime = currentFrame - GlobalVariables::lastFrame;
+    GlobalVariables::lastFrame = currentFrame;
 }
 
 void Init:: mouseCallback(GLFWwindow *window, double xposd, double yposd){
@@ -105,13 +102,13 @@ void Init:: processInput(GLFWwindow *window){
 
     if (!GlobalVariables::cameraFollow) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            GlobalVariables::camera.ProcessKeyboard(FORWARD, deltaTime);
+            GlobalVariables::camera.ProcessKeyboard(FORWARD, GlobalVariables::deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            GlobalVariables::camera.ProcessKeyboard(BACKWARD, deltaTime);
+            GlobalVariables::camera.ProcessKeyboard(BACKWARD, GlobalVariables::deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            GlobalVariables::camera.ProcessKeyboard(LEFT, deltaTime);
+            GlobalVariables::camera.ProcessKeyboard(LEFT, GlobalVariables::deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            GlobalVariables::camera.ProcessKeyboard(RIGHT, deltaTime);
+            GlobalVariables::camera.ProcessKeyboard(RIGHT, GlobalVariables::deltaTime);
     }
 
     float steering_limit = 1.0f;

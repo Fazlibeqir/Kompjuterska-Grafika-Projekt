@@ -19,8 +19,8 @@ public:
     Shader skyBoxShader;
     std::vector<GLfloat> skyboxVertices;
 
-    Skybox(const string& terrainShaderVertexPath,
-           const string& terrainShaderFragmentPath);
+    Skybox(const string& skyboxShaderVertexPath,
+           const string& skyboxShaderFragmentPath);
     const std::vector<GLfloat> &getSkyboxVertices() const;
     unsigned int loadCubeMap();
     void generateBuffers(unsigned int &skyboxVAO,unsigned int &skyboxVBO);
