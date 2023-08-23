@@ -46,14 +46,14 @@ const float GlobalVariables:: cAngDamp = 0.4f;
 const float GlobalVariables:: tLinDamp = 0.01f;
 const float GlobalVariables:: tAngDamp = 0.2f;
 const unsigned int GlobalVariables::track[grid_height][grid_width] = {
-        {0, 0, 0, 0, 0},
-        {0, 1, 1, 1, 0},
-        {0, 1, 0, 1, 0},
-        {0, 1, 0, 1, 0},
-        {0, 1, 0, 1, 0},
-        {0, 1, 0, 1, 0},
-        {0, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0}
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
 const float GlobalVariables:: plane_edge = 20.0f;

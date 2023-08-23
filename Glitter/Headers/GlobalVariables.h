@@ -54,7 +54,7 @@ public:
     static const float tLinDamp;
     static const float tAngDamp;
 
-    static const unsigned int grid_width = 5;
+    static const unsigned int grid_width = 10;
     static const unsigned int grid_height = 8;
     static const unsigned int tiles = grid_width * grid_height;
     static const unsigned int track[grid_height][grid_width];
