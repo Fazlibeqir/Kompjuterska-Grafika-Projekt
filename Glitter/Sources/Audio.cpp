@@ -4,7 +4,8 @@
 
 #include "Audio.hpp"
 bool Audio::shouldStopPlaying = false;
-Audio::Audio(){
+float Audio::defaultVolume = 1.0f; // Initialize the static member variable
+Audio::Audio(): currentSound(nullptr){
     engine = createIrrKlangDevice();
     if (!engine) {
         cout << "Failed to create IrrKlang device." << endl;
@@ -25,7 +26,7 @@ Audio::Audio(){
     std::mt19937 g(rd());
     std::shuffle(songList.begin(), songList.end(), g);
 
-  songThread=thread(&Audio::SongPlaybackThread,engine,songList);
+  songThread=thread(&Audio::SongPlaybackThread,this,engine);
 };
 Audio::~Audio(){
     if (engine) {
@@ -36,7 +37,13 @@ Audio::~Audio(){
     }
 }
 
-void Audio::SongPlaybackThread(ISoundEngine* engine, const vector<string>& songList) {
+void Audio::setDefaultVolume(float newVolume) {
+   if(currentSound){
+       currentSound->setVolume(newVolume);
+   }
+}
+
+void Audio::SongPlaybackThread(ISoundEngine* engine) {
     bool shouldContinuePlaying = true;
 
     while (shouldContinuePlaying) {
@@ -53,16 +60,16 @@ void Audio::SongPlaybackThread(ISoundEngine* engine, const vector<string>& songL
                 songName = songName.substr(0, extensionPos);
             }
             cout << "Playing song: " << songName << endl;
-            ISound *sound = engine->play2D(song.c_str(), false, false, true);
-            sound->setVolume(1.0f);
-            while (!sound->isFinished()) {
+            currentSound = engine->play2D(song.c_str(), false, false, true);
+
+            while (!currentSound->isFinished()) {
                 if (shouldStopPlaying) {
-                    sound->stop();  // Stop the song if we need to stop playing
+                    currentSound->stop();  // Stop the song if we need to stop playing
                     break;
                 }
                 this_thread::sleep_for(chrono::milliseconds(100));
             }
-            sound->drop();
+            currentSound->drop();
         }
     }
 }

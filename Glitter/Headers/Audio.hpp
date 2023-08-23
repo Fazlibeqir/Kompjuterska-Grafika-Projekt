@@ -28,12 +28,15 @@ class Audio {
 public:
     Audio();
     ~Audio();
+    void setDefaultVolume(float newVolume);
 private:
     ISoundEngine* engine;
     vector<string> songList;
     std::thread songThread;
+    ISound *currentSound;
     static bool shouldStopPlaying;
-    static void SongPlaybackThread(ISoundEngine* engine, const vector<string>& songList);
+    static float defaultVolume;
+    void SongPlaybackThread(ISoundEngine* engine);
 
 };
 

@@ -5,6 +5,7 @@
 #include "GlobalVariables.h"
 #include "Game.h"
 #include "Audio.hpp"
+#include "MainMenu.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -17,6 +18,9 @@ int main() {
     GLFWwindow *window = Init::initializeWindow();
     map<const string, string> mapForPaths = Init::initializeShadersAndModelsPaths();
 
+    MainMenu mainMenu(window);
+    mainMenu.initializeImGui();
+    mainMenu.show();
     Game game(mapForPaths["carVertPath"],mapForPaths["carFragPath"],
               mapForPaths["carModelPath"],
               mapForPaths["tyre1ModelPath"],
@@ -25,13 +29,19 @@ int main() {
               mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"],
               mapForPaths["skyVertPath"],mapForPaths["skyFragPath"]);
     game.initialize();
-    Audio audio;
+   // Audio audio;
+
+    enum GameState { MENU, GAME };
+    GameState gameState = MENU;
+    bool stateChanged = false;
 
     while (!glfwWindowShouldClose(window)) {
         Init::updateDeltaTime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         Init::processInput(window);
 //        game.startGame(window);
+    if(gameState==GAME){
         game.simulation.updateMovements();
         // Step physics forward
         game.simulation.dynamicsWorld->stepSimulation((
@@ -114,11 +124,20 @@ int main() {
 
         // Skybox
         game.setSkybox();
+        mainMenu.renderImGui();
+    }else{
+        game.preGame();
+        mainMenu.renderImGui();
+        if(mainMenu.gameStarted){
+            gameState=GAME;
+        }
+    }
 
         // Flip Buffers and Draw
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    MainMenu::cleanImGui();
     glfwTerminate();
     return EXIT_SUCCESS;
 }

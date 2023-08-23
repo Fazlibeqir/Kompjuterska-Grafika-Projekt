@@ -11,6 +11,7 @@
 #include "Skybox.hpp"
 #include "Physics.h"
 #include "GLFW/glfw3.h"
+#include "GlobalVariables.h"
 
 class Game {
 public:
@@ -18,6 +19,8 @@ public:
     Terrain terrain;
     Skybox skybox;
     Physics simulation;
+    bool gameStarted;
+    float rotationAngle;
     unsigned int skyboxVAO, skyboxVBO;
     unsigned int cubeMapTexture;
     glm::mat4 projection;
@@ -36,7 +39,7 @@ public:
          const string& skyboxShaderFragmentPath);
 
     void initialize();
-
+    void preGame();
     void startGame(GLFWwindow *window);
     void updateCameraPosition();
     void transform();

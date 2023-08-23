@@ -81,8 +81,8 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Headers/camera.hpp
         Glitter/Sources/init.cpp
         Glitter/Headers/init.h
-        #Glitter/Sources/MainMenu.cpp
-        #Glitter/Headers/MainMenu.h
+        Glitter/Sources/MainMenu.cpp
+        Glitter/Headers/MainMenu.h
         #Glitter/Sources/Game.cpp
         #Glitter/Headers/Game.h
         #Glitter/Headers/Skybox.hpp
@@ -103,20 +103,6 @@ target_link_libraries(
         LinearMath
         ${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Vendor/irrKlang/libs/irrKlang.lib
 )
-#set(DLL_LIST
-#        "Glitter/irrKlang.dll"
-#        "Glitter/ikpFlac.dll"
-#        "Glitter/ikpMP3.dll"
-#        )
-#
-## Copy DLLs to the build directory
-#foreach(DLL ${DLL_LIST})
-#    add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
-#            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#            "${CMAKE_CURRENT_SOURCE_DIR}/${DLL}"
-#            $<TARGET_FILE_DIR:${PROJECT_NAME}
-#            )
-#endforeach()
 set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 #Specify relative paths for shader and model files

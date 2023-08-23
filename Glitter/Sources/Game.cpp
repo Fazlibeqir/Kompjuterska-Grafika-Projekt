@@ -20,7 +20,9 @@ Game::Game(const string& carShaderVertexPath,
             terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path),
             skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
             simulation()
-     {}
+     {
+         gameStarted=false;
+     }
 
 void Game::initialize() {
     skybox.generateBuffers(skyboxVAO, skyboxVBO);
@@ -30,7 +32,78 @@ void Game::initialize() {
     simulation.generateCamaro();
     simulation.addConstraints();
 }
+void Game::preGame(){
+    if (!gameStarted) {
+        // Background Fill Color
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        rotationAngle += 45.0f * GlobalVariables::deltaTime; // Adjust the rotation speed as desired
+        // Get car's position from Bullet Physics
+        btTransform carTransform;
+        simulation.car->getMotionState()->getWorldTransform(carTransform);
+        btVector3 carPosition = carTransform.getOrigin();
+        glm::vec3 carPositionGLM(carPosition.getX(), carPosition.getY(), carPosition.getZ());
+
+        // Set up camera to look at the car from the front
+        glm::vec3 cameraPosition = carPositionGLM - glm::vec3(0.0f, -3.0f, 10.0f);
+        glm::vec3 cameraTarget = carPositionGLM;
+        // Update camera's position and target
+        GlobalVariables::camera.Position = cameraPosition;
+
+        // Update camera's view and projection matrices
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+                                                (float)GlobalVariables::scrWidth / (float)GlobalVariables::scrHeight, 0.1f, 100.0f);
+        glm::mat4 view = GlobalVariables::camera.GetViewMatrix();
+
+        // Rendering the terrain (background model)
+        terrain.terrainShader.Use();
+        terrain.terrainShader.setMat4("projection", projection);
+        terrain.terrainShader.setMat4("view", view);
+        // Set other shader uniforms for terrain lighting, etc.
+
+        glm::mat4 planeModelMatrix = glm::mat4(1.0f);
+        for (unsigned int i = 0; i < GlobalVariables::grid_width; i++) {
+            for (unsigned int j = 0; j < GlobalVariables::grid_height; j++) {
+                // Adjust planeModelMatrix for each tile position
+                // ...
+                glUniformMatrix4fv(glGetUniformLocation(terrain.terrainShader.Program, "model"), 1, GL_FALSE,
+                                   glm::value_ptr(planeModelMatrix));
+
+                if (GlobalVariables::track[j][i] == 0) {
+                    terrain.terrainModel1.Draw(terrain.terrainShader); // Grass
+                } else if (GlobalVariables::track[j][i] == 1) {
+                    terrain.terrainModel2.Draw(terrain.terrainShader); // Asphalt
+                }
+                planeModelMatrix = glm::mat4(1.0f);
+            }
+        }
+
+        // Rendering the car and its parts
+        carForGame.carShader.Use();
+        carForGame.carShader.setMat4("projection", projection);
+        carForGame.carShader.setMat4("view", view);
+
+        glm::mat4 objModelMatrix;
+        glm::mat3 objNormalMatrix;
+
+        // ... (same car rendering code as before)
+
+        // Skybox
+        glDepthFunc(GL_LEQUAL);
+        skybox.skyBoxShader.Use();
+        skybox.skyBoxShader.setMat4("projection", projection);
+        skybox.skyBoxShader.setMat4("view", view);
+        glBindVertexArray(skyboxVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthFunc(GL_LESS);
+        if (rotationAngle >= 360.0f) {
+            rotationAngle = 0.0f;
+        }
+    }
+}
 void Game::startGame(GLFWwindow *window) {
     simulation.updateMovements();
     // Step physics forward
