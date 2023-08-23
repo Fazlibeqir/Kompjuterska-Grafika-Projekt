@@ -35,12 +35,12 @@ public:
          const string& terrainShaderFragmentPath,
          const string& terrainModel1Path,
          const string& terrainModel2Path,
+         const string& terrainModel3Path,
          const string& skyboxShaderVertexPath,
          const string& skyboxShaderFragmentPath);
 
     void initialize();
     void preGame();
-    void startGame(GLFWwindow *window);
     void updateCameraPosition();
     void transform();
     void setSkybox();

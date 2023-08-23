@@ -14,11 +14,14 @@ public:
     Shader terrainShader;
     Model terrainModel1;
     Model terrainModel2;
+    Model terrainModel3;
 
     Terrain(const string& terrainShaderVertexPath,
             const string& terrainShaderFragmentPath,
             const string& terrainModel1Path,
-            const string& terrainModel2Path);
+            const string& terrainModel2Path,
+            const string& terrainModel3Path
+            );
 };
 
 

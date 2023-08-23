@@ -26,7 +26,7 @@ int main() {
               mapForPaths["tyre1ModelPath"],
               mapForPaths["tyre2ModelPath"],
               mapForPaths["terrainVertPath"], mapForPaths["terrainFragPath"],
-              mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"],
+              mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"],mapForPaths["terrainModel3Path"],
               mapForPaths["skyVertPath"],mapForPaths["skyFragPath"]);
     game.initialize();
    // Audio audio;
@@ -127,6 +127,78 @@ int main() {
         mainMenu.renderImGui();
     }else{
         game.preGame();
+
+        glm::mat4 objModelMatrix;
+        glm::mat3 objNormalMatrix;
+
+        GLfloat matrix[16];
+        btTransform transform;
+
+        glm::vec3 obj_size(1.0f);
+        Model *objectModel;
+
+        int num_cobjs = game.simulation.dynamicsWorld->getNumCollisionObjects();
+
+        for (unsigned int i = GlobalVariables::tiles + GlobalVariables::walls; i < num_cobjs; i++) {
+            switch (i) {
+                case GlobalVariables::tiles + GlobalVariables::walls:
+                    objectModel = &game.carForGame.carModel;
+                    break;
+                case GlobalVariables::tiles + GlobalVariables::walls + 1:
+                case GlobalVariables::tiles + GlobalVariables::walls + 2:
+                    objectModel = &game.carForGame.tyre1Model;
+                    break;
+                case GlobalVariables::tiles + GlobalVariables::walls + 3:
+                case GlobalVariables::tiles + GlobalVariables::walls + 4:
+                    objectModel = &game.carForGame.tyre2Model;
+                    break;
+                default:
+                    return (EXIT_FAILURE);
+            }
+            // taking the Collision Object from the list
+            btCollisionObject *obj = game.simulation.dynamicsWorld->getCollisionObjectArray()[i];
+            btRigidBody *body = btRigidBody::upcast(obj);
+
+            // transformation matrix of the rigid body, as calculated by the physics engine
+            body->getMotionState()->getWorldTransform(transform);
+
+            //Bullet matrix (transform) to an array of floats
+            transform.getOpenGLMatrix(matrix);
+
+            //GLM transformation matrix
+            objModelMatrix = glm::make_mat4(matrix) * glm::scale(objModelMatrix, obj_size);
+            objNormalMatrix = glm::transpose(glm::inverse(glm::mat3(objModelMatrix)));
+
+            //normal matrix
+            glUniformMatrix4fv(glGetUniformLocation(game.carForGame.carShader.Program, "model"), 1, GL_FALSE,
+                               glm::value_ptr(objModelMatrix));
+            glUniformMatrix3fv(glGetUniformLocation(game.carForGame.carShader.Program, "normal"), 1, GL_FALSE,
+                               glm::value_ptr(objNormalMatrix));
+
+            game.carForGame.carShader.setVec3("lightColor", glm::vec3(1.0));
+            game.carForGame.carShader.setVec3("lightPos", GlobalVariables::lightPos);
+            game.carForGame.carShader.setVec3("viewPos", GlobalVariables::camera.Position);
+
+            game.carForGame.carShader.setFloat("material.shininess", 128.0f);
+
+            game.carForGame.carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
+            game.carForGame.carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
+            game.carForGame.carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
+            game.carForGame.carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
+
+            glActiveTexture(GL_TEXTURE3);
+            game.carForGame.carShader.setInt("skybox", 3);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, game.cubeMapTexture);
+
+            objectModel->Draw(game.carForGame.carShader);
+
+            objModelMatrix = glm::mat4(1.0f);
+            objNormalMatrix = glm::mat4(1.0f);
+        }
+        game.view = glm::mat4(glm::mat3(GlobalVariables::camera.GetViewMatrix()));
+
+        // Skybox
+        game.setSkybox();
         mainMenu.renderImGui();
         if(mainMenu.gameStarted){
             gameState=GAME;

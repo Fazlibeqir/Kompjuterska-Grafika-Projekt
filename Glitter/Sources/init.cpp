@@ -181,6 +181,7 @@ map<const string, string> Init:: initializeShadersAndModelsPaths(){
     returnMap["tyre2ModelPath"] =  string(MODEL_DIR)+"\\car\\tyreb.obj";
     returnMap["terrainModel1Path"] =  string(SKY_DIR)+"\\terrian\\grass.obj";
     returnMap["terrainModel2Path"] =  string(SKY_DIR)+"\\terrian\\roads.obj";
+    returnMap["terrainModel3Path"] =  string(SKY_DIR)+"\\pre-game\\untitled.obj";
 
     return returnMap;
 }

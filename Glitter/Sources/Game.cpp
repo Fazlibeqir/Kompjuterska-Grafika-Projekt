@@ -14,10 +14,11 @@ Game::Game(const string& carShaderVertexPath,
      const string& terrainShaderFragmentPath,
      const string& terrainModel1Path,
      const string& terrainModel2Path,
+     const string& terrainModel3Path,
      const string& skyboxShaderVertexPath,
      const string& skyboxShaderFragmentPath)
         :   carForGame(carShaderVertexPath, carShaderFragmentPath, carModelPath, tyre1ModelPath, tyre2ModelPath),
-            terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path),
+            terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,terrainModel3Path),
             skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
             simulation()
      {
@@ -34,12 +35,18 @@ void Game::initialize() {
 }
 void Game::preGame(){
     if (!gameStarted) {
-        // Background Fill Color
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        simulation.updateMovements();
+        // Step physics forward
+        simulation.dynamicsWorld->stepSimulation((
+                                                              GlobalVariables::deltaTime < GlobalVariables::maxSecPerFrame ?
+                                                              GlobalVariables::deltaTime : GlobalVariables::maxSecPerFrame), 10);
 
-        rotationAngle += 45.0f * GlobalVariables::deltaTime; // Adjust the rotation speed as desired
-        // Get car's position from Bullet Physics
+        updateCameraPosition();
+        projection = glm::perspective(glm::radians(45.0f),
+                                      (float) GlobalVariables::scrWidth / (float) GlobalVariables::scrHeight,
+                                      0.1f, 10000.0f);
+        view = GlobalVariables::camera.GetViewMatrix();
+
         terrain.terrainShader.Use();
         terrain.terrainShader.setMat4("projection", projection);
         terrain.terrainShader.setMat4("view", view);
@@ -51,57 +58,35 @@ void Game::preGame(){
 
         glm::mat4 planeModelMatrix = glm::mat4(1.0f);
 
-        planeModelMatrix = glm::translate(planeModelMatrix,
-                                          simulation.plane_pos[(GlobalVariables::grid_height)]);
-        glUniformMatrix4fv(glGetUniformLocation( terrain.terrainShader.Program, "model"), 1, GL_FALSE,
-                           glm::value_ptr(planeModelMatrix));
+                planeModelMatrix = glm::translate(planeModelMatrix, simulation.plane_pos[(GlobalVariables::grid_height)]);
+                glUniformMatrix4fv(glGetUniformLocation( terrain.terrainShader.Program, "model"), 1, GL_FALSE,
+                                   glm::value_ptr(planeModelMatrix));
 
 
-        terrain.terrainShader.setFloat("material.shininess", 4.0f);
-        terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
-        terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-        terrain.terrainModel1.Draw( terrain.terrainShader);
-
-        // Asphalt
-        terrain.terrainShader.setFloat("material.shininess", 16.0f);
-        terrain.terrainShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-        terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
-        terrain.terrainModel2.Draw( terrain.terrainShader);
+                    // Grass
+                    terrain.terrainShader.setFloat("material.shininess", 4.0f);
+                    terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
+                    terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+                    terrain.terrainModel3.Draw( terrain.terrainShader);
 
 
-        planeModelMatrix = glm::mat4(1.0f);
+
+
+                planeModelMatrix = glm::mat4(1.0f);
+
+
+
+
 
         carForGame.carShader.Use();
         carForGame.carShader.setMat4("projection", projection);
         carForGame.carShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
+        // Asphalt
 
+        // Transforms
 
-
-        // Rendering the car and its parts
-        carForGame.carShader.Use();
-        carForGame.carShader.setMat4("projection", projection);
-        carForGame.carShader.setMat4("view", view);
-
-        glm::mat4 objModelMatrix;
-        glm::mat3 objNormalMatrix;
-
-        // ... (same car rendering code as before)
-
-        // Skybox
-        glDepthFunc(GL_LEQUAL);
-        skybox.skyBoxShader.Use();
-        skybox.skyBoxShader.setMat4("projection", projection);
-        skybox.skyBoxShader.setMat4("view", view);
-        glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthFunc(GL_LESS);
-        if (rotationAngle >= 360.0f) {
-            rotationAngle = 0.0f;
-        }
     }
 }
 void Game:: updateCameraPosition(){
@@ -158,12 +143,19 @@ void Game:: transform(){
                 terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
                 terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
                 terrain.terrainModel1.Draw( terrain.terrainShader);
+            }else if(GlobalVariables::track[j][i]==1){
+                //around the race track doing this for speed and car stability purposes
+                terrain.terrainShader.setFloat("material.shininess",  4.0f);
+                terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
+                terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+                terrain.terrainModel1.Draw( terrain.terrainShader);
             }
 
             planeModelMatrix = glm::mat4(1.0f);
         }
 
     }
+    //Race Track
     terrain.terrainShader.setFloat("material.shininess", 16.0f);
     terrain.terrainShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
     terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);

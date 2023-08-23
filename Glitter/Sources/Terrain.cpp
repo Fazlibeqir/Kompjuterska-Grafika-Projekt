@@ -7,7 +7,8 @@
 Terrain:: Terrain(const string& terrainShaderVertexPath,
                   const string& terrainShaderFragmentPath,
                   const string& terrainModel1Path,
-                  const string& terrainModel2Path)
+                  const string& terrainModel2Path,
+                  const string& terrainModel3Path)
                   : terrainShader(terrainShaderVertexPath.c_str(), terrainShaderFragmentPath.c_str()),
-                    terrainModel1(terrainModel1Path), terrainModel2(terrainModel2Path){
+                    terrainModel1(terrainModel1Path), terrainModel2(terrainModel2Path),terrainModel3(terrainModel3Path){
 }
