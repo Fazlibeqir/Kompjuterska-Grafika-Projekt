@@ -54,7 +54,7 @@ void Audio::SongPlaybackThread(ISoundEngine* engine, const vector<string>& songL
             }
             cout << "Playing song: " << songName << endl;
             ISound *sound = engine->play2D(song.c_str(), false, false, true);
-            sound->setVolume(1.0f);
+            sound->setVolume(0.1f);
             while (!sound->isFinished()) {
                 if (shouldStopPlaying) {
                     sound->stop();  // Stop the song if we need to stop playing
