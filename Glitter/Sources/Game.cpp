@@ -96,8 +96,8 @@ void Game:: transform(){
 //            planeModelMatrix = glm::mat4(1.0f);
 //        }
 //    }
-    planeModelMatrix = glm::translate(planeModelMatrix, glm::vec3(-39.0f, -2.0f, -10.0f));
-    planeModelMatrix = glm::rotate(planeModelMatrix, glm::vec3(2.5f));
+    planeModelMatrix = glm::translate(planeModelMatrix, glm::vec3(-39.0f, -2.0f, -20.0f));
+    planeModelMatrix = glm::rotate(planeModelMatrix,  glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     planeModelMatrix = glm::scale(planeModelMatrix, glm::vec3(2.5f));
     glUniformMatrix4fv(glGetUniformLocation(terrain.terrainShader.Program, "model"), 1, GL_FALSE,
                        glm::value_ptr(planeModelMatrix));
