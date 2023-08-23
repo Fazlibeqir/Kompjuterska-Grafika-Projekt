@@ -171,7 +171,7 @@ void Physics:: generateInvisibleWalls(){
 
 void Physics:: generateCamaro(){
     // Camaro
-    glm::vec3 spawn = glm::vec3(-40.0f, 0.0f, 0.0f);  // start position in world
+    glm::vec3 spawn = glm::vec3(0.0f, 0.0f, 0.0f);  // start position in world
 
     glm::vec3 car_pos = glm::vec3(0.0f, 1.0f, 0.0f) + spawn;
     glm::vec3 car_size = glm::vec3(1.0f, 0.6f, 3.0f);

@@ -3,7 +3,6 @@
 ////
 #include "Game.h"
 #include "glm/gtc/type_ptr.hpp"
-#include "GLFW/glfw3.h"
 
 Game::Game(const string& carShaderVertexPath,
      const string& carShaderFragmentPath,
@@ -73,58 +72,29 @@ void Game:: transform(){
     glm::mat4 model = glm::mat4(1.0f);
 
     glm::mat4 planeModelMatrix = glm::mat4(1.0f);
-//    for (unsigned int i = 0; i < GlobalVariables::grid_width; i++) {
-//        for (unsigned int j = 0; j < GlobalVariables::grid_height; j++) {
-//            planeModelMatrix = glm::translate(planeModelMatrix, simulation.plane_pos[i * (GlobalVariables::grid_height) + j]);
-//            glUniformMatrix4fv(glGetUniformLocation( terrain.terrainShader.Program, "model"), 1, GL_FALSE,
-//                               glm::value_ptr(planeModelMatrix));
-//
-//            if (GlobalVariables::track[j][i] == 0) {
-//                // Grass
-//                 terrain.terrainShader.setFloat("material.shininess", 4.0f);
-//                terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
-//                terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-//                terrain.terrainModel1.Draw( terrain.terrainShader);
-//            } else if (GlobalVariables::track[j][i] == 1) {
-//                // Asphalt
-//                terrain.terrainShader.setFloat("material.shininess", 16.0f);
-//                terrain.terrainShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-//                terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
-//                terrain.terrainModel2.Draw( terrain.terrainShader);
-//            }
-//
-//            planeModelMatrix = glm::mat4(1.0f);
-//        }
-//    }
-    planeModelMatrix = glm::translate(planeModelMatrix, glm::vec3(-39.0f, -2.0f, -20.0f));
+    planeModelMatrix = glm::translate(planeModelMatrix, glm::vec3(0.0f, -2.0f, -20.0f));
     planeModelMatrix = glm::rotate(planeModelMatrix,  glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     planeModelMatrix = glm::scale(planeModelMatrix, glm::vec3(2.5f));
     glUniformMatrix4fv(glGetUniformLocation(terrain.terrainShader.Program, "model"), 1, GL_FALSE,
                        glm::value_ptr(planeModelMatrix));
 
+    // Asphalt
+    terrain.terrainShader.setFloat("material.shininess", 16.0f);
+    terrain.terrainShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
+    terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
+    terrain.terrainModel1.Draw(terrain.terrainShader);
 
     // Grass
     terrain.terrainShader.setFloat("material.shininess", 4.0f);
     terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
     terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-    terrain.terrainModel1.Draw(terrain.terrainShader);
-
-    // Asphalt
-    terrain.terrainShader.setFloat("material.shininess", 16.0f);
-    terrain.terrainShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-    terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
-    //terrainModel2.Draw(terrainShader);
-
-
-    planeModelMatrix = glm::mat4(1.0f);
+    terrain.terrainModel2.Draw(terrain.terrainShader);
 
     carForGame.carShader.Use();
     carForGame.carShader.setMat4("projection", projection);
     carForGame.carShader.setMat4("view", view);
     model = glm::mat4(1.0f);
     model = glm::translate(model,glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
-
-
 }
 
 void Game:: setSkybox(){
