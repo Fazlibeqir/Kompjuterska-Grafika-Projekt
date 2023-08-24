@@ -12,7 +12,6 @@ MainMenu::MainMenu(GLFWwindow* inWindow)
     ImGuiIO& io = ImGui::GetIO();
     ImGui::StyleColorsDark();
 }
-
 void MainMenu::renderMainMenu(){
     ImGui::SetNextWindowPos(ImVec2(50, 50));  // Set the desired position
     ImGui::SetNextWindowSize(ImVec2(220, 220)); // Set the desired size
@@ -21,31 +20,35 @@ void MainMenu::renderMainMenu(){
     // Set the button size and style
     ImVec2 buttonSize(200, 40);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10));
-    if (ImGui::Button("Start Game",buttonSize)|| glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
-    {
-        // Handle start game action
-        gameStarted = true;
-        hide();
 
-    }else{
-        gameStarted = false;
-    }
-
-    if (ImGui::Button("Settings",buttonSize))
-    {
-        // Handle settings action
-        showSettings();
-    }
-
-    if (ImGui::Button("Quit",buttonSize))
-    {
-        // Handle quit action
-        quitGame();
-    }
+    renderMainMenuLogic(buttonSize);
 
     ImGui::Text("Right or left to choose a car");
     ImGui::PopStyleVar();
     ImGui::End();
+}
+
+void MainMenu::renderMainMenuLogic(const ImVec2& buttonSize) {
+    // Handle start game action
+    if (ImGui::Button("Start Game", buttonSize) || glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+        if (GlobalVariables::returnToMenuClicked == true)
+            GlobalVariables::returnToMenuClicked = !GlobalVariables::returnToMenuClicked;
+
+        gameStarted = true;
+        hide();
+    } else {
+        gameStarted = false;
+    }
+
+    // Handle settings action
+    if (ImGui::Button("Settings", buttonSize)) {
+        showSettingsWindow = !showSettingsWindow; // Toggle visibility
+    }
+
+    // Handle quit action
+    if (ImGui::Button("Quit", buttonSize)) {
+        quitGame();
+    }
 }
 void MainMenu:: initializeImGui() const
 {
@@ -61,28 +64,20 @@ void MainMenu:: cleanImGui(){
 
 
 void MainMenu:: renderImGui(){
-    if(isMenuVisible()) {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
 
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    if(isMenuVisible()||GlobalVariables::returnToMenuClicked) {
         renderMainMenu();
         if (showSettingsWindow) {
+            // Handle settings action
             showSettings();
         }
-
+    }
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
-    else{
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
 
-        //game.RenderScore();
-
-        ImGui::Render();
-    }
 }
 
 void MainMenu::quitGame() const {
@@ -93,7 +88,7 @@ void MainMenu::quitGame() const {
 }
 
 void MainMenu::showSettings() {
-    showSettingsWindow = true;
+
     ImGui::Begin("Settings");
     ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f);
     if (ImGui::Button("Apply")) {

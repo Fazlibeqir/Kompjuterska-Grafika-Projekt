@@ -63,6 +63,8 @@ public:
 
     static GLfloat maxSecPerFrame;
     static glm::vec3 lightPos;
+
+    static bool returnToMenuClicked;
 };
 
 

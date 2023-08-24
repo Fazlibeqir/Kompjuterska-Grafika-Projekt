@@ -20,7 +20,7 @@ Game::Game(const string& carShaderVertexPath,
         :   carForGame(carShaderVertexPath, carShaderFragmentPath, carModelPath, tyre1ModelPath, tyre2ModelPath),
             terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,terrainModel3Path),
             skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
-            simulation()
+            simulation(),rotationAngle(0.0f)
      {
          gameStarted=false;
      }
@@ -35,12 +35,6 @@ void Game::initialize() {
 }
 void Game::preGame(){
     if (!gameStarted) {
-        simulation.updateMovements();
-        // Step physics forward
-        simulation.dynamicsWorld->stepSimulation((
-                                                              GlobalVariables::deltaTime < GlobalVariables::maxSecPerFrame ?
-                                                              GlobalVariables::deltaTime : GlobalVariables::maxSecPerFrame), 10);
-
         updateCameraPosition();
         projection = glm::perspective(glm::radians(45.0f),
                                       (float) GlobalVariables::scrWidth / (float) GlobalVariables::scrHeight,
@@ -74,19 +68,15 @@ void Game::preGame(){
 
                 planeModelMatrix = glm::mat4(1.0f);
 
-
-
-
-
         carForGame.carShader.Use();
         carForGame.carShader.setMat4("projection", projection);
         carForGame.carShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
-        // Asphalt
 
-        // Transforms
-
+        if (rotationAngle >= 360.0f) {
+            rotationAngle = 0.0f;
+        }
     }
 }
 void Game:: updateCameraPosition(){

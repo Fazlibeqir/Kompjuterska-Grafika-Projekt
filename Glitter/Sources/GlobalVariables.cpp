@@ -60,3 +60,5 @@ const float GlobalVariables:: plane_edge = 20.0f;
 
 float GlobalVariables:: maxSecPerFrame = 1.0f / 50.0f;
 glm::vec3 GlobalVariables:: lightPos(0.0,2.0,-1.0);
+
+bool GlobalVariables::returnToMenuClicked = false;

@@ -1,6 +1,7 @@
 //
 // Created by Elena on 08.7.2023.
 //
+#include <thread>
 #include "init.h"
 #include "GlobalVariables.h"
 
@@ -84,6 +85,16 @@ void Init:: scrollCallback(GLFWwindow *window, double d, double y){
         GlobalVariables::basePitch = 0.0f;
 }
 void Init:: processInput(GLFWwindow *window){
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+        // Toggle menu visibility when the Escape key is pressed
+        GlobalVariables::returnToMenuClicked = !GlobalVariables::returnToMenuClicked;
+
+        // You may want to add additional logic here, such as pausing the game
+        // when the menu is visible and resuming when it's hidden.
+
+        // Wait a short duration to prevent multiple toggles on a single key press
+      //  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         glfwDestroyWindow(window);
     }
@@ -139,6 +150,7 @@ void Init:: processInput(GLFWwindow *window){
 
     // Car controls - handbrake
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        GlobalVariables::acceleration = -100;
         GlobalVariables::handbrake = TRUE;
     } else {
         GlobalVariables::handbrake = FALSE;

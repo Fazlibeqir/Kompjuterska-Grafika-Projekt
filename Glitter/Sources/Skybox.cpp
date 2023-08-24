@@ -53,81 +53,17 @@ Skybox::Skybox(const std::string &skyboxShaderVertexPath,
     };
 
 }
-
-//Skybox::Skybox() {
-//    vertices = {
-//            //    Position + Normal + TextOrd
-//            114.5f,  -1.7f, 111.5f,   0.0f, 0.0f, 0.0f,
-//            114.5f,  -1.7f, -111.5f,  0.0f, 1.0f, 0.0f,
-//            -112.0f, -1.7f, 111.5f,   0.0f, 0.0f, 1.0f,
-//            -112.0f, -1.7f, -111.5f,  0.0f, 1.0f, 1.0f,
-//
-//    };
-//     indices = {0, 1, 2, 3,};
-//     skyboxVertices = {            // Positions
-//            -1.0f,  1.0f, -1.0f,
-//            -1.0f, -1.0f, -1.0f,
-//            1.0f, -1.0f, -1.0f,
-//            1.0f, -1.0f, -1.0f,
-//            1.0f,  1.0f, -1.0f,
-//            -1.0f,  1.0f, -1.0f,
-//
-//            -1.0f, -1.0f,  1.0f,
-//            -1.0f, -1.0f, -1.0f,
-//            -1.0f,  1.0f, -1.0f,
-//            -1.0f,  1.0f, -1.0f,
-//            -1.0f,  1.0f,  1.0f,
-//            -1.0f, -1.0f,  1.0f,
-//
-//            1.0f, -1.0f, -1.0f,
-//            1.0f, -1.0f,  1.0f,
-//            1.0f,  1.0f,  1.0f,
-//            1.0f,  1.0f,  1.0f,
-//            1.0f,  1.0f, -1.0f,
-//            1.0f, -1.0f, -1.0f,
-//
-//            -1.0f, -1.0f,  1.0f,
-//            -1.0f,  1.0f,  1.0f,
-//            1.0f,  1.0f,  1.0f,
-//            1.0f,  1.0f,  1.0f,
-//            1.0f, -1.0f,  1.0f,
-//            -1.0f, -1.0f,  1.0f,
-//
-//            -1.0f,  1.0f, -1.0f,
-//            1.0f,  1.0f, -1.0f,
-//            1.0f,  1.0f,  1.0f,
-//            1.0f,  1.0f,  1.0f,
-//            -1.0f,  1.0f,  1.0f,
-//            -1.0f,  1.0f, -1.0f,
-//
-//            -1.0f, -1.0f, -1.0f,
-//            -1.0f, -1.0f,  1.0f,
-//            1.0f, -1.0f, -1.0f,
-//            1.0f, -1.0f, -1.0f,
-//            -1.0f, -1.0f,  1.0f,
-//            1.0f, -1.0f,  1.0f
-//    };
-//}
-
-//const std::vector<GLfloat> &Skybox::getVertices() const {
-//    return vertices;
-//}
-//
-//const std::vector<GLuint> &Skybox::getIndices() const {
-//    return indices;
-//}
-//
 const std::vector<GLfloat> &Skybox::getSkyboxVertices() const {
     return skyboxVertices;
 }
 
 unsigned int Skybox:: loadCubeMap() {
-    string right = string(SKY_DIR) + "\\skybox\\right.png";
-    string left = string(SKY_DIR) + "\\skybox\\left.png";
-    string top = string(SKY_DIR) + "\\skybox\\top.png";
-    string bottom = string(SKY_DIR) + "\\skybox\\bottom.png";
-    string back = string(SKY_DIR) + "\\skybox\\back.png";
-    string front = string(SKY_DIR) + "\\skybox\\front.png";
+    string right = string(SKY_DIR) + "\\skybox2\\clouds1_east.bmp";
+    string left = string(SKY_DIR) + "\\skybox2\\clouds1_west.bmp";
+    string top = string(SKY_DIR) + "\\skybox2\\clouds1_up.bmp";
+    string bottom = string(SKY_DIR) + "\\skybox2\\clouds1_down.bmp";
+    string back = string(SKY_DIR) + "\\skybox2\\clouds1_south.bmp";
+    string front = string(SKY_DIR) + "\\skybox2\\clouds1_north.bmp";
     unsigned int textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);

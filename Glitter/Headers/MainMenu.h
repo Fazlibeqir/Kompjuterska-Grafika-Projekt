@@ -18,6 +18,7 @@ class MainMenu {
 public:
     MainMenu(GLFWwindow* inWindow);
     void renderMainMenu();
+    void renderMainMenuLogic(const ImVec2& buttonSize);
     void initializeImGui() const;
     static void cleanImGui();
     void renderImGui();
@@ -26,6 +27,7 @@ public:
     bool isMenuVisible() const {
         return showMenu;
     }
+
     bool gameStarted;
     GLFWwindow* window;
 private:

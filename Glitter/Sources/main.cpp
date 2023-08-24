@@ -39,9 +39,9 @@ int main() {
         Init::updateDeltaTime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Init::processInput(window);
 //        game.startGame(window);
     if(gameState==GAME){
+        Init::processInput(window);
         game.simulation.updateMovements();
         // Step physics forward
         game.simulation.dynamicsWorld->stepSimulation((
@@ -125,7 +125,18 @@ int main() {
         // Skybox
         game.setSkybox();
         mainMenu.renderImGui();
+        if (GlobalVariables::returnToMenuClicked) {
+            // Transition back to the main menu
+            mainMenu.gameStarted = false;
+            mainMenu.show();
+        }else{
+            mainMenu.gameStarted = true;
+            mainMenu.hide();
+        }
+
     }else{
+        game.rotationAngle+=45.0f*GlobalVariables::deltaTime;
+        std::cout << "Rotation Angle: " << game.rotationAngle << std::endl;
         game.preGame();
 
         glm::mat4 objModelMatrix;
@@ -136,6 +147,7 @@ int main() {
 
         glm::vec3 obj_size(1.0f);
         Model *objectModel;
+        btRigidBody *tireBody = nullptr;
 
         int num_cobjs = game.simulation.dynamicsWorld->getNumCollisionObjects();
 
@@ -147,10 +159,18 @@ int main() {
                 case GlobalVariables::tiles + GlobalVariables::walls + 1:
                 case GlobalVariables::tiles + GlobalVariables::walls + 2:
                     objectModel = &game.carForGame.tyre1Model;
+                    tireBody = game.simulation.t1;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 3:
                 case GlobalVariables::tiles + GlobalVariables::walls + 4:
                     objectModel = &game.carForGame.tyre2Model;
+                    tireBody = game.simulation.t2;
+                    break;
+                case GlobalVariables::tiles + GlobalVariables::walls + 5:
+                    tireBody = game.simulation.t3; // Correct the tire index
+                    break;
+                case GlobalVariables::tiles + GlobalVariables::walls + 6:
+                    tireBody = game.simulation.t4; // Correct the tire index
                     break;
                 default:
                     return (EXIT_FAILURE);
@@ -162,6 +182,10 @@ int main() {
             // transformation matrix of the rigid body, as calculated by the physics engine
             body->getMotionState()->getWorldTransform(transform);
 
+            //Rotation XD
+            btQuaternion rotation;
+            rotation.setRotation(btVector3(0.0f,1.0f,0.0f),glm::radians(game.rotationAngle));
+            transform.setRotation(rotation);
             //Bullet matrix (transform) to an array of floats
             transform.getOpenGLMatrix(matrix);
 
