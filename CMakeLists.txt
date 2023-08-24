@@ -90,7 +90,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
         Glitter/Headers/Physics.h
         #Glitter/Headers/FrameBuffer.hpp
         #Glitter/Sources/FrameBuffer.cpp
-        )
+        Glitter/Headers/Score.hpp)
 target_link_libraries(
         ${PROJECT_NAME}
         assimp
@@ -107,6 +107,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 #Specify relative paths for shader and model files
 set(SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Shaders")
+set(ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets")
 set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/model")
 set(SKY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/img")
 set(AUDIO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Glitter/Sources/assets/media")
@@ -116,6 +117,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         MODEL_DIR="${MODEL_DIR}"
         SKY_DIR="${SKY_DIR}"
         AUDIO_DIR="${AUDIO_DIR}"
+        ASSETS_DIR="${ASSETS_DIR}"
         )
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD

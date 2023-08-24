@@ -17,6 +17,10 @@ Physics::Physics(){
     // set the gravity force
     this->dynamicsWorld->setGravity(btVector3(0.0f, -9.82f, 0.0f));
 }
+glm::vec3 Physics::getPlayerPosition() {
+    btVector3 bulletPlayerPosition = car->getWorldTransform().getOrigin();
+    return glm::vec3(bulletPlayerPosition.x(), bulletPlayerPosition.y(), bulletPlayerPosition.z());
+}
 
 btRigidBody * Physics::createRigidBody(int type, glm::vec3 pos, glm::vec3 size, glm::vec3 rot, float m, float friction, float restitution,
                 short group, short mask) {

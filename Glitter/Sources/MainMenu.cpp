@@ -3,6 +3,7 @@
 //
 
 #include "MainMenu.h"
+#include "Score.hpp"
 
 
 MainMenu::MainMenu(GLFWwindow* inWindow)
@@ -77,6 +78,9 @@ void MainMenu:: renderImGui(){
         }
     }
     currentlyPlaying();
+    if (gameStarted) {
+        renderScoreWindow();
+    }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -121,6 +125,72 @@ void MainMenu::toggleFullScreen(){
         }
     }
 }
+bool MainMenu::hasCrossedFinishLine(const glm::vec3& currentPlayerPosition) {
+    // Define the boundaries of the box-like finish line region
+    glm::vec3 boxMin = playerPosition - glm::vec3(0.5f);
+    glm::vec3 boxMax = playerPosition + glm::vec3(0.5f);
+
+    // Check if the current player position is within the box-like region
+    bool withinBox = currentPlayerPosition.x >= boxMin.x && currentPlayerPosition.x <= boxMax.x &&
+                     currentPlayerPosition.y >= boxMin.y && currentPlayerPosition.y <= boxMax.y &&
+                     currentPlayerPosition.z >= boxMin.z && currentPlayerPosition.z <= boxMax.z;
+
+    // If within the box-like region, increment the crossing count and return true if crossed twice
+    if (withinBox) {
+        if (crossingCount < 2) {
+            crossingCount++;
+        }
+    }
+
+    return crossingCount >= 2;
+}
+
+
+void MainMenu::setPlayerPosition(const glm::vec3& position) {
+    playerPosition = position;
+}
+void MainMenu::updateRaceStatus() {
+    // Check for finish line crossing using playerPosition
+    if (!raceFinished && hasCrossedFinishLine(playerPosition)) {
+        raceFinished = true;
+        finishedRaceTime = 600.0f - countdownTimer;
+        // Handle race completion
+    }
+}
+void MainMenu::renderScoreWindow() {
+    ImGui::SetNextWindowPos(ImVec2(375, 50));
+    ImGui::SetNextWindowSize(ImVec2(200, 70));
+    ImGui::Begin("Score", nullptr, ImGuiWindowFlags_NoResize);
+
+    const std::string scorePath=string(ASSETS_DIR)+"\\highscore.txt";
+    // Read the high score from the file
+    Score score(scorePath);
+    float currentHighScore = score.readHighScore();
+
+    int minutes = static_cast<int>(countdownTimer) / 60;
+    int seconds = static_cast<int>(countdownTimer) % 60;
+    ImGui::Text("Time left: %02d:%02d", minutes, seconds);
+    countdownTimer -= ImGui::GetIO().DeltaTime;
+
+    // Compare with high score and update if necessary
+    if (countdownTimer <= 0.0f) {
+        if (currentHighScore == 0.0f || currentHighScore > finishedRaceTime) {
+            score.updateHighScore(finishedRaceTime);
+        }
+        countdownTimer = 600.0f; // Reset the timer
+    }
+    // Display high score information
+    if (currentHighScore == 0.0f) {
+        ImGui::Text("High Score: No score yet");
+    } else {
+        int highScoreMinutes = static_cast<int>(currentHighScore) / 60;
+        int highScoreSeconds = static_cast<int>(currentHighScore) % 60;
+        ImGui::Text("High Score: %02d:%02d", highScoreMinutes, highScoreSeconds);
+    }
+
+    ImGui::End();
+}
+
 
 void MainMenu::currentlyPlaying() {
     const std::string& songName = audio.getCurrentSongName();

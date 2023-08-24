@@ -41,6 +41,9 @@ int main() {
 
 //        game.startGame(window);
     if(gameState==GAME){
+        glm::vec3 playerPosition = game.simulation.getPlayerPosition();
+        mainMenu.setPlayerPosition(playerPosition);
+        mainMenu.updateRaceStatus();
         Init::processInput(window);
         game.simulation.updateMovements();
         // Step physics forward
@@ -136,7 +139,6 @@ int main() {
 
     }else{
         game.rotationAngle+=45.0f*GlobalVariables::deltaTime;
-        //std::cout << "Rotation Angle: " << game.rotationAngle << std::endl;
         game.preGame();
 
         glm::mat4 objModelMatrix;

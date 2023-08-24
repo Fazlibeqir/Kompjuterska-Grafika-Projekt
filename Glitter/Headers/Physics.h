@@ -35,6 +35,7 @@ public:
     glm::vec3 plane_pos[GlobalVariables::tiles];
 
     Physics();
+    glm::vec3 getPlayerPosition();
     btRigidBody * createRigidBody(int type, glm::vec3 pos,
                                     glm::vec3 size,
                                     glm::vec3 rot,
