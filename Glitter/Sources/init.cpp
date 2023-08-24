@@ -150,7 +150,6 @@ void Init:: processInput(GLFWwindow *window){
 
     // Car controls - handbrake
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        GlobalVariables::acceleration = -100;
         GlobalVariables::handbrake = TRUE;
     } else {
         GlobalVariables::handbrake = FALSE;

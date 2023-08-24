@@ -42,7 +42,14 @@ void Audio::setDefaultVolume(float newVolume) {
        currentSound->setVolume(newVolume);
    }
 }
-
+const std::string& Audio::getCurrentSongName() const {
+    return currentSongName;
+}
+void Audio::playSong(const string& songName,const string &song) {
+    lock_guard<mutex> lock(songNameMutex);
+    currentSongName = songName;
+    currentSound = engine->play2D(song.c_str(), false, false, true);
+}
 void Audio::SongPlaybackThread(ISoundEngine* engine) {
     bool shouldContinuePlaying = true;
 
@@ -60,7 +67,7 @@ void Audio::SongPlaybackThread(ISoundEngine* engine) {
                 songName = songName.substr(0, extensionPos);
             }
             cout << "Playing song: " << songName << endl;
-            currentSound = engine->play2D(song.c_str(), false, false, true);
+            playSong(songName,song);
 
             while (!currentSound->isFinished()) {
                 if (shouldStopPlaying) {

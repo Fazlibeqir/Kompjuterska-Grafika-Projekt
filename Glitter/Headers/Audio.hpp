@@ -20,6 +20,8 @@
 #include <Windows.h>
 #include <algorithm>
 #include <random>
+#include <mutex>
+
 using namespace irrklang;
 using namespace std;
 #pragma comment(lib, "irrKlang.lib")
@@ -29,11 +31,16 @@ public:
     Audio();
     ~Audio();
     void setDefaultVolume(float newVolume);
+    const std::string& getCurrentSongName() const;
+    void playSong(const string& songName,const string &song);
 private:
     ISoundEngine* engine;
     vector<string> songList;
-    std::thread songThread;
+    thread songThread;
     ISound *currentSound;
+    mutex songNameMutex;
+    string currentSongName;
+
     static bool shouldStopPlaying;
     static float defaultVolume;
     void SongPlaybackThread(ISoundEngine* engine);

@@ -37,6 +37,8 @@ private:
     bool showMenu= true;
     void quitGame() const;
     void showSettings();
+    void toggleFullScreen();
+    void currentlyPlaying();
 };
 
 

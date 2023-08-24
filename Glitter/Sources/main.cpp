@@ -136,7 +136,7 @@ int main() {
 
     }else{
         game.rotationAngle+=45.0f*GlobalVariables::deltaTime;
-        std::cout << "Rotation Angle: " << game.rotationAngle << std::endl;
+        //std::cout << "Rotation Angle: " << game.rotationAngle << std::endl;
         game.preGame();
 
         glm::mat4 objModelMatrix;
