@@ -1,17 +1,6 @@
-#include "Shader.hpp"
-#include "init.h"
-#include "Car.h"
-#include "Terrain.h"
-#include "GlobalVariables.h"
-#include "Game.h"
-#include "MainMenu.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <cstdlib>
-#include <string>
+#include "main.hpp"
 
-void handleReturnToMenu(Game &game, MainMenu &mainMenu) {
+void handleReturnToMenu(MainMenu &mainMenu) {
     if (GlobalVariables::returnToMenuClicked) {
         mainMenu.gameStarted = false;
         mainMenu.show();
@@ -20,7 +9,6 @@ void handleReturnToMenu(Game &game, MainMenu &mainMenu) {
         mainMenu.hide();
     }
 }
-
 void setUp(GLFWwindow *window, Game &game, Init &init, MainMenu &mainMenu) {
     glm::vec3 playerPosition = game.simulation.getPlayerPosition();
     mainMenu.setPlayerPosition(playerPosition);
@@ -38,7 +26,6 @@ void setUp(GLFWwindow *window, Game &game, Init &init, MainMenu &mainMenu) {
 void renderGame(GLFWwindow* window,Game& game,Init& init,MainMenu& mainMenu ){
     setUp(window, game, init, mainMenu);
     // Transforms
-
     glm::mat4 objModelMatrix;
     glm::mat3 objNormalMatrix;
 
@@ -50,7 +37,7 @@ void renderGame(GLFWwindow* window,Game& game,Init& init,MainMenu& mainMenu ){
     game.startGame(objModelMatrix,objNormalMatrix,num_cobjs,objectModel,matrix,transform);
 
     mainMenu.renderImGui();
-    handleReturnToMenu(game, mainMenu);
+    handleReturnToMenu(mainMenu);
 }
 void renderPreGame(Game& game,MainMenu& mainMenu ){
     game.rotationAngle += 45.0f * GlobalVariables::deltaTime;
@@ -65,13 +52,10 @@ void renderPreGame(Game& game,MainMenu& mainMenu ){
     int num_cobjs = game.simulation.dynamicsWorld->getNumCollisionObjects();
     game.preGame(objModelMatrix,objNormalMatrix,num_cobjs,objectModel,matrix,transform);
 
-
     mainMenu.renderImGui();
     if (mainMenu.gameStarted)
         gameState = GAME;
-
 }
-
 int main() {
     Init init;
     GLFWwindow *window = Init::initializeWindow();
