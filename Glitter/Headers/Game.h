@@ -6,8 +6,8 @@
 #define KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H
 #pragma once
 
-#include "../Sources/Car.h"
-#include "../Sources/Terrain.h"
+#include "Car.h"
+#include "Terrain.h"
 #include "Skybox.hpp"
 #include "Physics.h"
 #include "GLFW/glfw3.h"
