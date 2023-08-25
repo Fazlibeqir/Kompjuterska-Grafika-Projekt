@@ -33,11 +33,14 @@ public:
     void setDefaultVolume(float newVolume);
     const std::string& getCurrentSongName() const;
     void playSong(const string& songName,const string &song);
+   // void playCarEngineSound();
+    bool pressed=false;
 private:
     ISoundEngine* engine;
     vector<string> songList;
     thread songThread;
     ISound *currentSound;
+    static ISound* sound1;
     mutex songNameMutex;
     string currentSongName;
 

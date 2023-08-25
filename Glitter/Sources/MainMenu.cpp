@@ -4,6 +4,7 @@
 
 #include "MainMenu.h"
 #include "Score.hpp"
+#include "GlobalVariables.h"
 
 
 MainMenu::MainMenu(GLFWwindow* inWindow)
@@ -14,8 +15,22 @@ MainMenu::MainMenu(GLFWwindow* inWindow)
     ImGui::StyleColorsDark();
 }
 void MainMenu::renderMainMenu(){
-    ImGui::SetNextWindowPos(ImVec2(50, 50));  // Set the desired position
-    ImGui::SetNextWindowSize(ImVec2(220, 220)); // Set the desired size
+    int screenWidth, screenHeight;
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    if (mode) {
+        screenWidth = mode->width;
+        screenHeight = mode->height;
+    }
+
+    ImVec2 windowSize(220, 220);
+    ImVec2 windowPos(50, 50);  // Desired offset from the top-left corner
+
+    // Adjust window position for screen size
+    windowPos.x = static_cast<float>(screenWidth) * windowPos.x / GlobalVariables::scrWidth;
+    windowPos.y = static_cast<float>(screenHeight) * windowPos.y / GlobalVariables::scrHeight;
+
+    ImGui::SetNextWindowPos(windowPos);
+    ImGui::SetNextWindowSize(windowSize);
     ImGui::Begin("Main Menu",nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
     ImGui::Separator();
     // Set the button size and style
@@ -158,7 +173,13 @@ void MainMenu::updateRaceStatus() {
     }
 }
 void MainMenu::renderScoreWindow() {
-    ImGui::SetNextWindowPos(ImVec2(375, 50));
+    int screenWidth, screenHeight;
+    glfwGetWindowSize(window, &screenWidth, &screenHeight);
+
+    float windowX = (screenWidth - 200) * 0.5f; // Center the window on x-axis
+    float windowY = 50.0f;
+
+    ImGui::SetNextWindowPos(ImVec2(windowX, windowY));
     ImGui::SetNextWindowSize(ImVec2(200, 70));
     ImGui::Begin("Score", nullptr, ImGuiWindowFlags_NoResize);
 
@@ -179,14 +200,14 @@ void MainMenu::renderScoreWindow() {
         }
         countdownTimer = 600.0f; // Reset the timer
     }
-    // Display high score information
-    if (currentHighScore == 0.0f) {
-        ImGui::Text("High Score: No score yet");
-    } else {
-        int highScoreMinutes = static_cast<int>(currentHighScore) / 60;
-        int highScoreSeconds = static_cast<int>(currentHighScore) % 60;
-        ImGui::Text("High Score: %02d:%02d", highScoreMinutes, highScoreSeconds);
-    }
+//    // Display high score information
+//    if (currentHighScore == 0.0f) {
+//        ImGui::Text("High Score: No score yet");
+//    } else {
+//        int highScoreMinutes = static_cast<int>(currentHighScore) / 60;
+//        int highScoreSeconds = static_cast<int>(currentHighScore) % 60;
+//        ImGui::Text("High Score: %02d:%02d", highScoreMinutes, highScoreSeconds);
+//    }
 
     ImGui::End();
 }
@@ -218,13 +239,17 @@ void MainMenu::currentlyPlaying() {
 
         // Showing
         if (!transitioningIn && showTimer > 0.0f) {
-            ImVec2 startPos(600, 450);
-            ImGui::SetNextWindowPos(startPos);
 
             // Calculate the width of the text
             ImVec2 textSize = ImGui::CalcTextSize(songName.c_str());
             ImVec2 windowSize(textSize.x + 20, 50); // Add padding to the width
 
+            // Calculate the window position based on screen size and desired offset
+            int screenWidth, screenHeight;
+            glfwGetWindowSize(window, &screenWidth, &screenHeight);
+            ImVec2 startPos(screenWidth - windowSize.x-100, 450); // Adjust the X position based on your desired offset
+
+            ImGui::SetNextWindowPos(startPos);
             ImGui::SetNextWindowSize(windowSize);
             ImGui::Begin("Now Playing:", nullptr, ImGuiWindowFlags_NoResize);
 

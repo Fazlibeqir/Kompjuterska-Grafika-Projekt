@@ -3,6 +3,7 @@
 //
 
 #include "Audio.hpp"
+ISound* Audio::sound1=nullptr;
 bool Audio::shouldStopPlaying = false;
 float Audio::defaultVolume = 1.0f; // Initialize the static member variable
 Audio::Audio(): currentSound(nullptr){
@@ -45,6 +46,26 @@ void Audio::setDefaultVolume(float newVolume) {
 const std::string& Audio::getCurrentSongName() const {
     return currentSongName;
 }
+//void Audio::playCarEngineSound() {
+//    // Replace 'CarEngine' with the appropriate name of your car engine sound file
+//    const string carEngineSoundPath = string(ASSETS_DIR) + "\\engineSound\\carEngine.ogg";
+//
+//    // Play the car engine sound with the specified volume
+//    sound1 = engine->play2D(carEngineSoundPath.c_str(), true, false, true);
+//    sound1->setVolume(defaultVolume);
+//
+//    thread carEngineThread = thread([this]() {
+//        while (pressed) {
+//            // This loop will continuously play the car engine sound
+//            // until the up arrow key is released
+//        }
+//
+//        // Stop the sound and release resources when the loop exits
+//        sound1->stop();
+//        sound1->drop();
+//        sound1 = nullptr;
+//    });
+//}
 void Audio::playSong(const string& songName,const string &song) {
     lock_guard<mutex> lock(songNameMutex);
     currentSongName = songName;

@@ -15,6 +15,7 @@
 #include <string>
 
 int main() {
+    Init init;
     GLFWwindow *window = Init::initializeWindow();
     map<const string, string> mapForPaths = Init::initializeShadersAndModelsPaths();
 
@@ -29,7 +30,6 @@ int main() {
               mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"],mapForPaths["terrainModel3Path"],
               mapForPaths["skyVertPath"],mapForPaths["skyFragPath"]);
     game.initialize();
-   // Audio audio;
 
     enum GameState { MENU, GAME };
     GameState gameState = MENU;
@@ -44,7 +44,7 @@ int main() {
         glm::vec3 playerPosition = game.simulation.getPlayerPosition();
         mainMenu.setPlayerPosition(playerPosition);
         mainMenu.updateRaceStatus();
-        Init::processInput(window);
+        init.processInput(window);
         game.simulation.updateMovements();
         // Step physics forward
         game.simulation.dynamicsWorld->stepSimulation((

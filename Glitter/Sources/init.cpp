@@ -5,6 +5,7 @@
 #include "init.h"
 #include "GlobalVariables.h"
 
+Init::Init(){}
 GLFWwindow * Init:: initializeWindow(){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -141,6 +142,7 @@ void Init:: processInput(GLFWwindow *window){
     // Car controls - acceleration
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         GlobalVariables::acceleration = 1;
+        //audio.pressed=!audio.pressed;
     } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         GlobalVariables::acceleration = -1;
     } else {
