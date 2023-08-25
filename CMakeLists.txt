@@ -21,7 +21,7 @@ add_subdirectory(Glitter/Vendor/bullet)
 
 if(MSVC)
     add_compile_options(/MP)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /INCREMENTAL")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /INCREMENTAL")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
     if(NOT WIN32)
@@ -51,13 +51,13 @@ file(GLOB PROJECT_HEADERS Glitter/Headers/*.hpp
         Glitter/Headers/*.h)
 file(GLOB PROJECT_SOURCES Glitter/Sources/*.cpp)
 file(GLOB PROJECT_SHADERS ${SHADER_DIR}/*.frag
-        ${SHADER_DIR}/*.vert)
+                          ${SHADER_DIR}/*.vert)
 file(GLOB PROJECT_AUDIO Glitter/Sources/assets/media/*.ogg)
 file(GLOB PROJECT_CONFIGS CMakeLists.txt
-        Readme.md
-        .gitattributes
-        .gitignore
-        .gitmodules)
+                          Readme.md
+                         .gitattributes
+                         .gitignore
+                         .gitmodules)
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
@@ -75,8 +75,6 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
 
         Glitter/Headers/shader.hpp
         Glitter/Headers/mesh.hpp
-        Glitter/Vendor/stb/deprecated/rrsprintf.h
-        Glitter/Vendor/stb/deprecated/stretchy_buffer.h
         Glitter/Vendor/imgui/imgui.h
         Glitter/Headers/camera.hpp
         Glitter/Sources/init.cpp
@@ -127,9 +125,3 @@ add_custom_command(
 if(WIN32)
     add_custom_target(build COMMAND make /m8)
 endif()
-#add_custom_command(
-#        TARGET ${PROJECT_NAME} POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Shaders ${CMAKE_BINARY_DIR}/Glitter/Shaders
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Models ${CMAKE_BINARY_DIR}/Glitter/Models
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Glitter/Skybox ${CMAKE_BINARY_DIR}/Glitter/Skybox
-#        DEPENDS ${PROJECT_SHADERS})

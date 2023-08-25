@@ -84,7 +84,6 @@ int main() {
         } else {
             renderPreGame(game,mainMenu);
         }
-
         // Flip Buffers and Draw
         glfwSwapBuffers(window);
         glfwPollEvents();
