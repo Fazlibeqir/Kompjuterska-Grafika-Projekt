@@ -9,6 +9,11 @@
 #include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h"
 
+
+enum GameState {
+    MENU, GAME
+};
+static GameState gameState = MENU;
 class GlobalVariables{
 public:
     static float deltaTime;

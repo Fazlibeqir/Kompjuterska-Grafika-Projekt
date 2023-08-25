@@ -44,12 +44,12 @@ public:
                  Model *objectModel, GLfloat *matrix, btTransform transform);
     void startGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix, int &num_cobjs,
                    Model *objectModel, GLfloat *matrix, btTransform transform);
-    void updateCameraPosition();
+    void updateCameraPosition() const;
     void transform();
 
     void setSkybox();
 
-    void carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix);
+    void carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix) const;
 private:
 };
 

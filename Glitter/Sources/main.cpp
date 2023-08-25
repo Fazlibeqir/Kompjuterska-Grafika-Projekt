@@ -52,10 +52,6 @@ void renderGame(GLFWwindow* window,Game& game,Init& init,MainMenu& mainMenu ){
     mainMenu.renderImGui();
     handleReturnToMenu(game, mainMenu);
 }
-enum GameState {
-    MENU, GAME
-};
-GameState gameState = MENU;
 void renderPreGame(Game& game,MainMenu& mainMenu ){
     game.rotationAngle += 45.0f * GlobalVariables::deltaTime;
 
@@ -71,10 +67,11 @@ void renderPreGame(Game& game,MainMenu& mainMenu ){
 
 
     mainMenu.renderImGui();
-    if (mainMenu.gameStarted) {
+    if (mainMenu.gameStarted)
         gameState = GAME;
-    }
+
 }
+
 int main() {
     Init init;
     GLFWwindow *window = Init::initializeWindow();

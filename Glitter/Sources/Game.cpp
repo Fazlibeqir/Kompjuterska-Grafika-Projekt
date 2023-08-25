@@ -33,7 +33,7 @@ void Game::initialize() {
     simulation.generateCamaro();
     simulation.addConstraints();
 }
-void Game::carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix){
+void Game::carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix) const{
     carForGame.carShader.setMat4("model",objModelMatrix);
     carForGame.carShader.setMat3("normal",objNormalMatrix);
 
@@ -51,7 +51,7 @@ void Game::carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix){
 
     carForGame.carShader.setInt("skybox", 3);
 }
-void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,  int &num_cobjs,
+void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& num_cobjs,
                    Model *objectModel, GLfloat *matrix, btTransform transform) {
     glm::vec3 obj_size(1.0f);
     for (unsigned int i = GlobalVariables::tiles + GlobalVariables::walls; i < num_cobjs; i++) {
@@ -192,7 +192,7 @@ void Game::startGame(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix,int& n
     // Skybox
     setSkybox();
 }
-void Game::updateCameraPosition() {
+void Game::updateCameraPosition() const {
     // Update camera position
     if (GlobalVariables::cameraFollow) {
         btTransform temp;
