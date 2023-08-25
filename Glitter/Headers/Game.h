@@ -40,13 +40,17 @@ public:
          const string& skyboxShaderFragmentPath);
 
     void initialize();
-    void preGame();
+    void preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix, int &num_cobjs,
+                 Model *objectModel, GLfloat *matrix, btTransform transform);
+    void startGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix, int &num_cobjs,
+                   Model *objectModel, GLfloat *matrix, btTransform transform);
     void updateCameraPosition();
     void transform();
+
     void setSkybox();
 
+    void carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix);
 private:
-
 };
 
 
