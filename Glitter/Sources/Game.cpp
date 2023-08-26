@@ -16,22 +16,23 @@ Game::Game(const string &carShaderVertexPath,
            const string &terrainShaderFragmentPath,
            const string &terrainModel1Path,
            const string &terrainModel2Path,
-           const string &terrainModel3Path,
-           const string &skyboxShaderVertexPath,
-           const string &skyboxShaderFragmentPath)
+           const string &terrainModel3Path
+//           const string &skyboxShaderVertexPath,
+//           const string &skyboxShaderFragmentPath
+           )
         : cars{{carShaderVertexPath, carShaderFragmentPath, carOneModelPath, tyre1ModelPath, tyre2ModelPath },
                {carShaderVertexPath, carShaderFragmentPath, carTwoModelPath, tyre1ModelPath, tyre2ModelPath},
                {carShaderVertexPath, carShaderFragmentPath, carThreeModelPath, tyre1ModelPath, tyre2ModelPath} },
                terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,
                   terrainModel3Path),
-          skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
+//          skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
           simulation(), rotationAngle(0.0f),chosenCarIndex(0) {
     gameStarted = false;
 }
 
 void Game::initialize() {
-    skybox.generateBuffers(skyboxVAO, skyboxVBO);
-    cubeMapTexture = skybox.loadCubeMap();
+//    skybox.generateBuffers(skyboxVAO, skyboxVBO,skyboxEBO);
+//    cubeMapTexture = skybox.loadCubeMap();
     simulation.generateTerrain();
     simulation.generateInvisibleWalls();
     simulation.generateCamaro();
@@ -102,9 +103,6 @@ void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& nu
         objNormalMatrix = glm::mat4(1.0f);
     }
     view = glm::mat4(glm::mat3(GlobalVariables::camera.GetViewMatrix()));
-
-    // Skybox
-    setSkybox();
     if (!gameStarted) {
         updateCameraPosition();
         projection = glm::perspective(glm::radians(45.0f),
@@ -194,7 +192,7 @@ void Game::startGame(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix,int& n
     view = glm::mat4(glm::mat3(GlobalVariables::camera.GetViewMatrix()));
 
     // Skybox
-    setSkybox();
+//    setSkybox();
 }
 void Game::updateCameraPosition() const {
     // Update camera position
@@ -279,15 +277,22 @@ void Game::transform() {
 
 }
 
-void Game::setSkybox() {
-    // Skybox
-    glDepthFunc(GL_LEQUAL);
-    skybox.skyBoxShader.Use();
-    skybox.skyBoxShader.setMat4("projection", projection);
-    skybox.skyBoxShader.setMat4("view", view);
-    glBindVertexArray(skyboxVAO);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDepthFunc(GL_LESS);
-}
+//void Game::setSkybox() {
+//    // Skybox
+//    glDepthFunc(GL_LEQUAL);
+//    skybox.skyBoxShader.Use();
+//    view = glm::mat4(1.0f);
+//    projection = glm::mat4(1.0f);
+//    projection = glm::perspective(glm::radians(45.0f),
+//                                  (float) GlobalVariables::scrWidth / (float) GlobalVariables::scrHeight,
+//                                  0.1f, 10000.0f);
+//    view = GlobalVariables::camera.GetViewMatrix();
+//    skybox.skyBoxShader.setMat4("projection", projection);
+//    skybox.skyBoxShader.setMat4("view", view);
+//    glBindVertexArray(skyboxVAO);
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
+//    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+//    glBindVertexArray(0);
+//    glDepthFunc(GL_LESS);
+//}

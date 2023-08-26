@@ -17,11 +17,11 @@ class Game {
 public:
     Car cars[3];
     Terrain terrain;
-    Skybox skybox;
+    //Skybox skybox;
     Physics simulation;
     bool gameStarted;
     float rotationAngle;
-    unsigned int skyboxVAO, skyboxVBO;
+//    unsigned int skyboxVAO, skyboxVBO,skyboxEBO;
     unsigned int cubeMapTexture;
     glm::mat4 projection;
     glm::mat4 view;
@@ -38,9 +38,10 @@ public:
          const string& terrainShaderFragmentPath,
          const string& terrainModel1Path,
          const string& terrainModel2Path,
-         const string& terrainModel3Path,
-         const string& skyboxShaderVertexPath,
-         const string& skyboxShaderFragmentPath);
+         const string& terrainModel3Path
+//         const string& skyboxShaderVertexPath,
+//         const string& skyboxShaderFragmentPath
+         );
 
     void initialize();
     void preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix, int &num_cobjs,
@@ -50,7 +51,7 @@ public:
     void updateCameraPosition() const;
     void transform();
 
-    void setSkybox();
+   // void setSkybox();
 
     void carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix) const;
 private:

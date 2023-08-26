@@ -34,9 +34,8 @@ GLFWwindow * Init:: initializeWindow(){
         glfwTerminate();
         exit(1);
     }
-
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
 
     return window;
 }
