@@ -85,6 +85,7 @@ int main() {
         if (gameState == GAME) {
             renderGame(window,game,init,mainMenu);
         } else if(gameState == MENU || GlobalVariables::returnToMenuClicked) {
+            Init::processInputForPreGame(window,game.chosenCarIndex);
             renderPreGame(game,mainMenu);
         }
         // Flip Buffers and Draw
