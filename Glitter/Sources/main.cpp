@@ -65,7 +65,9 @@ int main() {
     mainMenu.initializeImGui();
     mainMenu.show();
     Game game(mapForPaths["carVertPath"], mapForPaths["carFragPath"],
-              mapForPaths["carModelPath"],
+              mapForPaths["carOneModelPath"],
+              mapForPaths["carTwoModelPath"],
+              mapForPaths["carThreeModelPath"],
               mapForPaths["tyre1ModelPath"],
               mapForPaths["tyre2ModelPath"],
               mapForPaths["terrainVertPath"], mapForPaths["terrainFragPath"],
@@ -82,6 +84,7 @@ int main() {
             renderGame(window,game,init,mainMenu);
 
         } else {
+            Init:: processInputForPreGame(window, game.chosenCarIndex);
             renderPreGame(game,mainMenu);
         }
         // Flip Buffers and Draw

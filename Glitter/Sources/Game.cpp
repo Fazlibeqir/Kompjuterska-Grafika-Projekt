@@ -3,11 +3,13 @@
 ////
 #include "Game.h"
 #include "glm/gtc/type_ptr.hpp"
-#include "GLFW/glfw3.h"
+
 
 Game::Game(const string &carShaderVertexPath,
            const string &carShaderFragmentPath,
-           const string &carModelPath,
+           const string& carOneModelPath,
+           const string& carTwoModelPath,
+           const string& carThreeModelPath,
            const string &tyre1ModelPath,
            const string &tyre2ModelPath,
            const string &terrainShaderVertexPath,
@@ -17,11 +19,13 @@ Game::Game(const string &carShaderVertexPath,
            const string &terrainModel3Path,
            const string &skyboxShaderVertexPath,
            const string &skyboxShaderFragmentPath)
-        : carForGame(carShaderVertexPath, carShaderFragmentPath, carModelPath, tyre1ModelPath, tyre2ModelPath),
-          terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,
+        : cars{{carShaderVertexPath, carShaderFragmentPath, carOneModelPath, tyre1ModelPath, tyre2ModelPath },
+               {carShaderVertexPath, carShaderFragmentPath, carTwoModelPath, tyre1ModelPath, tyre2ModelPath},
+               {carShaderVertexPath, carShaderFragmentPath, carThreeModelPath, tyre1ModelPath, tyre2ModelPath} },
+               terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,
                   terrainModel3Path),
           skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
-          simulation(), rotationAngle(0.0f) {
+          simulation(), rotationAngle(0.0f),chosenCarIndex(0) {
     gameStarted = false;
 }
 
@@ -34,22 +38,22 @@ void Game::initialize() {
     simulation.addConstraints();
 }
 void Game::carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix) const{
-    carForGame.carShader.setMat4("model",objModelMatrix);
-    carForGame.carShader.setMat3("normal",objNormalMatrix);
+    cars[chosenCarIndex].carShader.setMat4("model",objModelMatrix);
+    cars[chosenCarIndex].carShader.setMat3("normal",objNormalMatrix);
 
 
-   carForGame.carShader.setVec3("lightColor", glm::vec3(1.0));
-   carForGame.carShader.setVec3("lightPos", GlobalVariables::lightPos);
-    carForGame.carShader.setVec3("viewPos", GlobalVariables::camera.Position);
+    cars[chosenCarIndex].carShader.setVec3("lightColor", glm::vec3(1.0));
+    cars[chosenCarIndex].carShader.setVec3("lightPos", GlobalVariables::lightPos);
+    cars[chosenCarIndex].carShader.setVec3("viewPos", GlobalVariables::camera.Position);
 
-    carForGame.carShader.setFloat("material.shininess", 128.0f);
+    cars[chosenCarIndex].carShader.setFloat("material.shininess", 128.0f);
 
-    carForGame.carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
-    carForGame.carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
-    carForGame.carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-    carForGame.carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
+    cars[chosenCarIndex].carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
+    cars[chosenCarIndex].carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
+    cars[chosenCarIndex].carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
+    cars[chosenCarIndex].carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
 
-    carForGame.carShader.setInt("skybox", 3);
+    cars[chosenCarIndex].carShader.setInt("skybox", 3);
 }
 void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& num_cobjs,
                    Model *objectModel, GLfloat *matrix, btTransform transform) {
@@ -57,15 +61,15 @@ void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& nu
     for (unsigned int i = GlobalVariables::tiles + GlobalVariables::walls; i < num_cobjs; i++) {
         switch (i) {
             case GlobalVariables::tiles + GlobalVariables::walls:
-                objectModel = &carForGame.carModel;
+                objectModel = &cars[chosenCarIndex].carModel;
                 break;
             case GlobalVariables::tiles + GlobalVariables::walls + 1:
             case GlobalVariables::tiles + GlobalVariables::walls + 2:
-                objectModel = &carForGame.tyre1Model;
+                objectModel = &cars[chosenCarIndex].tyre1Model;
                 break;
             case GlobalVariables::tiles + GlobalVariables::walls + 3:
             case GlobalVariables::tiles + GlobalVariables::walls + 4:
-                objectModel = &carForGame.tyre2Model;
+                objectModel = &cars[chosenCarIndex].tyre2Model;
                 break;
             default:
                 return;
@@ -92,7 +96,7 @@ void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& nu
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
 
-        objectModel->Draw(carForGame.carShader);
+        objectModel->Draw(cars[chosenCarIndex].carShader);
 
         objModelMatrix = glm::mat4(1.0f);
         objNormalMatrix = glm::mat4(1.0f);
@@ -131,9 +135,9 @@ void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& nu
 
         planeModelMatrix = glm::mat4(1.0f);
 
-        carForGame.carShader.Use();
-        carForGame.carShader.setMat4("projection", projection);
-        carForGame.carShader.setMat4("view", view);
+        cars[chosenCarIndex].carShader.Use();
+        cars[chosenCarIndex].carShader.setMat4("projection", projection);
+        cars[chosenCarIndex].carShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
 
@@ -149,15 +153,15 @@ void Game::startGame(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix,int& n
     for (unsigned int i = GlobalVariables::tiles + GlobalVariables::walls; i < num_cobjs; i++) {
         switch (i) {
             case GlobalVariables::tiles + GlobalVariables::walls:
-                objectModel = &carForGame.carModel;
+                objectModel = &cars[chosenCarIndex].carModel;
                 break;
             case GlobalVariables::tiles + GlobalVariables::walls + 1:
             case GlobalVariables::tiles + GlobalVariables::walls + 2:
-                objectModel = &carForGame.tyre1Model;
+                objectModel = &cars[chosenCarIndex].tyre1Model;
                 break;
             case GlobalVariables::tiles + GlobalVariables::walls + 3:
             case GlobalVariables::tiles + GlobalVariables::walls + 4:
-                objectModel = &carForGame.tyre2Model;
+                objectModel = &cars[chosenCarIndex].tyre2Model;
                 break;
             default:
                 return;
@@ -181,7 +185,7 @@ void Game::startGame(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix,int& n
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
 
-        objectModel->Draw(carForGame.carShader);
+        objectModel->Draw(cars[chosenCarIndex].carShader);
 
         objModelMatrix = glm::mat4(1.0f);
         objNormalMatrix = glm::mat4(1.0f);
@@ -266,9 +270,9 @@ void Game::transform() {
     terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
     terrain.terrainModel2.Draw(terrain.terrainShader);
 
-    carForGame.carShader.Use();
-    carForGame.carShader.setMat4("projection", projection);
-    carForGame.carShader.setMat4("view", view);
+    cars[chosenCarIndex].carShader.Use();
+    cars[chosenCarIndex].carShader.setMat4("projection", projection);
+    cars[chosenCarIndex].carShader.setMat4("view", view);
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
     // Asphalt

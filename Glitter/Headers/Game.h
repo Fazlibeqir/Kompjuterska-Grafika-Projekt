@@ -15,7 +15,7 @@
 
 class Game {
 public:
-    Car carForGame;
+    Car cars[3];
     Terrain terrain;
     Skybox skybox;
     Physics simulation;
@@ -25,10 +25,13 @@ public:
     unsigned int cubeMapTexture;
     glm::mat4 projection;
     glm::mat4 view;
+    int chosenCarIndex;
 
     Game(const string& carShaderVertexPath,
          const string& carShaderFragmentPath,
-         const string& carModelPath,
+         const string& carOneModelPath,
+         const string& carTwoModelPath,
+         const string& carThreeModelPath,
          const string& tyre1ModelPath,
          const string& tyre2ModelPath,
          const string& terrainShaderVertexPath,
