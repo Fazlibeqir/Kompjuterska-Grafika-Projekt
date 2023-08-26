@@ -181,22 +181,28 @@ void Init:: processInput(GLFWwindow *window){
 
 void Init:: processInputForPreGame(GLFWwindow *window, int &chosenCar)
 {
+    static bool rightKeyPressedLastFrame = false;
+    static bool leftKeyPressedLastFrame = false;
+
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        std::cout<<"Chosen car is:" << chosenCar<< std::endl;
-        switch (chosenCar) {
-            case 0 : chosenCar = 1; break;
-            case 1 : chosenCar = 2; break;
-//            case 2 : chosenCar = 2; break;
+        if (!rightKeyPressedLastFrame) {
+            std::cout << "Chosen car is: " << chosenCar << std::endl;
+            chosenCar = (chosenCar + 1) % 3; // Assuming you have 3 cars (0, 1, 2)
         }
+        rightKeyPressedLastFrame = true;
+    } else {
+        rightKeyPressedLastFrame = false;
     }
-//    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-//        if(chosenCar == 2){
-//            chosenCar = 1;
-//        }else {
-//            chosenCar = 0;
-//        }
-//
-//    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        if (!leftKeyPressedLastFrame) {
+            std::cout << "Chosen car is: " << chosenCar << std::endl;
+            chosenCar = (chosenCar - 1 + 3) % 3; // Wrapping around for previous car
+        }
+        leftKeyPressedLastFrame = true;
+    } else {
+        leftKeyPressedLastFrame = false;
+    }
 }
 
 map<const string, string> Init:: initializeShadersAndModelsPaths(){

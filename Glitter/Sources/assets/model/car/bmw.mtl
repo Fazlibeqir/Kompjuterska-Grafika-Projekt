@@ -10,8 +10,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd BMWM3GTRE46_BADGING.jpg
-map_bump BMWM3GTRE46_BADGING.jpg
-
+map_Bump BMWM3GTRE46_BADGING.jpg
 
 newmtl BRAKDISC
 Ns 2.500001
@@ -42,7 +41,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd BOTTOM.jpg
-map_bump BOTTOM.jpg
+map_Bump BOTTOM.jpg
 
 newmtl Chrome
 Ns 2.100002
@@ -93,7 +92,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd BMWM3GTRE46_INTERIOR.jpg
-map_bump BMWM3GTRE46_INTERIOR.jpg
+map_Bump BMWM3GTRE46_INTERIOR.jpg
 
 newmtl Licens
 Ns 2.700002
@@ -114,7 +113,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd BMWM3GTRE46_MISC.jpg
-map_bump BMWM3GTRE46_MISC.jpg
+map_Bump BMWM3GTRE46_MISC.jpg
 
 newmtl PSRTEST
 Ns 0.999999
@@ -155,7 +154,7 @@ Ni 1.450000
 d 1.000000
 illum 2
 map_Kd TREAD_MI.jpg
-map_bump TREAD_MI.jpg
+map_Bump TREAD_MI.jpg
 
 newmtl black
 Ns 3.300002
