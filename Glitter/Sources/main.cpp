@@ -22,7 +22,8 @@ int main() {
     mainMenu.initializeImGui();
     mainMenu.show();
     Game game(mapForPaths["carVertPath"],mapForPaths["carFragPath"],
-              mapForPaths["carModelPath"],
+              mapForPaths["carOneModelPath"],
+              mapForPaths["carTwoModelPath"],
               mapForPaths["tyre1ModelPath"],
               mapForPaths["tyre2ModelPath"],
               mapForPaths["terrainVertPath"], mapForPaths["terrainFragPath"],
@@ -66,15 +67,15 @@ int main() {
         for (unsigned int i = GlobalVariables::tiles + GlobalVariables::walls; i < num_cobjs; i++) {
             switch (i) {
                 case GlobalVariables::tiles + GlobalVariables::walls:
-                    objectModel = &game.carForGame.carModel;
+                    objectModel = &game.cars[game.chosenCarIndex].carModel;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 1:
                 case GlobalVariables::tiles + GlobalVariables::walls + 2:
-                    objectModel = &game.carForGame.tyre1Model;
+                    objectModel = &game.cars[game.chosenCarIndex].tyre1Model;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 3:
                 case GlobalVariables::tiles + GlobalVariables::walls + 4:
-                    objectModel = &game.carForGame.tyre2Model;
+                    objectModel = &game.cars[game.chosenCarIndex].tyre2Model;
                     break;
                 default:
                     return (EXIT_FAILURE);
@@ -94,27 +95,27 @@ int main() {
             objNormalMatrix = glm::transpose(glm::inverse(glm::mat3(objModelMatrix)));
 
             //normal matrix
-            glUniformMatrix4fv(glGetUniformLocation(game.carForGame.carShader.Program, "model"), 1, GL_FALSE,
+            glUniformMatrix4fv(glGetUniformLocation(game.cars[game.chosenCarIndex].carShader.Program, "model"), 1, GL_FALSE,
                                glm::value_ptr(objModelMatrix));
-            glUniformMatrix3fv(glGetUniformLocation(game.carForGame.carShader.Program, "normal"), 1, GL_FALSE,
+            glUniformMatrix3fv(glGetUniformLocation(game.cars[game.chosenCarIndex].carShader.Program, "normal"), 1, GL_FALSE,
                                glm::value_ptr(objNormalMatrix));
 
-            game.carForGame.carShader.setVec3("lightColor", glm::vec3(1.0));
-            game.carForGame.carShader.setVec3("lightPos", GlobalVariables::lightPos);
-            game.carForGame.carShader.setVec3("viewPos", GlobalVariables::camera.Position);
+            game.cars[game.chosenCarIndex].carShader.setVec3("lightColor", glm::vec3(1.0));
+            game.cars[game.chosenCarIndex].carShader.setVec3("lightPos", GlobalVariables::lightPos);
+            game.cars[game.chosenCarIndex].carShader.setVec3("viewPos", GlobalVariables::camera.Position);
 
-            game.carForGame.carShader.setFloat("material.shininess", 128.0f);
+            game.cars[game.chosenCarIndex].carShader.setFloat("material.shininess", 128.0f);
 
-            game.carForGame.carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
-            game.carForGame.carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
-            game.carForGame.carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-            game.carForGame.carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
 
             glActiveTexture(GL_TEXTURE3);
-            game.carForGame.carShader.setInt("skybox", 3);
+            game.cars[game.chosenCarIndex].carShader.setInt("skybox", 3);
             glBindTexture(GL_TEXTURE_CUBE_MAP, game.cubeMapTexture);
 
-            objectModel->Draw(game.carForGame.carShader);
+            objectModel->Draw(game.cars[game.chosenCarIndex].carShader);
 
             objModelMatrix = glm::mat4(1.0f);
             objNormalMatrix = glm::mat4(1.0f);
@@ -135,6 +136,8 @@ int main() {
         }
 
     }else{
+        Init:: processInputForPreGame(window, game.chosenCarIndex);
+        
         game.rotationAngle+=45.0f*GlobalVariables::deltaTime;
         //std::cout << "Rotation Angle: " << game.rotationAngle << std::endl;
         game.preGame();
@@ -154,16 +157,16 @@ int main() {
         for (unsigned int i = GlobalVariables::tiles + GlobalVariables::walls; i < num_cobjs; i++) {
             switch (i) {
                 case GlobalVariables::tiles + GlobalVariables::walls:
-                    objectModel = &game.carForGame.carModel;
+                    objectModel = &game.cars[game.chosenCarIndex].carModel;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 1:
                 case GlobalVariables::tiles + GlobalVariables::walls + 2:
-                    objectModel = &game.carForGame.tyre1Model;
+                    objectModel = &game.cars[game.chosenCarIndex].tyre1Model;
                     tireBody = game.simulation.t1;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 3:
                 case GlobalVariables::tiles + GlobalVariables::walls + 4:
-                    objectModel = &game.carForGame.tyre2Model;
+                    objectModel = &game.cars[game.chosenCarIndex].tyre2Model;
                     tireBody = game.simulation.t2;
                     break;
                 case GlobalVariables::tiles + GlobalVariables::walls + 5:
@@ -194,27 +197,27 @@ int main() {
             objNormalMatrix = glm::transpose(glm::inverse(glm::mat3(objModelMatrix)));
 
             //normal matrix
-            glUniformMatrix4fv(glGetUniformLocation(game.carForGame.carShader.Program, "model"), 1, GL_FALSE,
+            glUniformMatrix4fv(glGetUniformLocation(game.cars[game.chosenCarIndex].carShader.Program, "model"), 1, GL_FALSE,
                                glm::value_ptr(objModelMatrix));
-            glUniformMatrix3fv(glGetUniformLocation(game.carForGame.carShader.Program, "normal"), 1, GL_FALSE,
+            glUniformMatrix3fv(glGetUniformLocation(game.cars[game.chosenCarIndex].carShader.Program, "normal"), 1, GL_FALSE,
                                glm::value_ptr(objNormalMatrix));
 
-            game.carForGame.carShader.setVec3("lightColor", glm::vec3(1.0));
-            game.carForGame.carShader.setVec3("lightPos", GlobalVariables::lightPos);
-            game.carForGame.carShader.setVec3("viewPos", GlobalVariables::camera.Position);
+            game.cars[game.chosenCarIndex].carShader.setVec3("lightColor", glm::vec3(1.0));
+            game.cars[game.chosenCarIndex].carShader.setVec3("lightPos", GlobalVariables::lightPos);
+            game.cars[game.chosenCarIndex].carShader.setVec3("viewPos", GlobalVariables::camera.Position);
 
-            game.carForGame.carShader.setFloat("material.shininess", 128.0f);
+            game.cars[game.chosenCarIndex].carShader.setFloat("material.shininess", 128.0f);
 
-            game.carForGame.carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
-            game.carForGame.carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
-            game.carForGame.carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
-            game.carForGame.carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
+            game.cars[game.chosenCarIndex].carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
 
             glActiveTexture(GL_TEXTURE3);
-            game.carForGame.carShader.setInt("skybox", 3);
+            game.cars[game.chosenCarIndex].carShader.setInt("skybox", 3);
             glBindTexture(GL_TEXTURE_CUBE_MAP, game.cubeMapTexture);
 
-            objectModel->Draw(game.carForGame.carShader);
+            objectModel->Draw(game.cars[game.chosenCarIndex].carShader);
 
             objModelMatrix = glm::mat4(1.0f);
             objNormalMatrix = glm::mat4(1.0f);

@@ -179,6 +179,16 @@ void Init:: processInput(GLFWwindow *window){
 }
 
 
+void Init:: processInputForPreGame(GLFWwindow *window, int &chosenCar)
+{
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        chosenCar = 1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        chosenCar = 0;
+    }
+}
+
 map<const string, string> Init:: initializeShadersAndModelsPaths(){
     map<const string, string> returnMap;
     returnMap["carVertPath"]= string(SHADER_DIR)+"\\car.vert";
@@ -187,7 +197,8 @@ map<const string, string> Init:: initializeShadersAndModelsPaths(){
     returnMap["skyFragPath"]= string(SHADER_DIR)+"\\skybox.frag";
     returnMap["terrainVertPath"]= string(SHADER_DIR)+"\\terrian.vert";
     returnMap["terrainFragPath"]= string(SHADER_DIR)+"\\terrian.frag";
-    returnMap["carModelPath"] =  string(MODEL_DIR)+"\\car\\car.obj";
+    returnMap["carOneModelPath"] =  string(MODEL_DIR)+"\\car\\car.obj";
+    returnMap["carTwoModelPath"] =  string(MODEL_DIR)+"\\car\\bmw.obj";
     returnMap["tyre1ModelPath"] =  string(MODEL_DIR)+"\\car\\tyref.obj";
     returnMap["tyre2ModelPath"] =  string(MODEL_DIR)+"\\car\\tyreb.obj";
     returnMap["terrainModel1Path"] =  string(SKY_DIR)+"\\terrian\\grass.obj";

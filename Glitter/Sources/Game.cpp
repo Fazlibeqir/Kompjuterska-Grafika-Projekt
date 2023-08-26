@@ -7,7 +7,8 @@
 
 Game::Game(const string& carShaderVertexPath,
      const string& carShaderFragmentPath,
-     const string& carModelPath,
+     const string& carOneModelPath,
+     const string& carTwoModelPath,
      const string& tyre1ModelPath,
      const string& tyre2ModelPath,
      const string& terrainShaderVertexPath,
@@ -17,10 +18,11 @@ Game::Game(const string& carShaderVertexPath,
      const string& terrainModel3Path,
      const string& skyboxShaderVertexPath,
      const string& skyboxShaderFragmentPath)
-        :   carForGame(carShaderVertexPath, carShaderFragmentPath, carModelPath, tyre1ModelPath, tyre2ModelPath),
+        :   cars{{carShaderVertexPath, carShaderFragmentPath, carOneModelPath, tyre1ModelPath, tyre2ModelPath },
+                 {carShaderVertexPath, carShaderFragmentPath, carTwoModelPath, tyre1ModelPath, tyre2ModelPath}},
             terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,terrainModel3Path),
             skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
-            simulation(),rotationAngle(0.0f)
+            simulation(),rotationAngle(0.0f), chosenCarIndex(0)
      {
          gameStarted=false;
      }
@@ -68,9 +70,9 @@ void Game::preGame(){
 
                 planeModelMatrix = glm::mat4(1.0f);
 
-        carForGame.carShader.Use();
-        carForGame.carShader.setMat4("projection", projection);
-        carForGame.carShader.setMat4("view", view);
+        cars[chosenCarIndex].carShader.Use();
+        cars[chosenCarIndex].carShader.setMat4("projection", projection);
+        cars[chosenCarIndex].carShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
 
@@ -151,9 +153,9 @@ void Game:: transform(){
     terrain.terrainShader.setVec3("light.specular", 2.75f, 2.75f, 2.75f);
     terrain.terrainModel2.Draw( terrain.terrainShader);
 
-    carForGame.carShader.Use();
-    carForGame.carShader.setMat4("projection", projection);
-    carForGame.carShader.setMat4("view", view);
+    cars[chosenCarIndex].carShader.Use();
+    cars[chosenCarIndex].carShader.setMat4("projection", projection);
+    cars[chosenCarIndex].carShader.setMat4("view", view);
     model = glm::mat4(1.0f);
     model = glm::translate(model,glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
     // Asphalt

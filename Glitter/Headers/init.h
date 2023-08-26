@@ -25,6 +25,7 @@ public:
     static void processInput(GLFWwindow *window);
     static GLFWwindow * initializeWindow();
     static void updateDeltaTime();
+    static void processInputForPreGame(GLFWwindow *window, int &chosenCar);
 
     static map<const string, string> initializeShadersAndModelsPaths();
 
