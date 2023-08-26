@@ -1,6 +1,8 @@
 //
 // Created by Elena on 21.7.2023.
 //
+// Modified by Beqir on 22/08/2023.
+//
 
 #ifndef KOMPJUTERSKA_GRAFIKA_PROJEKT_PHYSICS_H
 #define KOMPJUTERSKA_GRAFIKA_PROJEKT_PHYSICS_H

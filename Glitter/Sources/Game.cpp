@@ -1,6 +1,6 @@
-////
-//// Created by Elena on 09.7.2023.
-////
+//
+// Created by Elena on 09.7.2023.
+//
 #include "Game.h"
 #include "glm/gtc/type_ptr.hpp"
 

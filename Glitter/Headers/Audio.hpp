@@ -40,12 +40,11 @@ private:
     vector<string> songList;
     thread songThread;
     ISound *currentSound;
-    static ISound* sound1;
     mutex songNameMutex;
     string currentSongName;
 
     static bool shouldStopPlaying;
-    static float defaultVolume;
+
     void SongPlaybackThread(ISoundEngine* engine);
 
 };

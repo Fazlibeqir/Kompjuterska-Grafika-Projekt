@@ -37,7 +37,7 @@ public:
     GLFWwindow* window;
 private:
     float finishedRaceTime = 0.0f;
-    float countdownTimer = 10.0f;
+    float countdownTimer = 60.0f;
     int crossingCount=0;
     Audio audio;
     bool showSettingsWindow = false;

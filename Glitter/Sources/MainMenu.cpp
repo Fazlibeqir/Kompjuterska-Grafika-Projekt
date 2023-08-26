@@ -209,6 +209,7 @@ void MainMenu::renderScoreWindow() {
         if(ImGui::Button("Start Over", buttonSize))
         {
             GlobalVariables::returnToMenuClicked = true;
+            gameState=MENU;
         }
         ImGui::End();
 

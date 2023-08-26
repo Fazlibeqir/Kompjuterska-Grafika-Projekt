@@ -3,9 +3,9 @@
 //
 
 #include "Audio.hpp"
-ISound* Audio::sound1=nullptr;
+
 bool Audio::shouldStopPlaying = false;
-float Audio::defaultVolume = 1.0f; // Initialize the static member variable
+// Initialize the static member variable
 Audio::Audio(): currentSound(nullptr){
     engine = createIrrKlangDevice();
     if (!engine) {
