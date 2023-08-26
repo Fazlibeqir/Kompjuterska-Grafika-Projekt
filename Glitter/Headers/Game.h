@@ -15,7 +15,7 @@
 
 class Game {
 public:
-    Car cars[2];
+    Car cars[3];
     Terrain terrain;
     Skybox skybox;
     Physics simulation;
@@ -31,6 +31,7 @@ public:
          const string& carShaderFragmentPath,
          const string& carOneModelPath,
          const string& carTwoModelPath,
+         const string& carThreeModelPath,
          const string& tyre1ModelPath,
          const string& tyre2ModelPath,
          const string& terrainShaderVertexPath,

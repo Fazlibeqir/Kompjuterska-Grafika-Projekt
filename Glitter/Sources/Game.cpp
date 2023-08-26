@@ -9,6 +9,7 @@ Game::Game(const string& carShaderVertexPath,
      const string& carShaderFragmentPath,
      const string& carOneModelPath,
      const string& carTwoModelPath,
+     const string& carThreeModelPath,
      const string& tyre1ModelPath,
      const string& tyre2ModelPath,
      const string& terrainShaderVertexPath,
@@ -19,7 +20,8 @@ Game::Game(const string& carShaderVertexPath,
      const string& skyboxShaderVertexPath,
      const string& skyboxShaderFragmentPath)
         :   cars{{carShaderVertexPath, carShaderFragmentPath, carOneModelPath, tyre1ModelPath, tyre2ModelPath },
-                 {carShaderVertexPath, carShaderFragmentPath, carTwoModelPath, tyre1ModelPath, tyre2ModelPath}},
+                 {carShaderVertexPath, carShaderFragmentPath, carTwoModelPath, tyre1ModelPath, tyre2ModelPath},
+                 {carShaderVertexPath, carShaderFragmentPath, carThreeModelPath, tyre1ModelPath, tyre2ModelPath} },
             terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,terrainModel3Path),
             skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
             simulation(),rotationAngle(0.0f), chosenCarIndex(0)
@@ -57,16 +59,11 @@ void Game::preGame(){
                 planeModelMatrix = glm::translate(planeModelMatrix, simulation.plane_pos[(GlobalVariables::grid_height)]);
                 glUniformMatrix4fv(glGetUniformLocation( terrain.terrainShader.Program, "model"), 1, GL_FALSE,
                                    glm::value_ptr(planeModelMatrix));
-
-
                     // Grass
                     terrain.terrainShader.setFloat("material.shininess", 4.0f);
                     terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
                     terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
                     terrain.terrainModel3.Draw( terrain.terrainShader);
-
-
-
 
                 planeModelMatrix = glm::mat4(1.0f);
 

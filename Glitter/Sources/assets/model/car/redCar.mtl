@@ -9,8 +9,8 @@ newmtl default
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.5580 0.5580 0.5580
 	Ke 0.0000 0.0000 0.0000
-	map_Ka car.jpg
-	map_Kd car.jpg
+	map_Ka redCar.jpg
+	map_Kd redCar.jpg
 
 newmtl 02___Default
 Ns 10.0000

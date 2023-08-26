@@ -182,11 +182,21 @@ void Init:: processInput(GLFWwindow *window){
 void Init:: processInputForPreGame(GLFWwindow *window, int &chosenCar)
 {
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        chosenCar = 1;
+        std::cout<<"Chosen car is:" << chosenCar<< std::endl;
+        switch (chosenCar) {
+            case 0 : chosenCar = 1; break;
+            case 1 : chosenCar = 2; break;
+//            case 2 : chosenCar = 2; break;
+        }
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        chosenCar = 0;
-    }
+//    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+//        if(chosenCar == 2){
+//            chosenCar = 1;
+//        }else {
+//            chosenCar = 0;
+//        }
+//
+//    }
 }
 
 map<const string, string> Init:: initializeShadersAndModelsPaths(){
@@ -199,6 +209,7 @@ map<const string, string> Init:: initializeShadersAndModelsPaths(){
     returnMap["terrainFragPath"]= string(SHADER_DIR)+"\\terrian.frag";
     returnMap["carOneModelPath"] =  string(MODEL_DIR)+"\\car\\car.obj";
     returnMap["carTwoModelPath"] =  string(MODEL_DIR)+"\\car\\bmw.obj";
+    returnMap["carThreeModelPath"] =  string(MODEL_DIR)+"\\car\\redCar.obj";
     returnMap["tyre1ModelPath"] =  string(MODEL_DIR)+"\\car\\tyref.obj";
     returnMap["tyre2ModelPath"] =  string(MODEL_DIR)+"\\car\\tyreb.obj";
     returnMap["terrainModel1Path"] =  string(SKY_DIR)+"\\terrian\\grass.obj";
