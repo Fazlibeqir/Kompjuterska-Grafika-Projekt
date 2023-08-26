@@ -68,7 +68,9 @@ int main() {
     mainMenu.initializeImGui();
     mainMenu.show();
     Game game(mapForPaths["carVertPath"], mapForPaths["carFragPath"],
-              mapForPaths["carModelPath"],
+              mapForPaths["carOneModelPath"],
+              mapForPaths["carTwoModelPath"],
+              mapForPaths["carThreeModelPath"],
               mapForPaths["tyre1ModelPath"],
               mapForPaths["tyre2ModelPath"],
               mapForPaths["terrainVertPath"], mapForPaths["terrainFragPath"],
