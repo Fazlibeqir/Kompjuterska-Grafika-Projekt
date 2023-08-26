@@ -8,7 +8,7 @@
 
 
 MainMenu::MainMenu(GLFWwindow* inWindow)
-: window(inWindow),volume(0.5f){
+: window(inWindow),volume(0.5f), disableInputForGame(false){
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -198,18 +198,34 @@ void MainMenu::renderScoreWindow() {
         if (currentHighScore == 0.0f || currentHighScore > finishedRaceTime) {
             score.updateHighScore(finishedRaceTime);
         }
-        countdownTimer = 600.0f; // Reset the timer
+
+//        countdownTimer = 600.0f; // Reset the timer
+        ImGui::SetNextWindowPos(ImVec2(windowX, windowY));
+        ImGui::SetNextWindowSize(ImVec2(200, 100));
+        ImGui::Begin("Time is up", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); // Set window background color to black
+        ImGui::Text("Game over", minutes, seconds);
+        ImVec2 buttonSize(140, 40);
+        if(ImGui::Button("Start Over", buttonSize))
+        {
+            GlobalVariables::returnToMenuClicked = true;
+        }
+        ImGui::End();
+
+        disableInputForGame = true;
+//        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-//    // Display high score information
-//    if (currentHighScore == 0.0f) {
-//        ImGui::Text("High Score: No score yet");
-//    } else {
-//        int highScoreMinutes = static_cast<int>(currentHighScore) / 60;
-//        int highScoreSeconds = static_cast<int>(currentHighScore) % 60;
-//        ImGui::Text("High Score: %02d:%02d", highScoreMinutes, highScoreSeconds);
-//    }
+    // Display high score information
+    if (currentHighScore == 0.0f) {
+        ImGui::Text("High Score: No score yet");
+    } else {
+        int highScoreMinutes = static_cast<int>(currentHighScore) / 60;
+        int highScoreSeconds = static_cast<int>(currentHighScore) % 60;
+        ImGui::Text("High Score: %02d:%02d", highScoreMinutes, highScoreSeconds);
+    }
 
     ImGui::End();
+
 }
 
 

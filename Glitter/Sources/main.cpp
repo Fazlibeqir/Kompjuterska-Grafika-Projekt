@@ -14,12 +14,15 @@ void setUp(GLFWwindow *window, Game &game, Init &init, MainMenu &mainMenu) {
     mainMenu.setPlayerPosition(playerPosition);
     mainMenu.updateRaceStatus();
     init.processInput(window);
-    game.simulation.updateMovements();
+    if(!mainMenu.disableInputForGame) {
+        init.processInputForGame(window);
+        game.simulation.updateMovements();
+
     // Step physics forward
     game.simulation.dynamicsWorld->stepSimulation((
        GlobalVariables::deltaTime < GlobalVariables::maxSecPerFrame ?
        GlobalVariables::deltaTime : GlobalVariables::maxSecPerFrame),10);
-
+    }
     game.updateCameraPosition();
     game.transform();
 }
@@ -78,10 +81,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (gameState == GAME) {
-
             renderGame(window,game,init,mainMenu);
-
-        } else {
+        } else if(gameState == MENU || GlobalVariables::returnToMenuClicked) {
             renderPreGame(game,mainMenu);
         }
         // Flip Buffers and Draw

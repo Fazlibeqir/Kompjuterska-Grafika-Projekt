@@ -85,20 +85,7 @@ void Init:: scrollCallback(GLFWwindow *window, double d, double y){
     if (GlobalVariables::basePitch < 0.0f)
         GlobalVariables::basePitch = 0.0f;
 }
-void Init:: processInput(GLFWwindow *window){
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
-        // Toggle menu visibility when the Escape key is pressed
-        GlobalVariables::returnToMenuClicked = !GlobalVariables::returnToMenuClicked;
-
-        // You may want to add additional logic here, such as pausing the game
-        // when the menu is visible and resuming when it's hidden.
-
-        // Wait a short duration to prevent multiple toggles on a single key press
-      //  std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    }
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        glfwDestroyWindow(window);
-    }
+void Init:: processInputForGame(GLFWwindow *window){
     if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS && !GlobalVariables::switched) {
         GlobalVariables::cameraFollow = !GlobalVariables::cameraFollow;
         GlobalVariables::switched = TRUE;
@@ -177,6 +164,17 @@ void Init:: processInput(GLFWwindow *window){
     }
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE) {
         GlobalVariables::jumped = FALSE;
+    }
+}
+
+void Init::processInput(GLFWwindow *window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+        // Toggle menu visibility when the Escape key is pressed
+        GlobalVariables::returnToMenuClicked = !GlobalVariables::returnToMenuClicked;
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        glfwDestroyWindow(window);
     }
 }
 

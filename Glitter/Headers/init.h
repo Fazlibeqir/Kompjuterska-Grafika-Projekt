@@ -25,6 +25,7 @@ public:
     static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
     static void scrollCallback(GLFWwindow *window, double d, double y);
     void processInput(GLFWwindow *window);
+    void processInputForGame(GLFWwindow *window);
     static GLFWwindow * initializeWindow();
     static void updateDeltaTime();
     static map<const string, string> initializeShadersAndModelsPaths();
