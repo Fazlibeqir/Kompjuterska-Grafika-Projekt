@@ -166,6 +166,31 @@ void Init:: processInputForGame(GLFWwindow *window){
         GlobalVariables::jumped = FALSE;
     }
 }
+void Init:: processInputForPreGame(GLFWwindow *window, int &chosenCar)
+{
+    static bool rightKeyPressedLastFrame = false;
+    static bool leftKeyPressedLastFrame = false;
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        if (!rightKeyPressedLastFrame) {
+            std::cout << "Chosen car is: " << chosenCar << std::endl;
+            chosenCar = (chosenCar + 1) % 3; // Assuming you have 3 cars (0, 1, 2)
+        }
+        rightKeyPressedLastFrame = true;
+    } else {
+        rightKeyPressedLastFrame = false;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        if (!leftKeyPressedLastFrame) {
+            std::cout << "Chosen car is: " << chosenCar << std::endl;
+            chosenCar = (chosenCar - 1 + 3) % 3; // Wrapping around for previous car
+        }
+        leftKeyPressedLastFrame = true;
+    } else {
+        leftKeyPressedLastFrame = false;
+    }
+}
 
 void Init::processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
@@ -187,7 +212,9 @@ map<const string, string> Init:: initializeShadersAndModelsPaths(){
     returnMap["skyFragPath"]= string(SHADER_DIR)+"\\skybox.frag";
     returnMap["terrainVertPath"]= string(SHADER_DIR)+"\\terrian.vert";
     returnMap["terrainFragPath"]= string(SHADER_DIR)+"\\terrian.frag";
-    returnMap["carModelPath"] =  string(MODEL_DIR)+"\\car\\car.obj";
+    returnMap["carOneModelPath"] =  string(MODEL_DIR)+"\\car\\car.obj";
+    returnMap["carTwoModelPath"] =  string(MODEL_DIR)+"\\car\\bmw.obj";
+    returnMap["carThreeModelPath"] =  string(MODEL_DIR)+"\\car\\redCar.obj";
     returnMap["tyre1ModelPath"] =  string(MODEL_DIR)+"\\car\\tyref.obj";
     returnMap["tyre2ModelPath"] =  string(MODEL_DIR)+"\\car\\tyreb.obj";
     returnMap["terrainModel1Path"] =  string(SKY_DIR)+"\\terrian\\grass.obj";

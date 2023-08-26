@@ -30,8 +30,9 @@ public:
     static void updateDeltaTime();
     static map<const string, string> initializeShadersAndModelsPaths();
 
-private:
+    static void processInputForPreGame(GLFWwindow *window, int &chosenCar);
 
+private:
 };
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_INIT_H
