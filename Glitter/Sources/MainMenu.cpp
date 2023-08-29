@@ -206,10 +206,9 @@ void MainMenu::renderScoreWindow() {
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 1.0f)); // Set window background color to black
         ImGui::Text("Game over", minutes, seconds);
         ImVec2 buttonSize(140, 40);
-        if(ImGui::Button("Start Over", buttonSize))
+        if(ImGui::Button("Quit", buttonSize))
         {
-            GlobalVariables::returnToMenuClicked = true;
-            gameState=MENU;
+            quitGame();
         }
         ImGui::End();
 
