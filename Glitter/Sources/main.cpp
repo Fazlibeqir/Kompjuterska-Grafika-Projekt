@@ -14,7 +14,6 @@ void setUp(GLFWwindow *window, Game &game, Init &init, MainMenu &mainMenu) {
     glm::vec3 playerPosition = game.simulation.getPlayerPosition();
     mainMenu.setPlayerPosition(playerPosition);
     mainMenu.updateRaceStatus();
-    init.processInput(window);
     if(!mainMenu.disableInputForGame) {
         init.processInputForGame(window);
         game.simulation.updateMovements();
@@ -195,6 +194,7 @@ int main() {
     intiSkybox(skyboxShader,game);
     while (!glfwWindowShouldClose(window)) {
         Init::updateDeltaTime();
+        Init::processInput(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (gameState == GAME) {
