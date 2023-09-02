@@ -9,13 +9,12 @@
 #include "BulletDynamics/Dynamics/btRigidBody.h"
 #include "BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h"
 
-
 enum GameState {
     MENU, GAME
 };
-static GameState gameState = MENU;
 class GlobalVariables{
 public:
+    static GameState gameState;
     static float deltaTime;
     static float lastFrame;
     static const unsigned int scrWidth = 960;

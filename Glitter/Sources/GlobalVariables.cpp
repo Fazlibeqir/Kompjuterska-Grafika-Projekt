@@ -3,6 +3,7 @@
 //
 #include "GlobalVariables.h"
 
+GameState GlobalVariables:: gameState = MENU;
 float GlobalVariables:: deltaTime = 0.0f;
 float GlobalVariables:: lastFrame = 0.0f;
 

@@ -55,7 +55,7 @@ void renderPreGame(Game& game,MainMenu& mainMenu ){
 
     mainMenu.renderImGui();
     if (mainMenu.gameStarted)
-        gameState = GAME;
+        GlobalVariables::gameState = GAME;
 }
 float skyboxVertices[] =
         {
@@ -197,11 +197,11 @@ int main() {
         Init::processInput(window);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if (gameState == GAME) {
+        if (GlobalVariables::gameState == GAME) {
             renderGame(window,game,init,mainMenu);
             renderSkybox(skyboxShader, game);
             handleReturnToMenu(mainMenu);
-        } else if(gameState == MENU || GlobalVariables::returnToMenuClicked) {
+        } else if(GlobalVariables::gameState == MENU || GlobalVariables::returnToMenuClicked) {
             Init::processInputForPreGame(window,game.chosenCarIndex);
             renderPreGame(game,mainMenu);
         }
