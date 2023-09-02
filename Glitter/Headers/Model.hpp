@@ -74,16 +74,13 @@ private:
 
     void loadModel(string path)
     {
-
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
-
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
             cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
             return;
         }
-
         this->directory = path.substr(0, path.find_last_of('\\'));
         this->processNode(scene->mRootNode, scene);
     }
@@ -105,15 +102,12 @@ private:
 
     Mesh processMesh(aiMesh* mesh, const aiScene* scene)
     {
-
         vector<Vertex> vertices;
         vector<GLuint> indices;
         vector<Texture> textures;
-
         for(GLuint i = 0; i < mesh->mNumVertices; i++)
         {
             Vertex vertex;
-
             glm::vec3 vector;
             // vertices coordinates
             vector.x = mesh->mVertices[i].x;
@@ -129,7 +123,6 @@ private:
             if(mesh->mTextureCoords[0])
             {
                 glm::vec2 vec;
-
                 vec.x = mesh->mTextureCoords[0][i].x;
                 vec.y = mesh->mTextureCoords[0][i].y;
                 vertex.TexCoords = vec;
@@ -148,21 +141,17 @@ private:
                 vertex.TexCoords = glm::vec2(0.0f, 0.0f);
                 cout << "WARNING::ASSIMP:: MODEL WITHOUT UV COORDINATES -> TANGENT AND BITANGENT ARE = 0" << endl;
             }
-
             vertices.push_back(vertex);
         }
-
         for(GLuint i = 0; i < mesh->mNumFaces; i++)
         {
             aiFace face = mesh->mFaces[i];
             for(GLuint j = 0; j < face.mNumIndices; j++)
                 indices.push_back(face.mIndices[j]);
         }
-
         if(mesh->mMaterialIndex >= 0)
         {
             aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-
             // 1. Diffuse maps
             vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
             textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());

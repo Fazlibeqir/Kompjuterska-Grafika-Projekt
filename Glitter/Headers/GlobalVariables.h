@@ -1,7 +1,6 @@
 //
 // Created by Elena on 19.8.2023.
 //
-
 #ifndef KOMPJUTERSKA_GRAFIKA_PROJEKT_GLOBALVARIABLES_H
 #define KOMPJUTERSKA_GRAFIKA_PROJEKT_GLOBALVARIABLES_H
 
@@ -23,15 +22,12 @@ public:
     static Camera camera;
     static bool cameraFollow;
     static glm::vec3 cameraFollowPos;
-//    static auto cameraFollowP;
-//    static auto cameraFollowY;
     static float lastX;
     static float lastY;
     static bool firstMouse;
     static bool rotating;
     static float cameraRadius;
     static bool switched;
-
 // Car controls
     static short acceleration;
     static float steering;
@@ -41,7 +37,6 @@ public:
     static bool getUp, gotUp;
     static bool jump, jumped;
     static float basePitch, baseYaw;
-
 // Car properties
     static float car_mass;
     static float tyre_mass_1;          // front wheels weight
@@ -67,9 +62,7 @@ public:
 
     static GLfloat maxSecPerFrame;
     static glm::vec3 lightPos;
-
     static bool returnToMenuClicked;
 };
-
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_GLOBALVARIABLES_H

@@ -21,7 +21,6 @@ void MainMenu::renderMainMenu(){
         screenWidth = mode->width;
         screenHeight = mode->height;
     }
-
     ImVec2 windowSize(220, 220);
     ImVec2 windowPos(50, 50);  // Desired offset from the top-left corner
 
@@ -45,27 +44,20 @@ void MainMenu::renderMainMenu(){
 }
 
 void MainMenu::renderMainMenuLogic(const ImVec2& buttonSize) {
-    // Handle start game action
     if (ImGui::Button("Start Game", buttonSize) || glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
-        if (GlobalVariables::returnToMenuClicked == true)
+        if (GlobalVariables::returnToMenuClicked)
             GlobalVariables::returnToMenuClicked = !GlobalVariables::returnToMenuClicked;
-
         gameStarted = true;
         hide();
     } else {
         gameStarted = false;
     }
-
-    // Handle settings action
     if (ImGui::Button("Settings", buttonSize)) {
         showSettingsWindow = !showSettingsWindow; // Toggle visibility
     }
-
-    // Handle quit action
     if (ImGui::Button("Quit", buttonSize)) {
         quitGame();
     }
-
 }
 void MainMenu:: initializeImGui() const
 {

@@ -5,8 +5,6 @@
 #ifndef KOMPJUTERSKA_GRAFIKA_PROJEKT_MAINMENU_H
 #define KOMPJUTERSKA_GRAFIKA_PROJEKT_MAINMENU_H
 
-
-
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -31,7 +29,6 @@ public:
     bool isMenuVisible() const {
         return showMenu;
     }
-
     bool disableInputForGame;
     bool gameStarted;
     GLFWwindow* window;

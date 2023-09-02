@@ -34,23 +34,17 @@ struct Texture {
 
 class Mesh {
 public:
-
     vector<Vertex> vertices;
     vector<GLuint> indices;
     vector<Texture> textures;
-
     GLuint VAO;
-
     Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures) {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
-
         this->setupMesh();
     }
-
     void Draw(Shader shader) {
-
         GLuint diffuseNr = 1;
         GLuint specularNr = 1;
         GLuint normalNr = 1;
@@ -69,15 +63,12 @@ public:
             else if (name == "texture_height")
                 ss << heightNr++;
             number = ss.str();
-
             glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
             glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
         }
-
         glBindVertexArray(this->VAO);
         glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
-
         for (GLuint i = 0; i < this->textures.size(); i++) {
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, 0);

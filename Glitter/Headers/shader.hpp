@@ -14,15 +14,12 @@ class Shader
 {
 public:
     GLuint Program;
-
     Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     {
-
         string vertexCode;
         string fragmentCode;
         ifstream vShaderFile;
         ifstream fShaderFile;
-
         vShaderFile.exceptions (ifstream::failbit | ifstream::badbit);
         fShaderFile.exceptions (ifstream::failbit | ifstream::badbit);
         try
@@ -41,24 +38,19 @@ public:
         {
             cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << endl;
         }
-
         const GLchar* vShaderCode = vertexCode.c_str();
         const GLchar * fShaderCode = fragmentCode.c_str();
-
         GLuint vertex, fragment;
-
         // Vertex Shader
         vertex = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertex, 1, &vShaderCode, NULL);
         glCompileShader(vertex);
         checkCompileErrors(vertex, "VERTEX");
-
         // Fragment Shader
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragment, 1, &fShaderCode, NULL);
         glCompileShader(fragment);
         checkCompileErrors(fragment, "FRAGMENT");
-
         // Shader Program creation
         this->Program = glCreateProgram();
         glAttachShader(this->Program, vertex);
