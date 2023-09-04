@@ -1,9 +1,7 @@
 #pragma once
 
 #include <vector>
-
 #include <glad/glad.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -13,10 +11,8 @@ enum Camera_Movement {
     LEFT,
     RIGHT
 };
-
 const GLfloat YAW = -90.0f; // Y
 const GLfloat PITCH = -10.0f; // X
-
 const GLfloat SPEED = 3.0f;
 const GLfloat SENSITIVITY = 0.1f;
 
@@ -28,16 +24,12 @@ public:
     glm::vec3 WorldFront;
     glm::vec3 Up; // camera local UP vector
     glm::vec3 Right;
-    glm::vec3 WorldUp; // camera world UP vector -> needed for the initial computation of Right vector
+    glm::vec3 WorldUp; //
     GLboolean onGround;
-
     //Euler Angles
-
     GLfloat Yaw;
     GLfloat Pitch;
-
     //Camera options
-
     GLfloat MovementSpeed;
     GLfloat MouseSensitivity;
 
@@ -96,7 +88,6 @@ public:
     }
 
 private:
-
     void updateCameraVectors() {
         glm::vec3 front;
         front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));

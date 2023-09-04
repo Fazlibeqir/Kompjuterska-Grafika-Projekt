@@ -17,7 +17,6 @@ void setUp(GLFWwindow *window, Game &game, Init &init, MainMenu &mainMenu) {
     if(!mainMenu.disableInputForGame) {
         init.processInputForGame(window);
         game.simulation.updateMovements();
-
     // Step physics forward
     game.simulation.dynamicsWorld->stepSimulation((
        GlobalVariables::deltaTime < GlobalVariables::maxSecPerFrame ?
@@ -28,31 +27,24 @@ void setUp(GLFWwindow *window, Game &game, Init &init, MainMenu &mainMenu) {
 }
 void renderGame(GLFWwindow* window,Game& game,Init& init,MainMenu& mainMenu ){
     setUp(window, game, init, mainMenu);
-    // Transforms
     glm::mat4 objModelMatrix;
     glm::mat3 objNormalMatrix;
-
     GLfloat matrix[16];
     btTransform transform;
     Model *objectModel = nullptr;
-
     int num_cobjs = game.simulation.dynamicsWorld->getNumCollisionObjects();
     game.startGame(objModelMatrix,objNormalMatrix,num_cobjs,objectModel,matrix,transform);
-
 }
 void renderPreGame(Game& game,MainMenu& mainMenu ){
     game.rotationAngle += 45.0f * GlobalVariables::deltaTime;
-
     glm::mat4 objModelMatrix;
     glm::mat3 objNormalMatrix;
-
     GLfloat matrix[16];
     btTransform transform;
     Model *objectModel= nullptr;
 
     int num_cobjs = game.simulation.dynamicsWorld->getNumCollisionObjects();
     game.preGame(objModelMatrix,objNormalMatrix,num_cobjs,objectModel,matrix,transform);
-
     mainMenu.renderImGui();
     if (mainMenu.gameStarted)
         GlobalVariables::gameState = GAME;
@@ -91,6 +83,7 @@ unsigned int skyboxIndices[] =
                 3, 7, 6,
                 6, 2, 3
         };
+
 unsigned int skyboxVAO,skyboxVBO,skyboxEBO;
 void intiSkybox(Shader& skyboxShader,Game& game){
     skyboxShader.Use();
@@ -155,8 +148,11 @@ void renderSkybox(Shader& skyboxShader,Game& game){
     glm::mat4 projection = glm::mat4(1.0f);
     // We make the mat4 into a mat3 and then a mat4 again in order to get rid of the last row and column
     // The last row and column affect the translation of the skybox (which we don't want to affect)
-    view = glm::mat4(glm::mat3(glm::lookAt(GlobalVariables::camera.Position, GlobalVariables::camera.Position + GlobalVariables::camera.Front, GlobalVariables::camera.Up)));
-    projection = glm::perspective(glm::radians(45.0f), (float)GlobalVariables::scrWidth / GlobalVariables::scrHeight, 0.1f, 100.0f);
+    view = glm::mat4(glm::mat3(glm::lookAt( GlobalVariables::camera.Position,
+                                                GlobalVariables::camera.Position + GlobalVariables::camera.Front,
+                                                        GlobalVariables::camera.Up)));
+    projection = glm::perspective(glm::radians(45.0f), (float)GlobalVariables::scrWidth /
+                                                                        GlobalVariables::scrHeight, 0.1f, 100.0f);
     skyboxShader.setMat4("view",view);
     skyboxShader.setMat4("projection",projection);
     // Draws the cubemap as the last object so we can save a bit of performance by discarding all fragments
@@ -174,24 +170,26 @@ int main() {
     Init init;
     GLFWwindow *window = Init::initializeWindow();
     map<const string, string> mapForPaths = Init::initializeShadersAndModelsPaths();
-
     MainMenu mainMenu(window);
     mainMenu.initializeImGui();
     mainMenu.show();
-    Game game(mapForPaths["carVertPath"], mapForPaths["carFragPath"],
+    Game game(mapForPaths["carVertPath"],
+              mapForPaths["carFragPath"],
               mapForPaths["carOneModelPath"],
               mapForPaths["carTwoModelPath"],
               mapForPaths["carThreeModelPath"],
               mapForPaths["tyre1ModelPath"],
               mapForPaths["tyre2ModelPath"],
-              mapForPaths["terrainVertPath"], mapForPaths["terrainFragPath"],
-              mapForPaths["terrainModel1Path"], mapForPaths["terrainModel2Path"], mapForPaths["terrainModel3Path"]
+              mapForPaths["terrainVertPath"],
+              mapForPaths["terrainFragPath"],
+              mapForPaths["terrainModel1Path"],
+              mapForPaths["terrainModel2Path"],
+              mapForPaths["terrainModel3Path"]
               );
     game.initialize();
-
     Shader skyboxShader(mapForPaths["skyVertPath"].c_str(), mapForPaths["skyFragPath"].c_str());
-
     intiSkybox(skyboxShader,game);
+
     while (!glfwWindowShouldClose(window)) {
         Init::updateDeltaTime();
         Init::processInput(window);

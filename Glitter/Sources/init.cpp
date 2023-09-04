@@ -172,8 +172,7 @@ void Init:: processInputForPreGame(GLFWwindow *window, int &chosenCar)
 
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         if (!rightKeyPressedLastFrame) {
-            std::cout << "Chosen car is: " << chosenCar << std::endl;
-            chosenCar = (chosenCar + 1) % 3; // Assuming you have 3 cars (0, 1, 2)
+            chosenCar = (chosenCar + 1) % 3;
         }
         rightKeyPressedLastFrame = true;
     } else {
@@ -182,8 +181,7 @@ void Init:: processInputForPreGame(GLFWwindow *window, int &chosenCar)
 
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         if (!leftKeyPressedLastFrame) {
-            std::cout << "Chosen car is: " << chosenCar << std::endl;
-            chosenCar = (chosenCar - 1 + 3) % 3; // Wrapping around for previous car
+            chosenCar = (chosenCar - 1 + 3) % 3;
         }
         leftKeyPressedLastFrame = true;
     } else {

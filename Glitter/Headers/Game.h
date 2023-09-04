@@ -8,7 +8,6 @@
 
 #include "Car.h"
 #include "Terrain.h"
-#include "Skybox.hpp"
 #include "Physics.h"
 #include "GLFW/glfw3.h"
 #include "GlobalVariables.h"
@@ -17,11 +16,9 @@ class Game {
 public:
     Car cars[3];
     Terrain terrain;
-    //Skybox skybox;
     Physics simulation;
     bool gameStarted;
     float rotationAngle;
-//    unsigned int skyboxVAO, skyboxVBO,skyboxEBO;
     unsigned int cubeMapTexture;
     glm::mat4 projection;
     glm::mat4 view;
@@ -39,8 +36,6 @@ public:
          const string& terrainModel1Path,
          const string& terrainModel2Path,
          const string& terrainModel3Path
-//         const string& skyboxShaderVertexPath,
-//         const string& skyboxShaderFragmentPath
          );
 
     void initialize();
@@ -50,12 +45,7 @@ public:
                    Model *objectModel, GLfloat *matrix, btTransform transform);
     void updateCameraPosition() const;
     void transform();
-
-   // void setSkybox();
-
     void carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix) const;
 private:
 };
-
-
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_GAME_H

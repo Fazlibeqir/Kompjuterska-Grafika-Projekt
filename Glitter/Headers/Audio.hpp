@@ -42,12 +42,8 @@ private:
     ISound *currentSound;
     mutex songNameMutex;
     string currentSongName;
-
     static bool shouldStopPlaying;
-
     void SongPlaybackThread(ISoundEngine* engine);
-
 };
-
 
 #endif //KOMPJUTERSKA_GRAFIKA_PROJEKT_AUDIO_HPP

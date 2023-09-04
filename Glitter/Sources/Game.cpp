@@ -17,22 +17,17 @@ Game::Game(const string &carShaderVertexPath,
            const string &terrainModel1Path,
            const string &terrainModel2Path,
            const string &terrainModel3Path
-//           const string &skyboxShaderVertexPath,
-//           const string &skyboxShaderFragmentPath
            )
         : cars{{carShaderVertexPath, carShaderFragmentPath, carOneModelPath, tyre1ModelPath, tyre2ModelPath },
                {carShaderVertexPath, carShaderFragmentPath, carTwoModelPath, tyre1ModelPath, tyre2ModelPath},
                {carShaderVertexPath, carShaderFragmentPath, carThreeModelPath, tyre1ModelPath, tyre2ModelPath} },
                terrain(terrainShaderVertexPath, terrainShaderFragmentPath, terrainModel1Path, terrainModel2Path,
                   terrainModel3Path),
-//          skybox(skyboxShaderVertexPath, skyboxShaderFragmentPath),
           simulation(), rotationAngle(0.0f),chosenCarIndex(0) {
     gameStarted = false;
 }
 
 void Game::initialize() {
-//    skybox.generateBuffers(skyboxVAO, skyboxVBO,skyboxEBO);
-//    cubeMapTexture = skybox.loadCubeMap();
     simulation.generateTerrain();
     simulation.generateInvisibleWalls();
     simulation.generateCamaro();
@@ -41,19 +36,14 @@ void Game::initialize() {
 void Game::carUniFrom(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix) const{
     cars[chosenCarIndex].carShader.setMat4("model",objModelMatrix);
     cars[chosenCarIndex].carShader.setMat3("normal",objNormalMatrix);
-
-
     cars[chosenCarIndex].carShader.setVec3("lightColor", glm::vec3(1.0));
     cars[chosenCarIndex].carShader.setVec3("lightPos", GlobalVariables::lightPos);
     cars[chosenCarIndex].carShader.setVec3("viewPos", GlobalVariables::camera.Position);
-
     cars[chosenCarIndex].carShader.setFloat("material.shininess", 128.0f);
-
     cars[chosenCarIndex].carShader.setVec3("light.direction", 1.0f, -0.5f, -0.5f);
     cars[chosenCarIndex].carShader.setVec3("light.ambient", 0.5f, 0.5f, 0.5f);
     cars[chosenCarIndex].carShader.setVec3("light.diffuse", 0.945f, 0.855f, 0.643f);
     cars[chosenCarIndex].carShader.setVec3("light.specular", 4.0f, 4.0f, 4.0f);
-
     cars[chosenCarIndex].carShader.setInt("skybox", 3);
 }
 void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& num_cobjs,
@@ -129,8 +119,6 @@ void Game::preGame(glm::mat4 &objModelMatrix, glm::mat3 &objNormalMatrix,int& nu
         terrain.terrainShader.setVec3("light.diffuse", 1.195f, 1.105f, 0.893f);
         terrain.terrainShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
         terrain.terrainModel3.Draw(terrain.terrainShader);
-
-
         planeModelMatrix = glm::mat4(1.0f);
 
         cars[chosenCarIndex].carShader.Use();
@@ -167,32 +155,23 @@ void Game::startGame(glm::mat4& objModelMatrix,glm::mat3& objNormalMatrix,int& n
         // taking the Collision Object from the list
         btCollisionObject *obj = simulation.dynamicsWorld->getCollisionObjectArray()[i];
         btRigidBody *body = btRigidBody::upcast(obj);
-
         // transformation matrix of the rigid body, as calculated by the physics engine
         body->getMotionState()->getWorldTransform(transform);
-
         //Bullet matrix (transform) to an array of floats
         transform.getOpenGLMatrix(matrix);
-
         //GLM transformation matrix
         objModelMatrix = glm::make_mat4(matrix) * glm::scale(objModelMatrix, obj_size);
         objNormalMatrix = glm::transpose(glm::inverse(glm::mat3(objModelMatrix)));
-
         //normal matrix
         carUniFrom(objModelMatrix, objNormalMatrix);
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
 
         objectModel->Draw(cars[chosenCarIndex].carShader);
-
         objModelMatrix = glm::mat4(1.0f);
         objNormalMatrix = glm::mat4(1.0f);
     }
-
     view = glm::mat4(glm::mat3(GlobalVariables::camera.GetViewMatrix()));
-
-    // Skybox
-//    setSkybox();
 }
 void Game::updateCameraPosition() const {
     // Update camera position
@@ -219,7 +198,6 @@ void Game::updateCameraPosition() const {
         GlobalVariables::camera.Position = GlobalVariables::cameraFollowPos;
         GlobalVariables::camera.LookAt(-newPos.x(), newPos.y(), -newPos.z());
     }
-
 }
 
 void Game::transform() {
@@ -273,26 +251,4 @@ void Game::transform() {
     cars[chosenCarIndex].carShader.setMat4("view", view);
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f)); // translate at the center of the scene
-    // Asphalt
-
 }
-
-//void Game::setSkybox() {
-//    // Skybox
-//    glDepthFunc(GL_LEQUAL);
-//    skybox.skyBoxShader.Use();
-//    view = glm::mat4(1.0f);
-//    projection = glm::mat4(1.0f);
-//    projection = glm::perspective(glm::radians(45.0f),
-//                                  (float) GlobalVariables::scrWidth / (float) GlobalVariables::scrHeight,
-//                                  0.1f, 10000.0f);
-//    view = GlobalVariables::camera.GetViewMatrix();
-//    skybox.skyBoxShader.setMat4("projection", projection);
-//    skybox.skyBoxShader.setMat4("view", view);
-//    glBindVertexArray(skyboxVAO);
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
-//    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-//    glBindVertexArray(0);
-//    glDepthFunc(GL_LESS);
-//}

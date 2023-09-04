@@ -92,12 +92,10 @@ private:
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             this->meshes.push_back(this->processMesh(mesh, scene));
         }
-
         for(GLuint i = 0; i < node->mNumChildren; i++)
         {
             this->processNode(node->mChildren[i], scene);
         }
-
     }
 
     Mesh processMesh(aiMesh* mesh, const aiScene* scene)
