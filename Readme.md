@@ -2,6 +2,8 @@
 
 
 ## Summary
+Project for Computer Graphics course at [FCSE](https://finki.ukim.mk/).
+
 This project is a 3D racing game developed using OpenGL as the primary graphics framework. It leverages the power of OpenGL to deliver stunning 3D graphics, realistic physics, and dynamic gameplay. The foundation of the game is built upon the [Glitter](http://polytonic.github.io/Glitter/) boilerplate, streamlining development and ensuring top-notch performance.
 
 ## Getting Started
