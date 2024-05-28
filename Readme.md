@@ -9,12 +9,18 @@ This project is a 3D racing game developed using OpenGL as the primary graphics 
 ## DropBox(Video, pdf, pptx)
 https://shorturl.at/nvyGK
 
+⚠️ **Attention**: This project contains video & audio file that may play at a high volume. Please ensure your speakers or headphones are set to a comfortable level before running the application to avoid any discomfort or potential hearing damage.
+
+
+https://github.com/Fazlibeqir/Kompjuterska-Grafika-Projekt/assets/57021385/4f554b06-4620-4c9d-a12a-d68cac18a3ed
+
 ## Getting Started
 Only on Windows was tested
 ### Dependencies
 To build this project, you'll need:
 
 [Cmake](http://www.cmake.org/download/)
+
 
 Visual Studio 2022 Compiler
 
